@@ -1,23 +1,24 @@
-import { ReactNode } from "react";
-import { useRouter } from "next/router";
-import { useAuth } from "../auth/useAuth";
+// src/app/components/PrivateRoute.tsx
+import { ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '../auth/useAuth';
 
 interface PrivateRouteProps {
-    children: ReactNode;
+  children: ReactNode;
 }
 
 const PrivateRoute = ({ children }: PrivateRouteProps) => {
-    const { user, loading } = useAuth();
-    const router = useRouter();
+  const { user, loading } = useAuth();
+  const router = useRouter();
 
-    if(loading) return <>Loading...</>
+  if (loading) return <div>Loading...</div>;
 
-    if(!user) {
-        router.push('/login');
-        return null; 
-    }
+  if (!user) {
+    router.push('/signup');
+    return null; // or a loading spinner
+  }
 
-    return <>{children}</>
+  return <>{children}</>;
 };
 
 export default PrivateRoute;
