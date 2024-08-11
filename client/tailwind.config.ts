@@ -52,6 +52,12 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        "Fuschia/100": "#ef5da8",
+        "Fuschia/80": "#f178b6",
+        "Fuschia/60": "#fcddec",
+        "Iris/100": "#5d5fef",
+        "Iris/80": "#7879f1",
+        "Iris/60": "#a5a6f6"
       },
       borderRadius: {
         lg: "var(--radius)",
