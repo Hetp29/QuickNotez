@@ -1,0 +1,2 @@
+# QuickNotez
+Welcome to QuickNotez!
