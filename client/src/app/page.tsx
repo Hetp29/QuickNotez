@@ -1,9 +1,6 @@
 
 'use client';
-// src/app/page.tsx
 import { useState } from 'react';
-import { db } from '../firebaseConfig';
-import { collection, addDoc } from 'firebase/firestore';
 
 const HomePage = () => {
   const [name, setName] = useState<string>('');
@@ -21,11 +18,22 @@ const HomePage = () => {
     setMessage('');
 
     try {
-      await addDoc(collection(db, 'test'), { name });
+      const response = await fetch('http://localhost:5001/add-name', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
       setMessage('Name added successfully!');
       setName('');
     } catch (error) {
-      console.error('Error adding document: ', error);
+      console.error('Error adding name: ', error);
       setMessage('Error adding name.');
     } finally {
       setLoading(false);
