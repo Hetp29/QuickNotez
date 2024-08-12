@@ -70,6 +70,37 @@ const LandingPage = () => {
             className="w-fulll h-auto max-w-screen-lg mx-auto"
           />
         </div>
+        <div className="flex flex-wrap justify-center gap-28 mt-16 mb-16">
+          <img
+            src="/images/client1.png"
+            alt="Client 1"
+            className="w-32 h-32 object-contain"
+          />
+          <img
+            src="/images/client2.png"
+            alt="Client 2"
+            className="w-32 h-32 object-contain"
+          />
+          <img
+            src="/images/client3.png"
+            alt="Client 3"
+            className="w-32 h-32 object-contain"
+          />
+          <img
+            src="/images/client4.png"
+            alt="Client 4"
+            className="w-32 h-32 object-contain"
+          />
+          <img
+            src="/images/client5.png"
+            alt="Client 5"
+            className="w-32 h-32 object-contain"
+          />
+          
+        </div>
+        <TitleSection
+          pill="✨ Your Own Space, Perfected" title={undefined}        />
+       
       </div>
     </section>
   );
