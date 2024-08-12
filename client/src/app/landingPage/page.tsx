@@ -4,59 +4,64 @@ import TitleSection from "./Slogan";
 
 const LandingPage = () => {
   return (
-    <section>
+    <section className="h-screen flex flex-col">
       <Navbar />
       <div className="
+        flex-1
+        flex
+        flex-col
+        justify-start
+        items-center
+        text-center
         overflow-hidden
         px-4
         sm:px-6
         mt-16
-        flex
-        flex-col
-        sm:flex-row
-        items-center
-        gap-4
-        md:justify-center
       ">
-        <div className="flex-1 flex flex-col items-center text-center">
-          <TitleSection 
-            pill="✨ Your Own Space, Perfected"
-            title={
-              <div className="flex flex-col items-center">
-                <span className="block text-4xl sm:text-6xl font-semibold mb-4">
-                  Design. Plan. Conquer.
-                </span>
-                <span className="text-4xl sm:text-4xl font-semibold">
-                  Welcome to <span className="text-blue-400">QuickNotez</span>!
-                </span>
-              </div>
-            }
-          />
-          <div className="mt-8">
-            <a href="#get-started">
-              <button className="
-                bg-blue-500
-                hover:bg-blue-600
-                text-white
-                px-6
-                py-3
-                rounded-lg
-                font-semibold
-                shadow-lg
-                transition-colors
-                duration-300
-                focus:outline-none
-                focus:ring-2
-                focus:ring-blue-400
-                focus:ring-opacity-50
-              ">
-                Get Started
-              </button>
-            </a>
-          </div>
+        <TitleSection 
+          pill="✨ Your Own Space, Perfected"
+          title={
+            <div className="flex flex-col items-center">
+              <span className="block text-4xl sm:text-6xl font-semibold mb-4">
+                Design. Plan. Conquer.
+              </span>
+              <span className="text-4xl sm:text-4xl font-semibold">
+                Welcome to <span className="text-blue-400">QuickNotez</span>!
+              </span>
+              <p className="mt-4 text-lg sm:text-xl">
+                Organize your life—Manage your notes, tasks, and projects seamlessly—Stay productive and achieve more with everything you need in one place.
+              </p>
+            </div>
+          }
+        />
+        <div className="mt-8">
+          <a href="#get-started">
+            <button className="
+              bg-white
+              text-black
+              text-lg
+              px-24
+              py-6
+              rounded-none
+              font-semibold
+              duration-300
+              focus:outline-none
+              focus:ring-2
+              focus:ring-blue-400
+              focus:ring-opacity-50
+              hover:bg-gray-200
+            ">
+              Get Started For Free
+            </button>
+          </a>
         </div>
-        <div className="flex-1">
-          {/* Image or additional content goes here */}
+        <div className="mt-8 text-lg">
+          <p>
+            Already have an account?{' '}
+            <a href="/login" className="text-blue-400 hover:underline">
+              Log in now
+            </a>
+          </p>
         </div>
       </div>
     </section>

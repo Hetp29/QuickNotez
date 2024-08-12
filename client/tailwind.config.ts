@@ -1,13 +1,13 @@
-import type { Config } from "tailwindcss"
+import type { Config } from "tailwindcss";
 
-const config = {
-  darkMode: ["class"],
+const config: Config = {
+  darkMode: 'class',
   content: [
     './pages/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
-	],
+  ],
   prefix: "",
   theme: {
     container: {
@@ -57,12 +57,15 @@ const config = {
         "Fuschia/60": "#fcddec",
         "Iris/100": "#5d5fef",
         "Iris/80": "#7879f1",
-        "Iris/60": "#a5a6f6"
+        "Iris/60": "#a5a6f6",
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      textShadow: {
+        '3d': '2px 2px 0 #000, 4px 4px 0 #fff, 6px 6px 0 #000',
       },
       keyframes: {
         "accordion-down": {
@@ -81,6 +84,6 @@ const config = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-} satisfies Config
+};
 
-export default config
+export default config;
