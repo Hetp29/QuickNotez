@@ -1,10 +1,21 @@
 import Link from "next/link";
+import Image from "next/image";
 
 const Navbar = () => {
   return (
     <nav className="bg-transparent py-4 px-8">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <div className="text-2xl font-bold text-white">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-2 text-2xl font-bold text-white">
+          <Link href="/">
+            <Image 
+              src="/images/logo.png"
+              alt="Logo"
+              width={55}
+              height={40}
+              className="object-contain"  // This class should respect the aspect ratio
+              style={{ width: 'auto', height: 'auto' }} // Ensure aspect ratio is maintained
+            />
+          </Link>
           <Link href="/">
             QuickNotez
           </Link>

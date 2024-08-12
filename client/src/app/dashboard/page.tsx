@@ -1,5 +1,5 @@
 'use client';
-import PrivateRoute from '../components/PrivateRoute';
+import PrivateRoute from "../PrivateRoute";
 
 const DashboardPage = () => {
   return (

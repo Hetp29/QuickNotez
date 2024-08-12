@@ -1,6 +1,6 @@
 'use client';
-import Navbar from "../components/landing-page/Navbar";
-import TitleSection from "../components/landing-page/title-section";
+import Navbar from "./Navbar";
+import TitleSection from "./Slogan";
 
 const LandingPage = () => {
   return (
