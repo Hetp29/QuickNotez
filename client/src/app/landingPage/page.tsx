@@ -67,7 +67,7 @@ const LandingPage = () => {
           <img
             src="/images/appBanner.png"
             alt="App Trailer"
-            className="w-fulll h-auto max-w-screen-lg mx-auto"
+            className="w-full h-auto max-w-screen-lg mx-auto"
           />
         </div>
         <div className="flex flex-wrap justify-center gap-28 mt-16 mb-16">
@@ -99,8 +99,31 @@ const LandingPage = () => {
           
         </div>
         <TitleSection
-          pill="✨ Your Own Space, Perfected" title={undefined}        />
-       
+          pill="✨ Features"
+          title={
+            <div className="flex flex-col items-center text-center">
+              <span className="block text-4xl sm:text-6xl font-semibold mb-4">
+                Keep track of all your work in one place.
+              </span>
+            <p className="mt-2 text-base sm:text-lg text-purple-150">
+              Capture your ideas, thoughts, and meeting notes in
+            </p>
+            <p className="mt-2 text-base sm:text-lg text-purple-150">
+            a structured and organized manner.
+            </p>
+          </div>
+          }
+        />
+
+            <div className="flex flex-wrap justify-center gap-28 mt-12 mb-14">  
+              <img
+                src="/images/cal.png"
+                alt="Calendar"
+                className="h-64 w-74 max-w-screen-lg mx-auto object-contain border- border-purple-400"
+              />
+            </div>
+
+      
       </div>
     </section>
   );
