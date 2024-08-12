@@ -4,7 +4,7 @@ import TitleSection from "./Slogan";
 
 const LandingPage = () => {
   return (
-    <section className="h-screen flex flex-col">
+    <section className="min-h-screen flex flex-col">
       <Navbar />
       <div className="
         flex-1
@@ -13,7 +13,7 @@ const LandingPage = () => {
         justify-start
         items-center
         text-center
-        overflow-hidden
+        overflow-auto
         px-4
         sm:px-6
         mt-16
@@ -62,6 +62,13 @@ const LandingPage = () => {
               Log in now
             </a>
           </p>
+        </div>
+        <div className="mt-16 mb-16">
+          <img
+            src="/images/appBanner.png"
+            alt="App Trailer"
+            className="w-fulll h-auto max-w-screen-lg mx-auto"
+          />
         </div>
       </div>
     </section>

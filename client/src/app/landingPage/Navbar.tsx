@@ -5,14 +5,14 @@ import Image from "next/image";
 const Navbar = () => {
   return (
     <nav className="bg-transparent py-4 px-8 shadow-lg border-b border-gray-200">
-      <div className="flex items-center justify-between max-w-screen-xl mx-auto">
+      <div className="flex items-center justify-between mx-auto">
         <div className="flex items-center space-x-4 text-2xl font-bold text-white">
           <Link href="/" legacyBehavior>
             <a className="flex items-center">
               <Image 
                 src="/images/logo.png"
                 alt="Logo"
-                width={55}
+                width={50}
                 height={40}
                 className="object-contain"
                 style={{ width: 'auto', height: 'auto' }} // Maintain aspect ratio
