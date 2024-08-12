@@ -25,11 +25,7 @@ const Navbar = () => {
           <Link href="/resources">Resources</Link>
           <Link href="/download">Download</Link>
           <Link href="/login">Login</Link>
-          <Link href="/signup">
-            <button className="bg-blue-500 text-white px-4 py-2 rounded">
-              Sign Up
-            </button>
-          </Link>
+          <Link href="/signup">Sign Up</Link>
         </div>
       </div>
     </nav>
