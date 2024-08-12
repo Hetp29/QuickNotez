@@ -1,12 +1,11 @@
 import './globals.css';
-import { Inter } from 'next/font/google';
 import { ThemeProvider } from './providers/next-theme-provider';
-import React from 'react'
-import LandingPage from './landingPage/page'
+import React from 'react';
+import LandingPage from './landingPage/page';
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout() {
   return (
-    <html lang="en">
+    <html suppressHydrationWarning={true} lang="en">
       <body>
         <ThemeProvider
           attribute='class'
@@ -14,10 +13,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           enableSystem
         >
           <LandingPage />
-
         </ThemeProvider>
       </body>
     </html>
-  )
+  );
 }
 

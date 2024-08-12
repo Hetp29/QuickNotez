@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface TitleSectionProps {
-  title: string;
+  title: React.ReactNode;
   pill: string;
 }
 
