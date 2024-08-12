@@ -1,6 +1,5 @@
 'use client';
 import Link from "next/link";
-import Image from "next/image";
 
 const Navbar = () => {
   return (
@@ -9,15 +8,13 @@ const Navbar = () => {
         <div className="flex items-center space-x-4 text-2xl font-bold text-white">
           <Link href="/" legacyBehavior>
             <a className="flex items-center">
-              <Image 
-                src="/images/logo.png"
-                alt="Logo"
-                width={50}
-                height={40}
-                className="object-contain"
-                style={{ width: 'auto', height: 'auto' }} // Maintain aspect ratio
-              />
-              <span className="ml-3 text-3xl tracking-wide hover:scale-105 transition-transform duration-200 ease-out">
+              <span 
+                className="text-4xl tracking-wide font-extrabold hover:scale-105 transition-transform duration-200 ease-out text-purple-400"
+                style={{ fontFamily: "'Fira Code', monospace", letterSpacing: '0.1em' }}
+              >
+                QN
+              </span>
+              <span className="ml-3 text-3xl tracking-wide hover:scale-105 transition-transform duration-200 ease-out text-white">
                 QuickNotez
               </span>
             </a>
