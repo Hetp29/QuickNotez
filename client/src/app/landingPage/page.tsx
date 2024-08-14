@@ -222,6 +222,72 @@ const LandingPage = () => {
           </div>
         </div>
       </div>
+
+      
+      <div id="pricing" className="bg-gray-900 text-white py-16 px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-semibold mb-4">Choose the Plan That Fits You Best</h2>
+          <p className="text-lg text-gray-400">Select a plan that suits your needs and start maximizing your productivity today.</p>
+        </div>
+        <div className="flex flex-wrap justify-center gap-8">
+          {/* Free Plan */}
+          <div className="bg-gray-800 p-6 rounded-lg shadow-lg max-w-xs text-center">
+            <h3 className="text-2xl font-semibold mb-4">Free</h3>
+            <p className="text-xl font-bold mb-4">$0/month</p>
+            <ul className="text-left mb-4">
+              <li>Unlimited blocks for teams</li>
+              <li>Unlimited file uploads</li>
+              <li>30 day page history</li>
+              <li>Invite 100 guests</li>
+              <li>Synced databases with 3rd party apps</li>
+              <li>Custom websites</li>
+              <li>Custom automations</li>
+              <li>Basic charts & dashboards</li>
+            </ul>
+            <a href="#get-started">
+              <button className="bg-white text-black px-4 py-2 rounded font-semibold hover:bg-gray-200">Sign Up</button>
+            </a>
+          </div>
+
+          {/* Plus Plan */}
+          <div className="bg-gray-800 p-6 rounded-lg shadow-lg max-w-xs text-center">
+            <h3 className="text-2xl font-semibold mb-4">Plus</h3>
+            <p className="text-xl font-bold mb-4">$8/month per seat</p>
+            <ul className="text-left mb-4">
+              <li>Everything in Free +</li>
+              <li>SAML SSO</li>
+              <li>Private teamspaces</li>
+              <li>Bulk PDF export</li>
+              <li>Advanced page analytics</li>
+              <li>90 day page history</li>
+              <li>Invite 250 guests</li>
+            </ul>
+            <a href="#get-started">
+              <button className="bg-white text-black px-4 py-2 rounded font-semibold hover:bg-gray-200">Get Started</button>
+            </a>
+          </div>
+
+          {/* Business Plan */}
+          <div className="bg-gray-800 p-6 rounded-lg shadow-lg max-w-xs text-center">
+            <h3 className="text-2xl font-semibold mb-4">Business</h3>
+            <p className="text-xl font-bold mb-4">$12/month per seat</p>
+            <ul className="text-left mb-4">
+              <li>Everything in Plus +</li>
+              <li>User provisioning (SCIM)</li>
+              <li>Advanced security & controls</li>
+              <li>Audit log</li>
+              <li>Customer success manager</li>
+              <li>Workspace analytics</li>
+              <li>Unlimited page history</li>
+              <li>Security & Compliance integrations</li>
+              <li>Invite 250 guests</li>
+            </ul>
+            <a href="#get-started">
+              <button className="bg-white text-black px-4 py-2 rounded font-semibold hover:bg-gray-200">Get Started</button>
+            </a>
+          </div>
+        </div>
+      </div>
     </section>
   );
 };
