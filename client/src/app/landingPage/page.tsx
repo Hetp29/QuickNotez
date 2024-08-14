@@ -4,37 +4,15 @@ import TitleSection from "./Slogan";
 
 const LandingPage = () => {
   return (
-    <section className="min-h-screen flex flex-col">
+    <section className="min-h-screen flex flex-col pt-16">
       <Navbar />
-      <div className="
-        flex-1
-        flex
-        flex-col
-        justify-start
-        items-center
-        text-center
-        overflow-auto
-        px-4
-        sm:px-6
-        mt-16
-      ">
+      <div className="flex-1 flex flex-col justify-start items-center text-center overflow-auto px-4 sm:px-6 mt-16 pt-20">
+        {/* Your existing content */}
         <TitleSection 
           pill="✨ Your Own Space, Perfected"
           title={
             <div className="flex flex-col items-center">
-              <span className="
-                block 
-                text-4xl 
-                sm:text-6xl 
-                font-semibold 
-                mb-4
-                text-white
-                tracking-wide
-                transition-transform
-                duration-200
-                ease-out
-                hover:scale-105
-                "
+              <span className="block text-4xl sm:text-6xl font-semibold mb-4 text-white tracking-wide transition-transform duration-200 ease-out hover:scale-105"
                 style={{ 
                   fontFamily: "'Fira Code', monospace", 
                   letterSpacing: '0.15em',
@@ -44,17 +22,7 @@ const LandingPage = () => {
               >
                 Design. Plan. Conquer.
               </span>
-              <span className="
-                text-4xl 
-                sm:text-4xl 
-                font-semibold 
-                text-blue-400
-                tracking-wide
-                transition-transform
-                duration-200
-                ease-out
-                hover:scale-105
-                "
+              <span className="text-4xl sm:text-4xl font-semibold text-blue-400 tracking-wide transition-transform duration-200 ease-out hover:scale-105"
                 style={{ 
                   fontFamily: "'Fira Code', monospace", 
                   letterSpacing: '0.15em',
@@ -64,17 +32,7 @@ const LandingPage = () => {
               >
                 Welcome to <span className="text-blue-400">QuickNotez</span>!
               </span>
-              <p className="
-                mt-4
-                text-lg
-                sm:text-xl
-                text-white
-                tracking-wide
-                transition-transform
-                duration-200
-                ease-out
-                hover:scale-105
-                "
+              <p className="mt-4 text-lg sm:text-xl text-white tracking-wide transition-transform duration-200 ease-out hover:scale-105"
                 style={{ 
                   fontFamily: "'Fira Code', monospace", 
                   letterSpacing: '0.1em',
@@ -88,26 +46,7 @@ const LandingPage = () => {
         />
         <div className="mt-8">
           <a href="#get-started">
-            <button className="
-              bg-white
-              text-black
-              text-lg
-              px-24
-              py-6
-              rounded-none
-              font-semibold
-              duration-300
-              focus:outline-none
-              focus:ring-2
-              focus:ring-blue-400
-              focus:ring-opacity-50
-              hover:bg-gray-200
-              tracking-wide
-              transition-transform
-              duration-200
-              ease-out
-              hover:scale-105
-            ">
+            <button className="bg-white text-black text-lg px-24 py-6 rounded-none font-semibold duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 hover:bg-gray-200 tracking-wide transition-transform duration-200 ease-out hover:scale-105">
               Get Started For Free
             </button>
           </a>
@@ -124,16 +63,7 @@ const LandingPage = () => {
           <img
             src="/images/appBanner.png"
             alt="App Trailer"
-            className="
-              w-full
-              h-auto
-              max-w-screen-lg
-              mx-auto
-              transition-transform
-              duration-200
-              ease-out
-              hover:scale-105
-            "
+            className="w-full h-auto max-w-screen-lg mx-auto transition-transform duration-200 ease-out hover:scale-105"
           />
         </div>
         <div className="flex flex-wrap justify-center gap-28 mt-16 mb-16">
@@ -167,19 +97,7 @@ const LandingPage = () => {
           pill="✨ Features"
           title={
             <div className="flex flex-col items-center text-center">
-              <span className="
-                block 
-                text-4xl 
-                sm:text-6xl 
-                font-semibold 
-                mb-4
-                text-white
-                tracking-wide
-                transition-transform
-                duration-200
-                ease-out
-                hover:scale-105
-                "
+              <span className="block text-4xl sm:text-6xl font-semibold mb-4 text-white tracking-wide transition-transform duration-200 ease-out hover:scale-105"
                 style={{ 
                   fontFamily: "'Fira Code', monospace", 
                   letterSpacing: '0.15em',
@@ -189,17 +107,7 @@ const LandingPage = () => {
               >
                 Keep track of all your work in one place.
               </span>
-              <p className="
-                mt-2
-                text-base
-                sm:text-lg
-                text-white
-                tracking-wide
-                transition-transform
-                duration-200
-                ease-out
-                hover:scale-105
-                "
+              <p className="mt-2 text-base sm:text-lg text-white tracking-wide transition-transform duration-200 ease-out hover:scale-105"
                 style={{ 
                   fontFamily: "'Fira Code', monospace", 
                   letterSpacing: '0.1em',
@@ -208,17 +116,7 @@ const LandingPage = () => {
               >
                 Capture your ideas, thoughts, and meeting notes in
               </p>
-              <p className="
-                mt-2
-                text-base
-                sm:text-lg
-                text-white
-                tracking-wide
-                transition-transform
-                duration-200
-                ease-out
-                hover:scale-105
-                "
+              <p className="mt-2 text-base sm:text-lg text-white tracking-wide transition-transform duration-200 ease-out hover:scale-105"
                 style={{ 
                   fontFamily: "'Fira Code', monospace", 
                   letterSpacing: '0.1em',
@@ -230,24 +128,11 @@ const LandingPage = () => {
             </div>
           }
         />
-
         <div className="flex flex-wrap justify-center gap-28 mt-12 mb-14">  
           <img
             src="/images/cal.png"
             alt="Calendar"
-            className="
-              h-64
-              w-74
-              max-w-screen-lg
-              mx-auto
-              object-contain
-              border
-              border-purple-400
-              transition-transform
-              duration-200
-              ease-out
-              hover:scale-105
-            "
+            className="h-64 w-74 max-w-screen-lg mx-auto object-contain border border-purple-400 transition-transform duration-200 ease-out hover:scale-105"
           />
         </div>
       </div>

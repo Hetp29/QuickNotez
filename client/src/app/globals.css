@@ -136,3 +136,20 @@ ul {
   @apply dark:text-purple-700;
 
 }
+
+.pt-16 {
+  padding-top: 4rem;
+}
+
+.fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 50;
+  border-bottom: 1px solid #d1d5db; /* Gray border */
+}
+
+.border-b-gray-300 {
+  border-bottom-color: #d1d5db;
+}
