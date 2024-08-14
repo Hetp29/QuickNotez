@@ -1,13 +1,13 @@
 'use client';
 import Navbar from "./Navbar";
 import TitleSection from "./Slogan";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 
 const LandingPage = () => {
   return (
     <section className="min-h-screen flex flex-col pt-16">
       <Navbar />
       <div className="flex-1 flex flex-col justify-start items-center text-center overflow-auto px-4 sm:px-6 mt-16 pt-20">
-        {/* Your existing content */}
         <TitleSection 
           pill="✨ Your Own Space, Perfected"
           title={
@@ -114,7 +114,7 @@ const LandingPage = () => {
                   textShadow: '0 0 8px rgba(255, 255, 255, 0.8)',
                 }}
               >
-                Capture your ideas, thoughts, and meeting notes in
+                Capture your ideas, thoughts, and meeting notes 
               </p>
               <p className="mt-2 text-base sm:text-lg text-white tracking-wide transition-transform duration-200 ease-out hover:scale-105"
                 style={{ 
@@ -123,17 +123,103 @@ const LandingPage = () => {
                   textShadow: '0 0 8px rgba(255, 255, 255, 0.8)',
                 }}
               >
-                a structured and organized manner.
+                in a structured and organized manner.
               </p>
             </div>
           }
         />
-        <div className="flex flex-wrap justify-center gap-28 mt-12 mb-14">  
+        <div className="flex flex-wrap justify-center gap-28 mt-12 mb-14 bg-brand-primaryPurple/50 border-purple-400">  
           <img
             src="/images/cal.png"
             alt="Calendar"
             className="h-64 w-74 max-w-screen-lg mx-auto object-contain border border-purple-400 transition-transform duration-200 ease-out hover:scale-105"
           />
+        </div>
+
+        <TitleSection
+          pill="✨ Trusted by all"
+          title={
+            <div className="flex flex-col items-center text-center">
+              <p className="mt-2 text-base sm:text-lg text-white tracking-wide transition-transform duration-200 ease-out hover:scale-105"
+                style={{ 
+                  fontFamily: "'Fira Code', monospace", 
+                  letterSpacing: '0.1em',
+                  textShadow: '0 0 8px rgba(255, 255, 255, 0.8)',
+                }}
+              >
+                Join our users who rely on our platform for 
+              </p>
+              <p className="mt-2 text-base sm:text-lg text-white tracking-wide transition-transform duration-200 ease-out hover:scale-105"
+                style={{ 
+                  fontFamily: "'Fira Code', monospace", 
+                  letterSpacing: '0.1em',
+                  textShadow: '0 0 8px rgba(255, 255, 255, 0.8)',
+                }}
+              >
+                their personal and productivity needs.
+              </p>
+            </div>
+          }
+        />
+
+        {/* Testimonials Section */}
+        <div className="mt-16 mb-16">
+          <TitleSection
+            pill="✨ What our users say"
+            title={
+              <div className="flex flex-col items-center text-center">
+                <span className="block text-4xl sm:text-5xl font-semibold mb-4 text-white tracking-wide transition-transform duration-200 ease-out hover:scale-105"
+                  style={{ 
+                    fontFamily: "'Fira Code', monospace", 
+                    letterSpacing: '0.15em',
+                    textShadow: '0 0 10px rgba(255, 255, 255, 0.8)',
+                    fontWeight: '900'
+                  }}
+                >
+                  Hear from our users
+                </span>
+              </div>
+            }
+          />
+          <div className="flex flex-wrap justify-center gap-12 mt-8">
+            <Card className="bg-gray-800 p-8 max-w-xs text-white hover:shadow-lg transition-transform duration-200 ease-out hover:scale-105">
+              <p className="text-lg font-medium">
+                "QuickNotez has completely changed the way I manage my projects. It's intuitive, efficient, and reliable."
+              </p>
+              <p className="mt-4 text-sm font-light text-gray-400">— Alex M., Project Manager</p>
+            </Card>
+            <Card className="bg-gray-800 p-8 max-w-xs text-white hover:shadow-lg transition-transform duration-200 ease-out hover:scale-105">
+              <p className="text-lg font-medium">
+                "The integration of tasks and notes is seamless. QuickNotez makes collaboration and organization a breeze."
+              </p>
+              <p className="mt-4 text-sm font-light text-gray-400">— Jamie L., Software Developer</p>
+            </Card>
+            <Card className="bg-gray-800 p-8 max-w-xs text-white hover:shadow-lg transition-transform duration-200 ease-out hover:scale-105">
+              <p className="text-lg font-medium">
+                "An exceptional tool for anyone who needs to stay organized. The user interface is clean and easy to use."
+              </p>
+              <p className="mt-4 text-sm font-light text-gray-400">— Morgan K., Entrepreneur</p>
+            </Card>
+            {/* New Testimonials */}
+            <Card className="bg-gray-800 p-8 max-w-xs text-white hover:shadow-lg transition-transform duration-200 ease-out hover:scale-105">
+              <p className="text-lg font-medium">
+                "QuickNotez has become an essential part of my daily workflow. The features are just what I needed to stay on top of things."
+              </p>
+              <p className="mt-4 text-sm font-light text-gray-400">— Taylor B., Marketing Specialist</p>
+            </Card>
+            <Card className="bg-gray-800 p-8 max-w-xs text-white hover:shadow-lg transition-transform duration-200 ease-out hover:scale-105">
+              <p className="text-lg font-medium">
+                "I love how QuickNotez integrates all my notes and tasks into one place. It's incredibly user-friendly and efficient."
+              </p>
+              <p className="mt-4 text-sm font-light text-gray-400">— Riley J., Graphic Designer</p>
+            </Card>
+            <Card className="bg-gray-800 p-8 max-w-xs text-white hover:shadow-lg transition-transform duration-200 ease-out hover:scale-105">
+              <p className="text-lg font-medium">
+                "The customization options are fantastic. QuickNotez allows me to tailor everything to fit my unique needs."
+              </p>
+              <p className="mt-4 text-sm font-light text-gray-400">— Casey D., Product Designer</p>
+            </Card>
+          </div>
         </div>
       </div>
     </section>

@@ -76,6 +76,8 @@ body {
   }
 }
 
+
+
 .ce-popover-item:hover {
   @apply bg-muted/40 transition-all !important;
 }
@@ -152,4 +154,31 @@ ul {
 
 .border-b-gray-300 {
   border-bottom-color: #d1d5db;
+}
+
+@keyframes rotateLeft {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes rotateRight {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+.rotate-left-animation {
+  animation: rotateLeft 20s linear infinite;
+}
+
+.rotate-right-animation {
+  animation: rotateRight 20s linear infinite;
 }

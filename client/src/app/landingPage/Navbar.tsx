@@ -27,11 +27,11 @@ const Navbar = () => {
               <Link href="/download" legacyBehavior>
                 <a className="text-white hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Download</a>
               </Link>
+              <Link href="/pricing" legacyBehavior>
+                <a className="text-white hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Pricing</a>
+              </Link>
               <Link href="/login" legacyBehavior>
                 <a className="text-white hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Login</a>
-              </Link>
-              <Link href="/signup" legacyBehavior>
-                <a className="text-white hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Sign Up</a>
               </Link>
             </div>
           </div>
@@ -69,11 +69,11 @@ const Navbar = () => {
             <Link href="/download" legacyBehavior>
               <a className="text-white hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Download</a>
             </Link>
-            <Link href="/login" legacyBehavior>
-              <a className="text-white hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Login</a>
+            <Link href="/pricing" legacyBehavior>
+              <a className="text-white hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Pricing</a>
             </Link>
             <Link href="/signup" legacyBehavior>
-              <a className="text-white hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Sign Up</a>
+              <a className="text-white hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Login</a>
             </Link>
           </div>
         </div>
