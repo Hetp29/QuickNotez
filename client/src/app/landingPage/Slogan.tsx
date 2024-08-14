@@ -19,18 +19,16 @@ const TitleSection: React.FC<TitleSectionProps> = ({
       md:items-center
     ">
       <article className="
+        relative
         rounded-full
-        p-[1px]
         text-sm
-        dark:bg-gradient-to-r
-        dark:from-brand-primaryBlue
-        dark:to-brand-primaryPurple
+        text-white
       ">
         <div className="
-          rounded-full 
+          relative
+          z-10
           px-3
           py-1
-          dark:bg-black
         ">
           {pill}
         </div>
@@ -43,6 +41,7 @@ const TitleSection: React.FC<TitleSectionProps> = ({
         md:text-center
         font-semibold
         flex flex-col items-start
+        text-white
       ">
         {title}
       </h1>
