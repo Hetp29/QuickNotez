@@ -182,3 +182,37 @@ ul {
 .rotate-right-animation {
   animation: rotateRight 20s linear infinite;
 }
+
+html {
+  --bg-color: #1a202c;
+  --text-color: #ffffff;
+}
+
+/* Light mode variables */
+html.light {
+  --bg-color: #ffffff;
+  --text-color: #000000;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+a {
+  color: var(--text-color);
+}
+
+/* Additional styles for light/dark mode */
+.navbar {
+  background-color: var(--bg-color);
+}
+
+.navbar a {
+  color: var(--text-color);
+}
+
+.button {
+  background-color: var(--text-color);
+  color: var(--bg-color);
+}
