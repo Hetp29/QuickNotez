@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import Navbar from '../landingPage/Navbar';
 import { Card } from '@/components/ui/card';
 import { auth } from '@/firebaseConfig';
@@ -9,20 +9,51 @@ const SignupPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const validatePassword = (password) => {
+    const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,15}$/;
+    return passwordRegex.test(password);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (password !== confirmPassword) {
-        alert('Passwords do not match');
-        return;
+      setErrorMessage('Passwords do not match');
+      return;
     }
 
-    try{
-        await createUserWithEmailAndPassword(auth, email, password);
-        alert('Account created successfully');
+    if (!validatePassword(password)) {
+      setErrorMessage(
+        'Password must be 8-15 characters long, include at least one uppercase letter, one lowercase letter, one number, one special character, and contain no spaces.'
+      );
+      return;
+    }
+
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      alert('Account created successfully');
+      window.location.href = '/dashboard';
     } catch (error) {
-        console.error('Error signing up', error);
-        alert('Error signing up');
+      if (error.code === 'auth/email-already-in-use') {
+        setErrorMessage('Email already in use. Please log in here.');
+      } else {
+        setErrorMessage('Error signing up. Please try again.');
+      }
+      console.error('Error signing up', error);
+    }
+  };
+
+  const handleGoogleSignUp = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+      alert('Signed in with Google successfully');
+      window.location.href = '/dashboard';
+    } catch (error) {
+      console.error('Error with Google Sign-Up', error);
+      setErrorMessage('Error signing up with Google. Please try again.');
     }
   };
 
@@ -53,6 +84,16 @@ const SignupPage = () => {
 
         <div className="mt-8 flex justify-center w-full max-w-lg">
           <Card className="bg-gray-100 p-8 text-black shadow-lg w-full max-w-md">
+            {errorMessage && (
+              <div className="mb-4 text-red-500 text-sm">
+                {errorMessage}
+                {errorMessage.includes('Email already in use') && (
+                  <a href="/login" className="text-blue-500 hover:underline">
+                    log in here.
+                  </a>
+                )}
+              </div>
+            )}
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
@@ -112,8 +153,11 @@ const SignupPage = () => {
 
             <div className="mt-8 text-lg">
               <p className="text-gray-700">Or</p>
-              <button className="w-full bg-red-500 text-white text-lg px-4 py-2 rounded-full font-semibold duration-300 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-50 hover:bg-red-600 tracking-wide transition-transform duration-200 ease-out hover:scale-105 mt-4">
-                Sign Up with Google
+              <button 
+                onClick={handleGoogleSignUp}
+                className="w-full bg-red-500 text-white text-lg px-4 py-2 rounded-full font-semibold duration-300 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-50 hover:bg-red-600 tracking-wide transition-transform duration-200 ease-out hover:scale-105 mt-4"
+              >
+                Sign Up With Google
               </button>
             </div>
           </Card>
