@@ -3,12 +3,12 @@ import { useState } from 'react';
 import Navbar from '../landingPage/Navbar';
 import { Card } from '@/components/ui/card';
 
-const LoginPage = () => {
+const ForgotPasswordPage = () => {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    // Add your password reset logic here
   };
 
   return (
@@ -23,7 +23,7 @@ const LoginPage = () => {
             fontWeight: '900'
           }}
         >
-          Log In to QuickNotez
+          Forgot Password
         </h1>
 
         <p className="mt-4 text-lg sm:text-xl text-black tracking-wide transition-transform duration-200 ease-out hover:scale-105"
@@ -33,7 +33,7 @@ const LoginPage = () => {
             textShadow: 'none',
           }}
         >
-          Enter your email and password!
+          Enter your email address to reset your password.
         </p>
 
         <div className="mt-8 flex justify-center w-full max-w-lg">
@@ -53,35 +53,16 @@ const LoginPage = () => {
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white"
                 />
               </div>
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white"
-                />
-                <div className="mt-2 flex justify-center">
-                  <a href="/forgot-password" className="text-blue-500 hover:underline">
-                    Forgot your password?
-                  </a>
-                </div>
-              </div>
               <button type="submit" className="w-full bg-blue-500 text-white text-lg px-4 py-2 rounded-full font-semibold duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 hover:bg-blue-600 tracking-wide transition-transform duration-200 ease-out hover:scale-105">
-                Log In
+                Send Reset Link
               </button>
             </form>
 
             <div className="mt-8 text-lg">
               <p className="text-gray-700">
-                Don't have an account?{' '}
-                <a href="/signup" className="text-blue-500 hover:underline">
-                  Register here
+                Remember your old password?{' '}
+                <a href="/login" className="text-blue-500 hover:underline">
+                  Log in here
                 </a>
               </p>
             </div>
@@ -102,4 +83,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default ForgotPasswordPage;
