@@ -50,7 +50,7 @@ const LandingPage = () => {
           }
         />
         <div className="mt-8">
-        <a href="#get-started">
+        <a href="/signup">
           <button className={`bg-blue-500 text-white text-lg px-24 py-6 rounded-full font-semibold duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 hover:bg-blue-600 tracking-wide transition-transform duration-200 ease-out hover:scale-105`}>
             Get Started For Free
           </button>
