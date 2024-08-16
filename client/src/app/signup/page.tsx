@@ -1,16 +1,29 @@
 'use client';
 import { useState } from 'react';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import Navbar from '../landingPage/Navbar';
 import { Card } from '@/components/ui/card';
+import { auth } from '@/firebaseConfig';
 
 const SignupPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add your signup logic here
+    if (password !== confirmPassword) {
+        alert('Passwords do not match');
+        return;
+    }
+
+    try{
+        await createUserWithEmailAndPassword(auth, email, password);
+        alert('Account created successfully');
+    } catch (error) {
+        console.error('Error signing up', error);
+        alert('Error signing up');
+    }
   };
 
   return (
