@@ -1,9 +1,11 @@
 'import client'
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
 
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
@@ -11,6 +13,10 @@ const Navbar = () => {
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleLoginClick = () => {
+    router.push('/login'); // Navigate to the login page
   };
 
   return (
@@ -40,9 +46,12 @@ const Navbar = () => {
               >
                 Pricing
               </button>
-              <Link href="/login" className="text-gray-900 font-bold tracking-wide hover:bg-gray-200 hover:text-gray-900 px-3 py-2 rounded-md text-sm">
+              <button
+                onClick={handleLoginClick}
+                className="text-gray-900 font-bold tracking-wide hover:bg-gray-200 hover:text-gray-900 px-3 py-2 rounded-md text-sm cursor-pointer"
+              >
                 Login
-              </Link>
+              </button>
             </div>
           </div>
           <div className="-mr-2 flex md:hidden">

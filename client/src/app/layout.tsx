@@ -1,9 +1,8 @@
 import './globals.css';
 import { ThemeProvider } from './providers/next-theme-provider';
 import React from 'react';
-import LandingPage from './landingPage/page';
 
-export default function RootLayout() {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html suppressHydrationWarning={true} lang="en">
       <body>
@@ -12,10 +11,9 @@ export default function RootLayout() {
           defaultTheme='dark'
           enableSystem
         >
-          <LandingPage />
+          {children}
         </ThemeProvider>
       </body>
     </html>
   );
 }
-
