@@ -1,7 +1,7 @@
 // src/app/components/PrivateRoute.tsx
 import { ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../auth/useAuth';
+import { useAuth } from './auth/useAuth';
 
 interface PrivateRouteProps {
   children: ReactNode;

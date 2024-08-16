@@ -2,12 +2,10 @@ import React from 'react';
 
 interface TitleSectionProps {
   title: React.ReactNode;
-  pill: string;
 }
 
 const TitleSection: React.FC<TitleSectionProps> = ({
   title,
-  pill,
 }) => {
   return (
     <section className="
@@ -30,7 +28,7 @@ const TitleSection: React.FC<TitleSectionProps> = ({
           px-3
           py-1
         ">
-          {pill}
+  
         </div>
       </article>
       <h1 className="

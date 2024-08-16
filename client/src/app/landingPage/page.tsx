@@ -5,40 +5,35 @@ import TitleSection from "./Slogan";
 import { Card } from '@/components/ui/card';
 
 const LandingPage = () => {
-  const [isLightMode, setIsLightMode] = useState(false);
-
-  const toggleTheme = () => {
-    setIsLightMode(!isLightMode);
-  };
-
+  
   return (
-    <section className={`min-h-screen flex flex-col pt-16 bg-white text-black transition-colors duration-300 ${isLightMode ? 'bg-white text-black' : 'bg-gray-900 text-white'}`}>
-      <Navbar toggleTheme={toggleTheme} isLightMode={isLightMode} />
+    <section className="min-h-screen flex flex-col pt-16 bg-white text-black transition-colors duration-300">
+      <Navbar  />
       <div className="flex-1 flex flex-col justify-center items-center text-center overflow-auto px-4 sm:px-6 mt-16 pt-20">
         <TitleSection 
           title={
             <div className="flex flex-col items-center">
-              <span className={`block text-4xl sm:text-6xl font-semibold mb-4 ${isLightMode ? 'text-black' : 'text-gray-800'} tracking-wide transition-transform duration-200 ease-out hover:scale-105`}
+              <span className="block text-4xl sm:text-6xl font-semibold mb-4 text-black tracking-wide transition-transform duration-200 ease-out hover:scale-105"
                 style={{ 
                 fontFamily: "'Fira Code', monospace", 
                 letterSpacing: '0.15em',
-                textShadow: isLightMode ? 'none' : '0 0 10px rgba(0, 0, 0, 0.5)', // Dark shadow for better readability
+                textShadow: 'none',
                 fontWeight: '900'
           }}
 >
                 Design. Plan. Conquer.
               </span>
 
-              <span className={`text-4xl sm:text-4xl font-semibold ${isLightMode ? 'text-black' : 'text-blue-400'} tracking-wide transition-transform duration-200 ease-out hover:scale-105`}
+              <span className="text-4xl sm:text-4xl font-semibold text-black tracking-wide transition-transform duration-200 ease-out hover:scale-105"
               style={{ 
                 fontFamily: "'Fira Code', monospace", 
                 letterSpacing: '0.15em',
-                textShadow: isLightMode ? 'none' : '0 0 10px rgba(255, 255, 255, 0.8)',
+                textShadow: 'none',
                 fontWeight: '900'
               }}
             >
-              <span className={isLightMode ? 'text-black' : 'text-black'}>Welcome to </span>
-              <span className={isLightMode ? 'text-blue-400' : 'text-blue-400'}>QuickNotez</span>!
+              <span className='text-black'>Welcome to </span>
+              <span className='text-blue-400'>QuickNotez</span>!
             </span>
 
             <p className={`mt-4 text-lg sm:text-xl text-black tracking-wide transition-transform duration-200 ease-out hover:scale-105`}
@@ -74,34 +69,34 @@ const LandingPage = () => {
           <img
             src="/images/appBanner.png"
             alt="App Trailer"
-            className={`w-full h-auto max-w-screen-lg mx-auto transition-transform duration-200 ease-out hover:scale-105 ${isLightMode ? 'filter invert' : ''}`}
+            className="w-32 h-32 object-contain transition-transform duration-200 ease-out hover:scale-105 filter invert"
           />
         </div>
         <div className="flex flex-wrap justify-center gap-28 mt-16 mb-16">
           <img
             src="/images/client1.png"
             alt="Client 1"
-            className={`w-32 h-32 object-contain transition-transform duration-200 ease-out hover:scale-105 ${isLightMode ? 'filter invert' : ''}`}
+            className="w-32 h-32 object-contain transition-transform duration-200 ease-out hover:scale-105 filter invert"
           />
           <img
             src="/images/client2.png"
             alt="Client 2"
-            className={`w-32 h-32 object-contain transition-transform duration-200 ease-out hover:scale-105 ${isLightMode ? 'filter invert' : ''}`}
+            className="w-32 h-32 object-contain transition-transform duration-200 ease-out hover:scale-105 filter invert"
           />
           <img
             src="/images/client3.png"
             alt="Client 3"
-            className={`w-32 h-32 object-contain transition-transform duration-200 ease-out hover:scale-105 ${isLightMode ? 'filter invert' : ''}`}
+            className="w-32 h-32 object-contain transition-transform duration-200 ease-out hover:scale-105 filter invert"
           />
           <img
             src="/images/client4.png"
             alt="Client 4"
-            className={`w-32 h-32 object-contain transition-transform duration-200 ease-out hover:scale-105 ${isLightMode ? 'filter invert' : ''}`}
+            className="w-32 h-32 object-contain transition-transform duration-200 ease-out hover:scale-105 filter invert"
           />
           <img
             src="/images/client5.png"
             alt="Client 5"
-            className={`w-32 h-32 object-contain transition-transform duration-200 ease-out hover:scale-105 ${isLightMode ? 'filter invert' : ''}`}
+            className="w-32 h-32 object-contain transition-transform duration-200 ease-out hover:scale-105 filter invert"
           />
         </div>
         <TitleSection
@@ -143,11 +138,11 @@ const LandingPage = () => {
             </div>
           }
         />
-        <div className={`flex flex-wrap justify-center gap-28 mt-12 mb-14 ${isLightMode ? 'bg-gray-200 border-gray-300' : 'bg-brand-primaryPurple/50 border-purple-400'} transition-colors duration-300`}>
+        <div className="flex flex-wrap justify-center gap-28 mt-12 mb-14 bg-gray-200 border-gray-300 transition-colors duration-300">
           <img
             src="/images/cal.png"
             alt="Calendar"
-            className={`h-64 w-74 max-w-screen-lg mx-auto object-contain border ${isLightMode ? 'border-gray-300' : 'border-purple-400'} transition-transform duration-200 ease-out hover:scale-105`}
+            className="h-64 w-74 max-w-screen-lg mx-auto object-contain border border-gray-300 transition-transform duration-200 ease-out hover:scale-105"
           />
         </div>
 
@@ -201,19 +196,19 @@ const LandingPage = () => {
           <div className="flex flex-wrap justify-center gap-12">
             <Card className="bg-gray-900 p-8 max-w-xs text-white hover:shadow-lg transition-transform duration-200 ease-out hover:scale-105">
               <p className="text-lg font-medium">
-                "QuickNotez has completely changed the way I manage my projects. It's intuitive, efficient, and reliable."
+                &quot;QuickNotez has completely changed the way I manage my projects. It's intuitive, efficient, and reliable.
               </p>
               <p className="mt-4 text-sm font-light text-gray-300">— Alex M., Project Manager</p>
             </Card>
             <Card className="bg-gray-900 p-8 max-w-xs text-white hover:shadow-lg transition-transform duration-200 ease-out hover:scale-105">
               <p className="text-lg font-medium">
-                "The integration of tasks and notes is seamless. QuickNotez makes collaboration and organization a breeze."
+                &quot;The integration of tasks and notes is seamless. QuickNotez makes collaboration and organization a breeze.
               </p>
               <p className="mt-4 text-sm font-light text-gray-300">— Jamie L., Software Developer</p>
             </Card>
             <Card className="bg-gray-900 p-8 max-w-xs text-white hover:shadow-lg transition-transform duration-200 ease-out hover:scale-105">
               <p className="text-lg font-medium">
-                "An exceptional tool for anyone who needs to stay organized. The user interface is clean and easy to use."
+                &quot;An exceptional tool for anyone who needs to stay organized. The user interface is clean and easy to use.&quot;
               </p>
               <p className="mt-4 text-sm font-light text-gray-300">— Morgan K., Entrepreneur</p>
             </Card>
@@ -223,19 +218,19 @@ const LandingPage = () => {
           <div className="flex flex-wrap justify-center gap-12 mt-8">
             <Card className="bg-gray-900 p-8 max-w-xs text-white hover:shadow-lg transition-transform duration-200 ease-out hover:scale-105">
               <p className="text-lg font-medium">
-                "QuickNotez has become an essential part of my daily workflow. The features are just what I needed to stay on top of things."
+                &quot;QuickNotez has become an essential part of my daily workflow. The features are just what I needed to stay on top of things.
               </p>
               <p className="mt-4 text-sm font-light text-gray-300">— Taylor B., Marketing Specialist</p>
             </Card>
             <Card className="bg-gray-900 p-8 max-w-xs text-white hover:shadow-lg transition-transform duration-200 ease-out hover:scale-105">
               <p className="text-lg font-medium">
-                "I love how QuickNotez integrates all my notes and tasks into one place. It's incredibly user-friendly and efficient."
+                &quot;I love how QuickNotez integrates all my notes and tasks into one place. It's incredibly user-friendly and efficient.
               </p>
               <p className="mt-4 text-sm font-light text-gray-300">— Riley J., Graphic Designer</p>
             </Card>
             <Card className="bg-gray-900 p-8 max-w-xs text-white hover:shadow-lg transition-transform duration-200 ease-out hover:scale-105">
               <p className="text-lg font-medium">
-                "The customization options are fantastic. QuickNotez allows me to tailor everything to fit my unique needs."
+                &quot;The customization options are fantastic. QuickNotez allows me to tailor everything to fit my unique needs.
               </p>
               <p className="mt-4 text-sm font-light text-gray-300">— Casey D., Product Designer</p>
             </Card>
