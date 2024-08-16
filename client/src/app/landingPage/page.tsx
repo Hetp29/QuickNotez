@@ -12,7 +12,7 @@ const LandingPage = () => {
   };
 
   return (
-    <section className={`min-h-screen flex flex-col pt-16 bg-white text-black transition-colors duration-300`}>
+    <section className={`min-h-screen flex flex-col pt-16 bg-white text-black transition-colors duration-300 ${isLightMode ? 'bg-white text-black' : 'bg-gray-900 text-white'}`}>
       <Navbar toggleTheme={toggleTheme} isLightMode={isLightMode} />
       <div className="flex-1 flex flex-col justify-center items-center text-center overflow-auto px-4 sm:px-6 mt-16 pt-20">
         <TitleSection 
@@ -243,7 +243,7 @@ const LandingPage = () => {
         </div>
 
 
-        <div id="pricing" className="bg-white text-gray-900 py-16 px-4 sm:px-6 lg:px-8">
+        <section id="pricing" className="bg-white py-16">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-semibold mb-4 text-gray-900">Choose the Plan That Fits You Best</h2>
             <p className="text-lg text-gray-600">Select a plan that suits your needs and start maximizing your productivity today.</p>
@@ -301,7 +301,7 @@ const LandingPage = () => {
               </a>
             </div>
           </div>
-        </div>
+        </section>
 
   
     </div>

@@ -1,41 +1,46 @@
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isLightMode, setLightMode] = useState(false);
 
-  useEffect(() => {
-    document.documentElement.classList.toggle('light', isLightMode);
-    document.documentElement.classList.toggle('dark', !isLightMode);
-  }, [isLightMode]);
+  const scrollToSection = (id) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <nav className="bg-white fixed w-full z-50 top-0 left-0 shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex-shrink-0 flex items-center">
-            <Link href="/" legacyBehavior>
-              <a className="flex items-center">
-                <span className="text-gray-900 text-4xl font-extrabold tracking-wide">QN</span>
-                <span className="text-gray-900 text-2xl font-bold ml-2">QuickNotez</span>
-              </a>
+            <Link href="/" onClick={scrollToTop} className="flex items-center cursor-pointer">
+              <span className="text-gray-900 text-4xl font-extrabold tracking-wide">QN</span>
+              <span className="text-gray-900 text-2xl font-bold ml-2">QuickNotez</span>
             </Link>
           </div>
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-4">
-              <Link href="/products" legacyBehavior>
-                <a className="text-gray-900 font-bold tracking-wide hover:bg-gray-200 hover:text-gray-900 px-3 py-2 rounded-md text-sm">Products</a>
+              <Link href="/products" className="text-gray-900 font-bold tracking-wide hover:bg-gray-200 hover:text-gray-900 px-3 py-2 rounded-md text-sm">
+                Products
               </Link>
-              <Link href="/resources" legacyBehavior>
-                <a className="text-gray-900 font-bold tracking-wide hover:bg-gray-200 hover:text-gray-900 px-3 py-2 rounded-md text-sm">Resources</a>
+              <Link href="/resources" className="text-gray-900 font-bold tracking-wide hover:bg-gray-200 hover:text-gray-900 px-3 py-2 rounded-md text-sm">
+                Resources
               </Link>
-              <Link href="/download" legacyBehavior>
-                <a className="text-gray-900 font-bold tracking-wide hover:bg-gray-200 hover:text-gray-900 px-3 py-2 rounded-md text-sm">Download</a>
+              <Link href="/download" className="text-gray-900 font-bold tracking-wide hover:bg-gray-200 hover:text-gray-900 px-3 py-2 rounded-md text-sm">
+                Download
               </Link>
-              <a href="#pricing" className="text-gray-900 font-bold tracking-wide hover:bg-gray-200 hover:text-gray-900 px-3 py-2 rounded-md text-sm">Pricing</a>
-              <Link href="/login" legacyBehavior>
-                <a className="text-gray-900 font-bold tracking-wide hover:bg-gray-200 hover:text-gray-900 px-3 py-2 rounded-md text-sm">Login</a>
+              <button
+                onClick={() => scrollToSection('pricing')}
+                className="text-gray-900 font-bold tracking-wide hover:bg-gray-200 hover:text-gray-900 px-3 py-2 rounded-md text-sm cursor-pointer"
+              >
+                Pricing
+              </button>
+              <Link href="/login" className="text-gray-900 font-bold tracking-wide hover:bg-gray-200 hover:text-gray-900 px-3 py-2 rounded-md text-sm">
+                Login
               </Link>
             </div>
           </div>
@@ -77,18 +82,23 @@ const Navbar = () => {
               </svg>
             </button>
             <div className="px-2 space-y-4">
-              <Link href="/products" legacyBehavior>
-                <a className="text-gray-900 font-bold tracking-wide hover:bg-gray-200 hover:text-gray-900 block px-3 py-2 rounded-md text-base">Products</a>
+              <Link href="/products" className="text-gray-900 font-bold tracking-wide hover:bg-gray-200 hover:text-gray-900 block px-3 py-2 rounded-md text-base">
+                Products
               </Link>
-              <Link href="/resources" legacyBehavior>
-                <a className="text-gray-900 font-bold tracking-wide hover:bg-gray-200 hover:text-gray-900 block px-3 py-2 rounded-md text-base">Resources</a>
+              <Link href="/resources" className="text-gray-900 font-bold tracking-wide hover:bg-gray-200 hover:text-gray-900 block px-3 py-2 rounded-md text-base">
+                Resources
               </Link>
-              <Link href="/download" legacyBehavior>
-                <a className="text-gray-900 font-bold tracking-wide hover:bg-gray-200 hover:text-gray-900 block px-3 py-2 rounded-md text-base">Download</a>
+              <Link href="/download" className="text-gray-900 font-bold tracking-wide hover:bg-gray-200 hover:text-gray-900 block px-3 py-2 rounded-md text-base">
+                Download
               </Link>
-              <a href="#pricing" className="text-gray-900 font-bold tracking-wide hover:bg-gray-200 hover:text-gray-900 block px-3 py-2 rounded-md text-base">Pricing</a>
-              <Link href="/login" legacyBehavior>
-                <a className="text-gray-900 font-bold tracking-wide hover:bg-gray-200 hover:text-gray-900 block px-3 py-2 rounded-md text-base">Login</a>
+              <button
+                onClick={() => scrollToSection('pricing')}
+                className="text-gray-900 font-bold tracking-wide hover:bg-gray-200 hover:text-gray-900 block px-3 py-2 rounded-md text-base cursor-pointer"
+              >
+                Pricing
+              </button>
+              <Link href="/login" className="text-gray-900 font-bold tracking-wide hover:bg-gray-200 hover:text-gray-900 block px-3 py-2 rounded-md text-base">
+                Login
               </Link>
             </div>
           </div>

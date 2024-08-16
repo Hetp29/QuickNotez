@@ -216,3 +216,7 @@ a {
   background-color: var(--text-color);
   color: var(--bg-color);
 }
+
+html {
+  scroll-behavior: smooth;
+}
