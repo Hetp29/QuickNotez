@@ -33,7 +33,6 @@ const SignupPage = () => {
 
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-      alert('Account created successfully');
       window.location.href = '/dashboard';
     } catch (error) {
       if (error.code === 'auth/email-already-in-use') {
