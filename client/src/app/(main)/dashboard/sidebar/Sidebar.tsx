@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { HiChevronRight } from 'react-icons/hi'; 
+import UserIcon from './UserIcon'; // Import the UserIcon component
 
 const Sidebar: React.FC = () => {
   const [width, setWidth] = useState(256);
@@ -33,7 +34,9 @@ const Sidebar: React.FC = () => {
       style={{ width }}
     >
       <div className="flex items-center justify-between mb-6 p-4">
-        <h1 className="text-xl font-semibold text-gray-700 truncate">
+        {/* User icon with initial */}
+        <UserIcon initial="A" /> {/* Replace "A" with the actual initial */}
+        <h1 className="text-xl font-semibold text-gray-700 truncate ml-4">
           Welcome to your own workspace!
         </h1>
         <button className="p-2">
@@ -41,6 +44,7 @@ const Sidebar: React.FC = () => {
         </button>
       </div>
       <div className="flex-1">
+        {/* Additional content */}
       </div>
       <div
         ref={resizerRef}
