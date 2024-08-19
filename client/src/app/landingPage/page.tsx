@@ -40,7 +40,7 @@ const LandingPage = () => {
               style={{ 
                 fontFamily: "'Fira Code', monospace", 
                 letterSpacing: '0.1em',
-                textShadow: 'none', // Adjust this if needed
+                textShadow: 'none', 
               }}
             >
               Organize your life—Manage your notes, tasks, and projects seamlessly—Stay productive and achieve more with everything you need in one place.
