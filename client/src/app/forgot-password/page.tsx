@@ -1,14 +1,33 @@
 'use client';
 import { useState } from 'react';
+import { sendPasswordResetEmail } from 'firebase/auth';
 import Navbar from '../landingPage/Navbar';
 import { Card } from '@/components/ui/card';
+import { auth } from '@/firebaseConfig';
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add your password reset logic here
+    setMessage('');
+    setErrorMessage('');
+
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setMessage('Password reset email sent! Please check your inbox.');
+    } catch (error) {
+      if (error.code === 'auth/invalid-email') {
+        setErrorMessage('Invalid email address. Please enter a valid email.');
+      } else if (error.code === 'auth/user-not-found') {
+        setErrorMessage('No user found with this email address.');
+      } else {
+        setErrorMessage('Error sending reset email. Please try again.');
+      }
+      console.error('Error sending reset email', error);
+    }
   };
 
   return (
@@ -38,6 +57,16 @@ const ForgotPasswordPage = () => {
 
         <div className="mt-8 flex justify-center w-full max-w-lg">
           <Card className="bg-gray-100 p-8 text-black shadow-lg w-full max-w-md">
+            {message && (
+              <div className="mb-4 text-green-500 text-sm">
+                {message}
+              </div>
+            )}
+            {errorMessage && (
+              <div className="mb-4 text-red-500 text-sm">
+                {errorMessage}
+              </div>
+            )}
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
