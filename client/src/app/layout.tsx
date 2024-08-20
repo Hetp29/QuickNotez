@@ -1,6 +1,11 @@
+export const dynamic = 'force-dynamic';
+
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from './providers/next-theme-provider';
-import React from 'react';
+import { DM_Sans } from 'next/font/google';
+import { twMerge } from 'tailwind-merge';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
