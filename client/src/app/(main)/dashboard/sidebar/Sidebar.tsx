@@ -4,18 +4,31 @@ import { HiChevronRight, HiPlus } from 'react-icons/hi'; // Import HiPlus for th
 import { auth } from '../../../../../firebaseConfig';
 
 const Sidebar: React.FC = () => {
-    const [width, setWidth] = useState(256);
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [user, setUser] = useState<firebase.User | null>(null);
     const minWidth = 400;
     const maxWidth = 700;  // Increased maxWidth to allow more expansion
+    const [width, setWidth] = useState<number>(400); // Default value without localStorage
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [user, setUser] = useState<firebase.User | null>(null);
     const sidebarRef = useRef<HTMLDivElement>(null);
     const resizerRef = useRef<HTMLDivElement>(null);
   
     useEffect(() => {
-      const unsubscribe = auth.onAuthStateChanged(setUser);
-      return () => unsubscribe();
+        // Client-side code for localStorage
+        const savedWidth = localStorage.getItem('sidebarWidth');
+        if (savedWidth) {
+            setWidth(parseInt(savedWidth, 10));
+        }
     }, []);
+
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged(setUser);
+        return () => unsubscribe();
+    }, []);
+  
+    useEffect(() => {
+        // Save the sidebar width to localStorage whenever it changes
+        localStorage.setItem('sidebarWidth', width.toString());
+    }, [width]);
   
     const handleMouseDown = (e: React.MouseEvent) => {
       e.preventDefault();
@@ -40,7 +53,6 @@ const Sidebar: React.FC = () => {
     };
 
     const handleCreateNewPage = () => {
-      
       console.log('Create new page');
     };
   
