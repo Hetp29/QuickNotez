@@ -17,8 +17,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           const batch = writeBatch(db);
 
           results.forEach((row) => {
-            const docRef = doc(collection(db, 'articles_firebase'), row['web-scraper-order']);
-            batch.set(docRef, row);
+            const orderId = row['web-scraper-order'];
+
+            // Ensure orderId is valid
+            if (orderId) {
+              const docRef = doc(collection(db, 'articles_firebase'), orderId);
+
+              // Create a clean document object to store in Firebase
+              const documentData = {
+                articleContent: row['Article Content'] || "",
+                articleName: row['Article Name'] || "",
+                articlePublisher: row['Article Publisher'] || "",
+                pages: row['Pages'] || "",
+                pagesHref: row['Pages-href'] || "",
+                links: row['links'] || "",
+                linksHref: row['links-href'] || "",
+                webScraperOrder: row['web-scraper-order'] || "",
+                webScraperStartUrl: row['web-scraper-start-url'] || ""
+              };
+
+              batch.set(docRef, documentData);
+            }
           });
 
           try {
