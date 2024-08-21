@@ -7,7 +7,7 @@ const Sidebar: React.FC = () => {
     const [width, setWidth] = useState(256);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [user, setUser] = useState<firebase.User | null>(null);
-    const minWidth = 150;
+    const minWidth = 400;
     const maxWidth = 700;  // Increased maxWidth to allow more expansion
     const sidebarRef = useRef<HTMLDivElement>(null);
     const resizerRef = useRef<HTMLDivElement>(null);
