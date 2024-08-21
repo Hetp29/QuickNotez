@@ -1,19 +1,18 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
-import { HiChevronRight, HiPlus } from 'react-icons/hi'; // Import HiPlus for the new page button
+import { HiChevronRight, HiPlus, HiChartBar, HiCalendar, HiTemplate, HiShare, HiChat } from 'react-icons/hi'; 
 import { auth } from '../../../../../firebaseConfig';
 
 const Sidebar: React.FC = () => {
     const minWidth = 400;
-    const maxWidth = 700;  // Increased maxWidth to allow more expansion
-    const [width, setWidth] = useState<number>(400); // Default value without localStorage
+    const maxWidth = 700;  
+    const [width, setWidth] = useState<number>(400); 
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [user, setUser] = useState<firebase.User | null>(null);
     const sidebarRef = useRef<HTMLDivElement>(null);
     const resizerRef = useRef<HTMLDivElement>(null);
   
     useEffect(() => {
-        // Client-side code for localStorage
         const savedWidth = localStorage.getItem('sidebarWidth');
         if (savedWidth) {
             setWidth(parseInt(savedWidth, 10));
@@ -26,7 +25,6 @@ const Sidebar: React.FC = () => {
     }, []);
   
     useEffect(() => {
-        // Save the sidebar width to localStorage whenever it changes
         localStorage.setItem('sidebarWidth', width.toString());
     }, [width]);
   
@@ -91,14 +89,39 @@ const Sidebar: React.FC = () => {
           </div>
           <button 
             className="p-2"
-            onClick={handleCreateNewPage} // Handle the button click
+            onClick={handleCreateNewPage} 
           >
             <HiPlus className="text-gray-600 text-4xl" />
           </button>
         </div>
 
-        <div className="flex-1">
+        <div className="flex-1 flex flex-col space-y-4 p-4">
+          <button className="flex items-center gap-2 p-2 rounded hover:bg-gray-200">
+            <HiChat className="text-gray-600 text-2xl" />
+            <span className="text-gray-800">QuickNotez AI</span>
+          </button>
+          <button className="flex items-center gap-2 p-2 rounded hover:bg-gray-200">
+            <HiChevronRight className="text-gray-600 text-2xl" />
+            <span className="text-gray-800">Your Workspaces</span>
+          </button>
+          <button className="flex items-center gap-2 p-2 rounded hover:bg-gray-200">
+            <HiShare className="text-gray-600 text-2xl" />
+            <span className="text-gray-800">Collaboration & Sharing</span>
+          </button>
+          <button className="flex items-center gap-2 p-2 rounded hover:bg-gray-200">
+            <HiTemplate className="text-gray-600 text-2xl" />
+            <span className="text-gray-800">Templates & Automation</span>
+          </button>
+          <button className="flex items-center gap-2 p-2 rounded hover:bg-gray-200">
+            <HiCalendar className="text-gray-600 text-2xl" />
+            <span className="text-gray-800">Calendar & Reminders</span>
+          </button>
+          <button className="flex items-center gap-2 p-2 rounded hover:bg-gray-200">
+            <HiChartBar className="text-gray-600 text-2xl" />
+            <span className="text-gray-800">Productivity Dashboard</span>
+          </button>
         </div>
+
         <div
           ref={resizerRef}
           onMouseDown={handleMouseDown}
