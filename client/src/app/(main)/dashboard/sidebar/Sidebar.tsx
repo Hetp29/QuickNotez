@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
 import { HiChevronRight, HiPlus } from 'react-icons/hi'; // Import HiPlus for the new page button
-import { auth } from '@/firebaseConfig';
+import { auth } from '../../../../../firebaseConfig';
 
 const Sidebar: React.FC = () => {
     const [width, setWidth] = useState(256);
