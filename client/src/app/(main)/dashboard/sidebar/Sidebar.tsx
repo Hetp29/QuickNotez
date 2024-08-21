@@ -1,6 +1,10 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
-import { HiChevronRight, HiPlus, HiChartBar, HiCalendar, HiTemplate, HiShare, HiChat } from 'react-icons/hi'; 
+import { 
+  HiChevronRight, HiPlus, HiChartBar, HiCalendar, 
+  HiTemplate, HiShare, HiChat, HiTrash, 
+  HiQuestionMarkCircle, HiArrowUp, HiMoon 
+} from 'react-icons/hi'; 
 import { auth } from '../../../../../firebaseConfig';
 
 const Sidebar: React.FC = () => {
@@ -11,6 +15,9 @@ const Sidebar: React.FC = () => {
     const [user, setUser] = useState<firebase.User | null>(null);
     const sidebarRef = useRef<HTMLDivElement>(null);
     const resizerRef = useRef<HTMLDivElement>(null);
+
+    // State for the dark mode toggle (no functionality yet)
+    const [isDarkMode, setIsDarkMode] = useState(false);
   
     useEffect(() => {
         const savedWidth = localStorage.getItem('sidebarWidth');
@@ -66,17 +73,17 @@ const Sidebar: React.FC = () => {
               className="relative flex items-center justify-center bg-gray-500 w-20 h-20 text-white rounded-full cursor-pointer"
               onClick={toggleDropdown}
             >
-              <span className="text-4xl">{user?.displayName?.[0] || 'A'}</span>
+              <span className="text-3xl">{user?.displayName?.[0] || 'A'}</span>
               {isDropdownOpen && (
                 <div className="absolute top-full left-0 mt-3 w-96 bg-white border border-gray-300 rounded-lg shadow-lg z-10">
                   <div className="px-12 py-8 text-gray-800 border-b border-gray-300">
-                    <p className="font-semibold">{user?.displayName || 'User Name'}'s Workspace</p>
+                    <p className="font-semibold text-lg">{user?.displayName || 'User Name'}'s Workspace</p>
                     <p className="text-sm text-gray-600">{user?.email || 'user@example.com'}</p>
                   </div>
                   <ul className="py-6">
-                    <li className="px-12 py-4 text-gray-700 hover:bg-gray-100">Profile</li>
-                    <li className="px-12 py-4 text-gray-700 hover:bg-gray-100">Settings</li>
-                    <li className="px-12 py-4 text-gray-700 hover:bg-gray-100">Logout</li>
+                    <li className="px-12 py-4 text-gray-700 hover:bg-gray-100 text-base">Profile</li>
+                    <li className="px-12 py-4 text-gray-700 hover:bg-gray-100 text-base">Settings</li>
+                    <li className="px-12 py-4 text-gray-700 hover:bg-gray-100 text-base">Logout</li>
                   </ul>
                 </div>
               )}
@@ -91,11 +98,11 @@ const Sidebar: React.FC = () => {
             className="p-2"
             onClick={handleCreateNewPage} 
           >
-            <HiPlus className="text-gray-600 text-4xl" />
+            <HiPlus className="text-gray-600 text-3xl" />
           </button>
         </div>
 
-        <div className="flex-1 flex flex-col space-y-4 p-4">
+        <div className="flex-1 flex flex-col space-y-4 p-4 text-base">
           <button className="flex items-center gap-2 p-2 rounded hover:bg-gray-200">
             <HiChat className="text-gray-600 text-2xl" />
             <span className="text-gray-800">QuickNotez AI</span>
@@ -119,6 +126,27 @@ const Sidebar: React.FC = () => {
           <button className="flex items-center gap-2 p-2 rounded hover:bg-gray-200">
             <HiChartBar className="text-gray-600 text-2xl" />
             <span className="text-gray-800">Productivity Dashboard</span>
+          </button>
+          
+          {/* Light/Dark Mode Toggle Button */}
+          <button className="flex items-center gap-2 p-2 rounded hover:bg-gray-200">
+            <HiMoon className="text-gray-600 text-2xl" />
+            <span className="text-gray-800">{isDarkMode ? 'Dark Mode' : 'Switch to Dark Mode'}</span>
+          </button>
+        </div>
+
+        <div className="p-4 border-t border-gray-400 text-base">
+          <button className="flex items-center gap-2 p-2 rounded hover:bg-gray-200 mb-2">
+            <HiTrash className="text-gray-600 text-2xl" />
+            <span className="text-gray-800">Trash</span>
+          </button>
+          <button className="flex items-center gap-2 p-2 rounded hover:bg-gray-200 mb-2">
+            <HiQuestionMarkCircle className="text-gray-600 text-2xl" />
+            <span className="text-gray-800">Help and Support</span>
+          </button>
+          <button className="flex items-center gap-2 p-2 rounded hover:bg-gray-200">
+            <HiArrowUp className="text-gray-600 text-2xl" />
+            <span className="text-gray-800">Upgrade Plan</span>
           </button>
         </div>
 
