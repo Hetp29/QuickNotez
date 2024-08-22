@@ -57,6 +57,9 @@ const Sidebar: React.FC = () => {
         console.log('Create new page');
     };
 
+    const buttonTextColor = colorMode === 'light' ? 'gray.800' : 'whiteAlpha.900';
+    const buttonHoverBg = colorMode === 'light' ? 'gray.200' : 'gray.600';
+
     return (
         <Box
             ref={sidebarRef}
@@ -73,15 +76,15 @@ const Sidebar: React.FC = () => {
                     >
                         <span className="text-3xl">{user?.displayName?.[0] || 'A'}</span>
                         {isDropdownOpen && (
-                            <div className="absolute top-full left-0 mt-3 w-96 bg-white border border-gray-300 rounded-lg shadow-lg z-10">
+                            <div className={`absolute top-full left-0 mt-3 w-96 bg-${colorMode === 'light' ? 'white' : 'gray.700'} border border-gray-300 rounded-lg shadow-lg z-10`}>
                                 <div className="px-12 py-8 text-gray-800 border-b border-gray-300">
                                     <p className="font-semibold text-lg">{user?.displayName || 'User Name'}'s Workspace</p>
                                     <p className="text-sm text-gray-600">{user?.email || 'user@example.com'}</p>
                                 </div>
                                 <ul className="py-6">
-                                    <li className="px-12 py-4 text-gray-700 hover:bg-gray-100 text-base">Profile</li>
-                                    <li className="px-12 py-4 text-gray-700 hover:bg-gray-100 text-base">Settings</li>
-                                    <li className="px-12 py-4 text-gray-700 hover:bg-gray-100 text-base">Logout</li>
+                                    <li className={`px-12 py-4 text-${buttonTextColor} hover:bg-${buttonHoverBg} text-base`}>Profile</li>
+                                    <li className={`px-12 py-4 text-${buttonTextColor} hover:bg-${buttonHoverBg} text-base`}>Settings</li>
+                                    <li className={`px-12 py-4 text-${buttonTextColor} hover:bg-${buttonHoverBg} text-base`}>Logout</li>
                                 </ul>
                             </div>
                         )}
@@ -96,55 +99,55 @@ const Sidebar: React.FC = () => {
                     className="p-2"
                     onClick={handleCreateNewPage}
                 >
-                    <HiPlus className="text-gray-600 text-3xl" />
+                    <HiPlus className={`text-${buttonTextColor} text-3xl`} />
                 </button>
             </div>
 
             <div className="flex-1 flex flex-col space-y-4 p-4 text-base">
-                <button className="flex items-center gap-2 p-2 rounded hover:bg-gray-200">
-                    <HiChat className="text-gray-600 text-2xl" />
-                    <span className="text-gray-800">QuickNotez AI</span>
+                <button className={`flex items-center gap-2 p-2 rounded hover:bg-${buttonHoverBg}`}>
+                    <HiChat className={`text-${buttonTextColor} text-2xl`} />
+                    <span className={`text-${buttonTextColor}`}>QuickNotez AI</span>
                 </button>
-                <button className="flex items-center gap-2 p-2 rounded hover:bg-gray-200">
-                    <HiChevronRight className="text-gray-600 text-2xl" />
-                    <span className="text-gray-800">Your Workspaces</span>
+                <button className={`flex items-center gap-2 p-2 rounded hover:bg-${buttonHoverBg}`}>
+                    <HiChevronRight className={`text-${buttonTextColor} text-2xl`} />
+                    <span className={`text-${buttonTextColor}`}>Your Workspaces</span>
                 </button>
-                <button className="flex items-center gap-2 p-2 rounded hover:bg-gray-200">
-                    <HiShare className="text-gray-600 text-2xl" />
-                    <span className="text-gray-800">Collaboration & Sharing</span>
+                <button className={`flex items-center gap-2 p-2 rounded hover:bg-${buttonHoverBg}`}>
+                    <HiShare className={`text-${buttonTextColor} text-2xl`} />
+                    <span className={`text-${buttonTextColor}`}>Collaboration & Sharing</span>
                 </button>
-                <button className="flex items-center gap-2 p-2 rounded hover:bg-gray-200">
-                    <HiTemplate className="text-gray-600 text-2xl" />
-                    <span className="text-gray-800">Templates & Automation</span>
+                <button className={`flex items-center gap-2 p-2 rounded hover:bg-${buttonHoverBg}`}>
+                    <HiTemplate className={`text-${buttonTextColor} text-2xl`} />
+                    <span className={`text-${buttonTextColor}`}>Templates & Automation</span>
                 </button>
-                <button className="flex items-center gap-2 p-2 rounded hover:bg-gray-200">
-                    <HiCalendar className="text-gray-600 text-2xl" />
-                    <span className="text-gray-800">Calendar & Reminders</span>
+                <button className={`flex items-center gap-2 p-2 rounded hover:bg-${buttonHoverBg}`}>
+                    <HiCalendar className={`text-${buttonTextColor} text-2xl`} />
+                    <span className={`text-${buttonTextColor}`}>Calendar & Reminders</span>
                 </button>
-                <button className="flex items-center gap-2 p-2 rounded hover:bg-gray-200">
-                    <HiChartBar className="text-gray-600 text-2xl" />
-                    <span className="text-gray-800">Productivity Dashboard</span>
+                <button className={`flex items-center gap-2 p-2 rounded hover:bg-${buttonHoverBg}`}>
+                    <HiChartBar className={`text-${buttonTextColor} text-2xl`} />
+                    <span className={`text-${buttonTextColor}`}>Productivity Dashboard</span>
                 </button>
 
                 {/* Light/Dark Mode Toggle Button */}
-                <button className="flex items-center gap-2 p-2 rounded hover:bg-gray-200" onClick={toggleColorMode}>
-                    <HiMoon className="text-gray-600 text-2xl" />
-                    <span className="text-gray-800">{colorMode === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+                <button className={`flex items-center gap-2 p-2 rounded hover:bg-${buttonHoverBg}`} onClick={toggleColorMode}>
+                    <HiMoon className={`text-${buttonTextColor} text-2xl`} />
+                    <span className={`text-${buttonTextColor}`}>{colorMode === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
                 </button>
             </div>
 
             <div className="p-4 border-t border-gray-400 text-base">
-                <button className="flex items-center gap-2 p-2 rounded hover:bg-gray-200 mb-2">
-                    <HiTrash className="text-gray-600 text-2xl" />
-                    <span className="text-gray-800">Trash</span>
+                <button className={`flex items-center gap-2 p-2 rounded hover:bg-${buttonHoverBg} mb-2`}>
+                    <HiTrash className={`text-${buttonTextColor} text-2xl`} />
+                    <span className={`text-${buttonTextColor}`}>Trash</span>
                 </button>
-                <button className="flex items-center gap-2 p-2 rounded hover:bg-gray-200 mb-2">
-                    <HiQuestionMarkCircle className="text-gray-600 text-2xl" />
-                    <span className="text-gray-800">Help and Support</span>
+                <button className={`flex items-center gap-2 p-2 rounded hover:bg-${buttonHoverBg} mb-2`}>
+                    <HiQuestionMarkCircle className={`text-${buttonTextColor} text-2xl`} />
+                    <span className={`text-${buttonTextColor}`}>Help and Support</span>
                 </button>
-                <button className="flex items-center gap-2 p-2 rounded hover:bg-gray-200">
-                    <HiArrowUp className="text-gray-600 text-2xl" />
-                    <span className="text-gray-800">Upgrade Plan</span>
+                <button className={`flex items-center gap-2 p-2 rounded hover:bg-${buttonHoverBg}`}>
+                    <HiArrowUp className={`text-${buttonTextColor} text-2xl`} />
+                    <span className={`text-${buttonTextColor}`}>Upgrade Plan</span>
                 </button>
             </div>
 
