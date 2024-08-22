@@ -1,10 +1,9 @@
-// src/pages/api/scrapeMedium.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import Papa from 'papaparse';
 import fs from 'fs';
 import path from 'path';
 
-// Define the structure of your CSV data
+
 interface ArticleData {
   'web-scraper-order': string;
   'web-scraper-start-url': string;
