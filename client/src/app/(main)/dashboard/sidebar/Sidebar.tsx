@@ -15,6 +15,7 @@ import {
 } from 'react-icons/hi';
 import { useColorMode, Box } from '@chakra-ui/react';
 import { auth } from '../../../../../firebaseConfig';
+import { useRouter } from 'next/router';
 
 const Sidebar: React.FC = () => {
   const minWidth = 400;
@@ -26,6 +27,7 @@ const Sidebar: React.FC = () => {
   const resizerRef = useRef<HTMLDivElement>(null);
 
 
+
   const { colorMode, toggleColorMode } = useColorMode();
 
   useEffect(() => {
@@ -34,6 +36,15 @@ const Sidebar: React.FC = () => {
       setWidth(parseInt(savedWidth, 10));
     }
   }, []);
+
+  const handleLogout = async () => {
+    try {
+        await auth.signOut();
+        window.location.href = '/'
+    } catch (error) {
+     console.error('Error signing out:', error);
+  }
+}
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(setUser);
@@ -114,7 +125,7 @@ const Sidebar: React.FC = () => {
                 <li className={`px-12 py-4 ${buttonTextColor} hover:bg-${buttonHoverBg} text-base`}>
                   Settings
                 </li>
-                <li className={`px-12 py-4 ${buttonTextColor} hover:bg-${buttonHoverBg} text-base`}>
+                <li className={`px-12 py-4 ${buttonTextColor} hover:bg-${buttonHoverBg} text-base`} onClick={handleLogout}>
                   Logout
                 </li>
               </ul>
