@@ -12,10 +12,14 @@ import {
   HiArrowUp,
   HiMoon,
   HiSun, 
+  HiUser,
+  HiSettings,
+  HiLogout,
+  HiUsers
 } from 'react-icons/hi';
 import { useColorMode, Box } from '@chakra-ui/react';
 import { auth } from '../../../../../firebaseConfig';
-import { useRouter } from 'next/router';
+//import { useRouter } from 'next/router';
 
 const Sidebar: React.FC = () => {
   const minWidth = 400;
@@ -29,6 +33,18 @@ const Sidebar: React.FC = () => {
 
 
   const { colorMode, toggleColorMode } = useColorMode();
+  const [workspaces, setWorkspaces] = useState<string[]>([]);
+
+  const fetchWorkspaces = async () => {
+    try {
+        const response = await fetch('/api/workspaces');
+        const data = await response.json();
+        setWorkspaces(data.workspaces);
+    } catch (error) {
+        console.error('Error fetching workspaces: ', error);
+    }
+  }
+
 
   useEffect(() => {
     const savedWidth = localStorage.getItem('sidebarWidth');
@@ -46,9 +62,15 @@ const Sidebar: React.FC = () => {
   }
 }
 
+
+
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(setUser);
     return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    fetchWorkspaces();
   }, []);
 
   useEffect(() => {
@@ -81,6 +103,31 @@ const Sidebar: React.FC = () => {
     console.log('Create new page');
   };
 
+  const handleAddWorkspace = async () => {
+    const workspaceName = prompt('Enter the name of the new workspace:');
+    if (workspaceName) {
+      try {
+        const response = await fetch('/api/workspaces/add', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ workspace: workspaceName }),
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          setWorkspaces(data.workspaces);
+        } else {
+          console.error('Error adding workspace:', await response.text());
+        }
+      } catch (error) {
+        console.error('Error adding workspace:', error);
+      }
+    }
+  };
+  
+
   const buttonTextColor = colorMode === 'light' ? 'gray.800' : 'whiteAlpha.900';
   const buttonHoverBg = colorMode === 'light' ? 'gray.200' : 'gray.600';
 
@@ -105,33 +152,38 @@ const Sidebar: React.FC = () => {
           >
             <span className="text-3xl">{user?.displayName?.[0] || 'A'}</span>
             {isDropdownOpen && (
-              <div
-              className={`absolute top-full left-0 mt-3 w-96 ${
-                colorMode === 'light' ? 'bg-white border-gray-300 text-gray-800' : 'bg-gray-700 border-gray-600 text-white'
-              } border rounded-lg shadow-lg z-10`}
-            >
-              <div className={`px-12 py-8 ${colorMode === 'light' ? 'text-gray-800 border-b border-gray-300' : 'text-gray-300 border-b border-gray-600'}`}>
-                <p className="font-semibold text-lg">
-                  {user?.displayName || 'User Name'}'s Workspace
-                </p>
-                <p className={`${colorMode === 'light' ? 'text-gray-600' : 'text-gray-400'} text-sm`}>
-                  {user?.email || 'user@example.com'}
-                </p>
-              </div>
-              <ul className="py-6">
-                <li className={`px-12 py-4 ${buttonTextColor} hover:bg-${buttonHoverBg} text-base`}>
-                  Profile
-                </li>
-                <li className={`px-12 py-4 ${buttonTextColor} hover:bg-${buttonHoverBg} text-base`}>
-                  Settings
-                </li>
-                <li className={`px-12 py-4 ${buttonTextColor} hover:bg-${buttonHoverBg} text-base`} onClick={handleLogout}>
-                  Logout
-                </li>
-              </ul>
-            </div>
-            
-            )}
+  <div
+    className={`absolute top-full left-0 mt-3 w-96 ${
+      colorMode === 'light' ? 'bg-white border-gray-300 text-gray-800' : 'bg-gray-700 border-gray-600 text-white'
+    } border rounded-lg shadow-lg z-10`}
+  >
+    <div className={`px-12 py-8 ${colorMode === 'light' ? 'text-gray-800 border-b border-gray-300' : 'text-gray-300 border-b border-gray-600'}`}>
+      <p className="font-semibold text-lg">
+        {user?.displayName || 'User Name'}'s Workspace
+      </p>
+      <p className={`${colorMode === 'light' ? 'text-gray-600' : 'text-gray-400'} text-sm`}>
+        {user?.email || 'user@example.com'}
+      </p>
+    </div>
+    <ul className="py-6">
+      {workspaces.map((workspace) => (
+        <li key={workspace} className={`px-12 py-4 ${buttonTextColor} hover:bg-${buttonHoverBg} text-base`}>
+          {workspace}
+        </li>
+      ))}
+      <li className={`px-12 py-4 ${buttonTextColor} hover:bg-${buttonHoverBg} text-base`}>
+        Invite Members
+      </li>
+      <li className={`px-12 py-4 ${buttonTextColor} hover:bg-${buttonHoverBg} text-base`}>
+        Settings
+      </li>
+      <li className={`px-12 py-4 ${buttonTextColor} hover:bg-${buttonHoverBg} text-base`} onClick={handleLogout}>
+        Logout
+      </li>
+    </ul>
+  </div>
+)}
+
           </div>
           <div className="flex-1 flex items-center justify-center">
             <h1 className="text-3xl font-semibold truncate">Your Workspace!</h1>
@@ -143,6 +195,11 @@ const Sidebar: React.FC = () => {
       </div>
 
       <div className="flex-1 flex flex-col space-y-4 p-4 text-base">
+      <button className={`flex items-center gap-2 p-2 rounded hover:bg-${buttonHoverBg}`} onClick={handleAddWorkspace}>
+            <HiPlus className={`text-${buttonTextColor} text-2xl`} />
+            <span className={`text-${buttonTextColor}`}>Add Workspace</span>
+        </button>
+
         <button className={`flex items-center gap-2 p-2 rounded hover:bg-${buttonHoverBg}`}>
           <HiChat className={`text-${buttonTextColor} text-2xl`} />
           <span className={`text-${buttonTextColor}`}>QuickNotez AI</span>
