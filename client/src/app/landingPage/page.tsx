@@ -3,6 +3,7 @@ import { useState } from 'react';
 import Navbar from "./Navbar";
 import TitleSection from "./Slogan";
 import { Card } from '@/components/ui/card';
+import Footer from './Footer';
 
 const LandingPage = () => {
   
@@ -332,6 +333,8 @@ const LandingPage = () => {
 
   
     </div>
+
+    <Footer />
 
         </section>
       );

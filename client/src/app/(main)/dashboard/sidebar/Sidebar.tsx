@@ -11,7 +11,7 @@ import {
   HiQuestionMarkCircle,
   HiArrowUp,
   HiMoon,
-  HiSun, // Import the sun icon
+  HiSun, 
 } from 'react-icons/hi';
 import { useColorMode, Box } from '@chakra-ui/react';
 import { auth } from '../../../../../firebaseConfig';
@@ -25,7 +25,7 @@ const Sidebar: React.FC = () => {
   const sidebarRef = useRef<HTMLDivElement>(null);
   const resizerRef = useRef<HTMLDivElement>(null);
 
-  // Dark mode functionality
+
   const { colorMode, toggleColorMode } = useColorMode();
 
   useEffect(() => {

@@ -16,7 +16,7 @@ const MainContent = () => {
       color={colorMode === 'light' ? 'black' : 'white'}
       minH="100vh"
     >
-      {/* Main content goes here */}
+      
       Your main content
     </Box>
   );
