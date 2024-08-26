@@ -1,36 +1,40 @@
 import dynamic from 'next/dynamic';
 import React, { useState, useEffect, useCallback } from 'react';
 import 'react-quill/dist/quill.snow.css';
-import { db, doc, setDoc, getDoc } from '../../../../../firebaseConfig'; // Importing getDoc
+import { db, doc, setDoc, getDoc } from '../../../../../firebaseConfig';
+import { debounce } from 'lodash'; 
 
-// Dynamically import ReactQuill
+
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 interface NoteEditorProps {
     selectedFile: string | null;
-    workspaceId: string | null; // Ensure you have a valid workspace ID
+    workspaceId: string | null;
 }
 
 const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId }) => {
     const [content, setContent] = useState('');
 
-    // Function to save content to Firebase
-    const saveContent = useCallback(async () => {
-        if (selectedFile && workspaceId) {
-            // Remove HTML tags from the content
-            const plainTextContent = content.replace(/<\/?[^>]+(>|$)/g, "");
 
+    const saveContent = useCallback(async (plainTextContent: string) => {
+        if (selectedFile && workspaceId) {
             const noteDoc = doc(db, 'notes', `${workspaceId}_${selectedFile}`);
             try {
-                await setDoc(noteDoc, { content: plainTextContent });
+                await setDoc(noteDoc, { content: plainTextContent }, { merge: true }); // merge option to update the content
                 console.log(`Saved content of ${selectedFile}: ${plainTextContent}`);
             } catch (error) {
                 console.error('Error saving document:', error);
             }
         }
-    }, [selectedFile, content, workspaceId]);
+    }, [selectedFile, workspaceId]);
 
-    // Load content when a new file is selected
+
+    const debouncedSaveContent = useCallback(debounce((content: string) => {
+        const plainTextContent = content.replace(/<\/?[^>]+(>|$)/g, "");
+        saveContent(plainTextContent);
+    }, 500), [saveContent]);
+
+   
     useEffect(() => {
         const loadContent = async () => {
             if (selectedFile && workspaceId) {
@@ -42,7 +46,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId }) =>
                         console.log(`Loaded content: ${docSnap.data().content}`);
                     } else {
                         console.log('No such document!');
-                        setContent(''); // Clear the editor if no document is found
+                        setContent(''); 
                     }
                 } catch (error) {
                     console.error('Error loading document:', error);
@@ -53,15 +57,9 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId }) =>
         loadContent();
     }, [selectedFile, workspaceId]);
 
-    // Save content when the component unmounts or when the selectedFile changes
-    useEffect(() => {
-        return () => {
-            saveContent();
-        };
-    }, [saveContent]);
-
     const handleContentChange = (value: string) => {
         setContent(value);
+        debouncedSaveContent(value); 
         console.log(`Content changed: ${value}`);
     };
 
