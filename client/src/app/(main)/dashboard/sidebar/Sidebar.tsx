@@ -140,7 +140,7 @@ const Sidebar: React.FC<{
         className="relative transition-all duration-300 h-screen flex flex-col"
         style={{
             width,
-            borderRight: colorMode === 'light' ? ' #e2e8f0' : ' #2d3748',
+            //borderRight: colorMode === '' ? ' #e2e8f0' : ' ',
         }}
         bg={colorMode === 'light' ? 'gray.100' : 'dark.800'}
         color={colorMode === 'light' ? 'black' : 'white'}
