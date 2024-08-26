@@ -9,15 +9,18 @@ import { auth } from '../../../../../firebaseConfig';
 import { collection, addDoc, getDocs } from 'firebase/firestore';
 import { db } from '../../../../../firebaseConfig';
 
-const Sidebar: React.FC<{ setSelectedFile: (file: string) => void }> = ({ setSelectedFile }) => {
-  const minWidth = 400;
-  const maxWidth = 700;
-  const [width, setWidth] = useState<number>(400);
-  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
-  const [isWorkspaceDropdownOpen, setIsWorkspaceDropdownOpen] = useState(false); 
-  const [user, setUser] = useState<firebase.User | null>(null);
-  const sidebarRef = useRef<HTMLDivElement>(null);
-  const resizerRef = useRef<HTMLDivElement>(null);
+const Sidebar: React.FC<{ 
+    setSelectedFile: (file: string) => void;
+    setWorkspaceId: (id: string) => void;
+  }> = ({ setSelectedFile, setWorkspaceId }) => {
+    const minWidth = 400;
+    const maxWidth = 700;
+    const [width, setWidth] = useState<number>(400);
+    const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+    const [isWorkspaceDropdownOpen, setIsWorkspaceDropdownOpen] = useState(false); 
+    const [user, setUser] = useState<firebase.User | null>(null);
+    const sidebarRef = useRef<HTMLDivElement>(null);
+    const resizerRef = useRef<HTMLDivElement>(null);
 
   const { colorMode, toggleColorMode } = useColorMode();
   const [workspaces, setWorkspaces] = useState<any[]>([]);
@@ -39,10 +42,17 @@ const Sidebar: React.FC<{ setSelectedFile: (file: string) => void }> = ({ setSel
     }
   };
 
-  const handleFileClick = (file: string) => {
-    setSelectedFile(file);
+  const handleWorkspaceClick = (workspaceId: string) => {
+    setWorkspaceId(workspaceId); 
+    //setSelectedFile(null);
   };
 
+  const handleFileClick = (workspaceId: string, file: string) => {
+    setWorkspaceId(workspaceId);
+    setSelectedFile(file); 
+  };
+
+ 
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(setUser);
@@ -76,6 +86,7 @@ const Sidebar: React.FC<{ setSelectedFile: (file: string) => void }> = ({ setSel
       ...prev,
       [workspaceId]: !prev[workspaceId],
     }));
+    handleAddWorkspace(workspaceId);
   };
 
   const handleLogout = async () => {
@@ -232,7 +243,7 @@ const Sidebar: React.FC<{ setSelectedFile: (file: string) => void }> = ({ setSel
                       <button
                         key={index}
                         className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
-                        onClick={() => handleFileClick(file.name)}
+                        onClick={() => handleFileClick(workspace.id, file.name)}
                       >
                         <HiDocument className={`text-2xl ${buttonTextColor}`} />
                         <span className={buttonTextColor}>{file.name}</span>

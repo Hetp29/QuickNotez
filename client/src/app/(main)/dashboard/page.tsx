@@ -1,12 +1,14 @@
 'use client';
-
 import React, { useState } from 'react';
 import Sidebar from './sidebar/Sidebar';
 import { ChakraProvider, Box, useColorMode } from '@chakra-ui/react';
-import NoteEditor from './components/NoteEditor';
+import dynamic from 'next/dynamic';
 import theme from './styles/theme';
 
-const MainContent = ({ selectedFile }) => {
+// Dynamically import NoteEditor to prevent SSR issues
+const NoteEditor = dynamic(() => import('./components/NoteEditor'), { ssr: false });
+
+const MainContent = ({ selectedFile, workspaceId }) => {
   const { colorMode } = useColorMode();
   
   return (
@@ -17,19 +19,21 @@ const MainContent = ({ selectedFile }) => {
       color={colorMode === 'light' ? 'black' : 'white'}
       minH="100vh"
     >
-      <NoteEditor selectedFile={selectedFile} />
+      {selectedFile && <NoteEditor selectedFile={selectedFile} workspaceId={workspaceId} />}
     </Box>
   );
 };
 
 const Page = () => {
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [workspaceId, setWorkspaceId] = useState<string | null>(null); // State to hold the workspace ID
 
   return (
     <ChakraProvider theme={theme}>
       <Box display="flex">
-        <Sidebar setSelectedFile={setSelectedFile} />
-        <MainContent selectedFile={selectedFile} />
+        {/* Pass setSelectedFile and setWorkspaceId to Sidebar */}
+        <Sidebar setSelectedFile={setSelectedFile} setWorkspaceId={setWorkspaceId} />
+        <MainContent selectedFile={selectedFile} workspaceId={workspaceId} />
       </Box>
     </ChakraProvider>
   );
