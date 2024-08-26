@@ -17,10 +17,13 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId }) =>
     // Function to save content to Firebase
     const saveContent = useCallback(async () => {
         if (selectedFile && workspaceId) {
+            // Remove HTML tags from the content
+            const plainTextContent = content.replace(/<\/?[^>]+(>|$)/g, "");
+
             const noteDoc = doc(db, 'notes', `${workspaceId}_${selectedFile}`);
             try {
-                await setDoc(noteDoc, { content });
-                console.log(`Saved content of ${selectedFile}: ${content}`);
+                await setDoc(noteDoc, { content: plainTextContent });
+                console.log(`Saved content of ${selectedFile}: ${plainTextContent}`);
             } catch (error) {
                 console.error('Error saving document:', error);
             }
