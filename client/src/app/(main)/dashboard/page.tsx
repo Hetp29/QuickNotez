@@ -1,13 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Sidebar from './sidebar/Sidebar';
 import { ChakraProvider, Box, useColorMode } from '@chakra-ui/react';
 import NoteEditor from './components/NoteEditor';
 import theme from './styles/theme';
 
-
-const MainContent = () => {
+const MainContent = ({ selectedFile }) => {
   const { colorMode } = useColorMode();
   
   return (
@@ -18,18 +17,19 @@ const MainContent = () => {
       color={colorMode === 'light' ? 'black' : 'white'}
       minH="100vh"
     >
-      
-      <NoteEditor />
+      <NoteEditor selectedFile={selectedFile} />
     </Box>
   );
 };
 
 const Page = () => {
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+
   return (
     <ChakraProvider theme={theme}>
       <Box display="flex">
-        <Sidebar />
-        <MainContent />
+        <Sidebar setSelectedFile={setSelectedFile} />
+        <MainContent selectedFile={selectedFile} />
       </Box>
     </ChakraProvider>
   );

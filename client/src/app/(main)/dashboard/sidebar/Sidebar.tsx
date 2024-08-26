@@ -9,7 +9,7 @@ import { auth } from '../../../../../firebaseConfig';
 import { collection, addDoc, getDocs } from 'firebase/firestore';
 import { db } from '../../../../../firebaseConfig';
 
-const Sidebar: React.FC = () => {
+const Sidebar: React.FC<{ setSelectedFile: (file: string) => void }> = ({ setSelectedFile }) => {
   const minWidth = 400;
   const maxWidth = 700;
   const [width, setWidth] = useState<number>(400);
@@ -38,6 +38,11 @@ const Sidebar: React.FC = () => {
       }
     }
   };
+
+  const handleFileClick = (file: string) => {
+    setSelectedFile(file);
+  };
+
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(setUser);
@@ -227,6 +232,7 @@ const Sidebar: React.FC = () => {
                       <button
                         key={index}
                         className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
+                        onClick={() => handleFileClick(file.name)}
                       >
                         <HiDocument className={`text-2xl ${buttonTextColor}`} />
                         <span className={buttonTextColor}>{file.name}</span>
