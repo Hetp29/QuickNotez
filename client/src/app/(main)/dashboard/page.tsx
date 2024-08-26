@@ -10,7 +10,7 @@ const NoteEditor = dynamic(() => import('./components/NoteEditor'), { ssr: false
 
 const MainContent = ({ selectedFile, workspaceId }) => {
   const { colorMode } = useColorMode();
-  
+
   return (
     <Box
       flex="1"
