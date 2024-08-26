@@ -3,7 +3,9 @@
 import React from 'react';
 import Sidebar from './sidebar/Sidebar';
 import { ChakraProvider, Box, useColorMode } from '@chakra-ui/react';
+import NoteEditor from './components/NoteEditor';
 import theme from './styles/theme';
+
 
 const MainContent = () => {
   const { colorMode } = useColorMode();
@@ -17,7 +19,7 @@ const MainContent = () => {
       minH="100vh"
     >
       
-      Your main content
+      <NoteEditor />
     </Box>
   );
 };

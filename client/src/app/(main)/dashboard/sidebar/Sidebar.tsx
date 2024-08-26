@@ -57,7 +57,7 @@ const Sidebar: React.FC = () => {
       try {
         await addDoc(collection(db, 'users', user.uid, 'workspaces'), {
           name: workspaceName,
-          files: [{ name: 'notes.txt', content: 'Your notes go here...' }],
+          files: [{ name: "Type here...", content: 'Your notes go here...' }],
         });
         fetchWorkspaces();
       } catch (error) {
@@ -81,6 +81,8 @@ const Sidebar: React.FC = () => {
       console.error('Error signing out:', error);
     }
   };
+
+  
 
   const toggleProfileDropdown = () => {
     setIsProfileDropdownOpen(!isProfileDropdownOpen);
