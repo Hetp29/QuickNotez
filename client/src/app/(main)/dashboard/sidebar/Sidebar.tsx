@@ -118,9 +118,9 @@ const Sidebar: React.FC = () => {
       className="relative transition-all duration-300 h-screen flex flex-col"
       style={{
         width,
-        borderRight: colorMode === 'light' ? '4px solid #e2e8f0' : '4px solid #2d3748',
+        borderRight: colorMode === 'light' ? '' : '',
       }}
-      bg={colorMode === 'light' ? 'gray.100' : 'gray.800'}
+      bg={colorMode === 'light' ? 'gray.100' : 'dark.800'}
       color={colorMode === 'light' ? 'black' : 'white'}
     >
        <div className={`flex items-center justify-between p-4 border-b ${colorMode === 'light' ? 'border-gray-400' : 'border-gray-600'} w-full`}>

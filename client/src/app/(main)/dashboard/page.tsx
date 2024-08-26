@@ -12,7 +12,7 @@ const MainContent = () => {
     <Box
       flex="1"
       p={4}
-      bg={colorMode === 'light' ? 'gray.100' : 'gray.800'}
+      bg={colorMode === 'light' ? 'gray.100' : 'dark.900'}
       color={colorMode === 'light' ? 'black' : 'white'}
       minH="100vh"
     >
