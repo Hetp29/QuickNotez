@@ -13,14 +13,15 @@ const Sidebar: React.FC = () => {
   const minWidth = 400;
   const maxWidth = 700;
   const [width, setWidth] = useState<number>(400);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [isWorkspaceDropdownOpen, setIsWorkspaceDropdownOpen] = useState(false); 
   const [user, setUser] = useState<firebase.User | null>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
   const resizerRef = useRef<HTMLDivElement>(null);
 
   const { colorMode, toggleColorMode } = useColorMode();
   const [workspaces, setWorkspaces] = useState<any[]>([]);
-  const [isWorkspaceDropdownOpen, setIsWorkspaceDropdownOpen] = useState<{ [key: string]: boolean }>({});
+  const [workspaceFoldersOpen, setWorkspaceFoldersOpen] = useState<{ [key: string]: boolean }>({});
 
   const fetchWorkspaces = async () => {
     if (user) {
@@ -65,8 +66,8 @@ const Sidebar: React.FC = () => {
     }
   };
 
-  const toggleWorkspaceDropdown = (workspaceId: string) => {
-    setIsWorkspaceDropdownOpen(prev => ({
+  const toggleWorkspaceFolders = (workspaceId: string) => {
+    setWorkspaceFoldersOpen(prev => ({
       ...prev,
       [workspaceId]: !prev[workspaceId],
     }));
@@ -81,8 +82,12 @@ const Sidebar: React.FC = () => {
     }
   };
 
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
+  const toggleProfileDropdown = () => {
+    setIsProfileDropdownOpen(!isProfileDropdownOpen);
+  };
+
+  const toggleWorkspaceDropdown = () => {
+    setIsWorkspaceDropdownOpen(!isWorkspaceDropdownOpen); 
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -106,7 +111,6 @@ const Sidebar: React.FC = () => {
   const buttonTextColor = colorMode === 'light' ? 'text-gray-800' : 'text-whiteAlpha-900';
   const buttonHoverBg = colorMode === 'light' ? 'hover:bg-gray-200' : 'hover:bg-gray-600';
 
-  // Generate initials from the user's display name or email
   const generateInitials = (name: string) => {
     const initials = name.split(' ').map((word) => word[0]).join('');
     return initials.toUpperCase();
@@ -114,23 +118,23 @@ const Sidebar: React.FC = () => {
 
   return (
     <Box
-      ref={sidebarRef}
-      className="relative transition-all duration-300 h-screen flex flex-col"
-      style={{
-        width,
-        borderRight: colorMode === 'light' ? '' : '',
-      }}
-      bg={colorMode === 'light' ? 'gray.100' : 'dark.800'}
-      color={colorMode === 'light' ? 'black' : 'white'}
+        ref={sidebarRef}
+        className="relative transition-all duration-300 h-screen flex flex-col"
+        style={{
+            width,
+            borderRight: colorMode === 'light' ? ' #e2e8f0' : ' #2d3748',
+        }}
+        bg={colorMode === 'light' ? 'gray.100' : 'dark.800'}
+        color={colorMode === 'light' ? 'black' : 'white'}
     >
       <div className={`flex items-center justify-between p-4 border-b ${colorMode === 'light' ? 'border-gray-400' : 'border-gray-600'} w-full`}>
         <div className="flex items-center gap-2 flex-grow">
           <div
             className={`relative flex items-center justify-center ${colorMode === 'light' ? 'bg-gray-500' : 'bg-gray-700'} w-20 h-20 text-white rounded-full cursor-pointer`}
-            onClick={toggleDropdown}
+            onClick={toggleProfileDropdown}
           >
             <span className="text-3xl">{user?.displayName?.[0] || 'A'}</span>
-            {isDropdownOpen && (
+            {isProfileDropdownOpen && (
               <div
                 className={`absolute top-full left-0 mt-3 w-96 ${
                   colorMode === 'light' ? 'bg-white' : 'bg-gray-700'
@@ -186,90 +190,109 @@ const Sidebar: React.FC = () => {
         </button>
       </div>
 
-      {/* Scrollable Workspace and Navigation Buttons */}
+    
       <div className="flex-1 flex flex-col space-y-4 p-4 text-base overflow-y-auto">
         <button
           className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
-          onClick={handleAddWorkspace}
+          onClick={toggleWorkspaceDropdown} 
         >
-          <HiPlus className={`text-2xl ${buttonTextColor}`} />
+          {isWorkspaceDropdownOpen ? (
+              <HiChevronDown className={`text-2xl ${buttonTextColor}`} />
+          ) : (
+              <HiChevronRight className={`text-2xl ${buttonTextColor}`} />
+          )}
           <span className={buttonTextColor}>Add Workspace</span>
         </button>
 
-        {workspaces.map(workspace => (
-          <div key={workspace.id} className="ml-2">
-            <button
-              className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
-              onClick={() => toggleWorkspaceDropdown(workspace.id)}
-            >
-              {isWorkspaceDropdownOpen[workspace.id] ? (
-                <HiChevronDown className={`text-2xl ${buttonTextColor}`} />
-              ) : (
-                <HiChevronRight className={`text-2xl ${buttonTextColor}`} />
-            )}
-            <span className={buttonTextColor}>{workspace.name}</span>
-          </button>
-          <Collapse in={isWorkspaceDropdownOpen[workspace.id]}>
-            <Box pl={8} mt={2}>
-              {workspace.files.map((file, index) => (
-                <button
-                  key={index}
+        {isWorkspaceDropdownOpen && (
+          <Box pl={8} mt={2}>
+            {workspaces.map(workspace => (
+              <div key={workspace.id} className="ml-2">
+                                <button
                   className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
+                  onClick={() => toggleWorkspaceFolders(workspace.id)}
                 >
-                  <HiDocument className={`text-2xl ${buttonTextColor}`} />
-                  <span className={buttonTextColor}>{file.name}</span>
+                  {workspaceFoldersOpen[workspace.id] ? (
+                    <HiChevronDown className={`text-2xl ${buttonTextColor}`} />
+                  ) : (
+                    <HiChevronRight className={`text-2xl ${buttonTextColor}`} />
+                  )}
+                  <span className={buttonTextColor}>{workspace.name}</span>
                 </button>
-              ))}
-            </Box>
-          </Collapse>
-        </div>
-      ))}
+                <Collapse in={workspaceFoldersOpen[workspace.id]} animateOpacity>
+                  <Box pl={8} mt={2} style={{ transition: 'all 0.3s ease-in-out' }}>
+                    {workspace.files.map((file, index) => (
+                      <button
+                        key={index}
+                        className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
+                      >
+                        <HiDocument className={`text-2xl ${buttonTextColor}`} />
+                        <span className={buttonTextColor}>{file.name}</span>
+                      </button>
+                    ))}
+                  </Box>
+                </Collapse>
+              </div>
+            ))}
+          </Box>
+        )}
 
-      <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg} mt-4`}>
-        <HiChat className={`text-2xl ${buttonTextColor}`} />
-        <span className={buttonTextColor}>QuickNotez AI</span>
-      </button>
-      <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}>
-        <HiShare className={`text-2xl ${buttonTextColor}`} />
-        <span className={buttonTextColor}>Collaboration & Sharing</span>
-      </button>
-      <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}>
-        <HiTemplate className={`text-2xl ${buttonTextColor}`} />
-        <span className={buttonTextColor}>Templates & Automation</span>
-      </button>
-      <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}>
-        <HiCalendar className={`text-2xl ${buttonTextColor}`} />
-        <span className={buttonTextColor}>Calendar & Reminders</span>
-      </button>
-      <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}>
-        <HiChartBar className={`text-2xl ${buttonTextColor}`} />
-        <span className={buttonTextColor}>Productivity Dashboard</span>
-      </button>
-    </div>
+        <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg} mt-4`}>
+          <HiChat className={`text-2xl ${buttonTextColor}`} />
+          <span className={buttonTextColor}>QuickNotez AI</span>
+        </button>
+        <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}>
+          <HiShare className={`text-2xl ${buttonTextColor}`} />
+          <span className={buttonTextColor}>Collaboration & Sharing</span>
+        </button>
+        <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}>
+          <HiTemplate className={`text-2xl ${buttonTextColor}`} />
+          <span className={buttonTextColor}>Templates & Automation</span>
+        </button>
+        <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}>
+          <HiCalendar className={`text-2xl ${buttonTextColor}`} />
+          <span className={buttonTextColor}>Calendar & Reminders</span>
+        </button>
+        <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}>
+          <HiChartBar className={`text-2xl ${buttonTextColor}`} />
+          <span className={buttonTextColor}>Productivity Dashboard</span>
+        </button>
+      </div>
 
-    {/* Fixed Bottom Section */}
-    <div className="p-4 border-t border-gray-400 text-base">
-      <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg} mb-2`}>
-        <HiTrash className={`text-2xl ${buttonTextColor}`} />
-        <span className={buttonTextColor}>Trash</span>
-      </button>
-      <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg} mb-2`}>
-        <HiQuestionMarkCircle className={`text-2xl ${buttonTextColor}`} />
-        <span className={buttonTextColor}>Help and Support</span>
-      </button>
-      <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}>
-        <HiArrowUp className={`text-2xl ${buttonTextColor}`} />
-        <span className={buttonTextColor}>Feedback</span>
-      </button>
-    </div>
+      <div className="p-4 border-t border-gray-400 text-base">
+        <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg} mb-2`}>
+          <HiTrash className={`text-2xl ${buttonTextColor}`} />
+          <span className={buttonTextColor}>Trash</span>
+        </button>
+        <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg} mb-2`}>
+          <HiQuestionMarkCircle className={`text-2xl ${buttonTextColor}`} />
+          <span className={buttonTextColor}>Help and Support</span>
+        </button>
+        <button
+          className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
+          onClick={toggleColorMode}
+        >
+          {colorMode === 'dark' ? (
+            <>
+              <HiSun className={`text-2xl ${buttonTextColor}`} />
+              <span className={buttonTextColor}>Light Mode</span>
+            </>
+          ) : (
+            <>
+              <HiMoon className={`text-2xl ${buttonTextColor}`} />
+              <span className={buttonTextColor}>Dark Mode</span>
+            </>
+          )}
+        </button>
+      </div>
 
-    <div
-      ref={resizerRef}
-      className={`absolute top-0 right-0 w-1 h-full cursor-col-resize ${colorMode === 'light' ? 'bg-gray-300' : 'bg-gray-700'}`}
-      onMouseDown={handleMouseDown}
-    />
-  </Box>
-);
+      <div
+        ref={resizerRef}
+        className={`absolute top-0 right-0 w-1 h-full cursor-col-resize ${colorMode === 'light' ? 'bg-gray-300' : 'bg-gray-700'}`}
+        onMouseDown={handleMouseDown}
+      />
+    </Box>
+  );
 };
 
 export default Sidebar;
