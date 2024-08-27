@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
-  HiChevronRight, HiPlus, HiMoon, HiSun, HiUser, HiSettings, HiLogout, 
-  HiChat, HiTrash, HiQuestionMarkCircle, HiDocument, HiArrowUp, 
-  HiTemplate, HiCalendar, HiChartBar, HiShare, HiUsers, HiChevronDown 
+  HiChevronRight, HiPlus, HiMoon, HiSun, 
+  HiChat, HiTrash, HiQuestionMarkCircle, HiDocument, 
+  HiTemplate, HiCalendar, HiChartBar, HiShare, HiChevronDown 
 } from 'react-icons/hi';
 import { useColorMode, Box, Collapse } from '@chakra-ui/react';
 import { auth, getDoc } from '../../../../../firebaseConfig';
 import { db, collection, addDoc, getDocs, updateDoc, doc } from '../../../../../firebaseConfig';
+import { deleteDoc } from 'firebase/firestore';
 
 const Sidebar: React.FC<{ 
   setSelectedFile: (file: string) => void;
@@ -26,6 +27,7 @@ const Sidebar: React.FC<{
     workspaceId: string | null, 
     selectedFile: string | null 
   }>({ x: 0, y: 0, workspaceId: null, selectedFile: null });
+
 
   const { colorMode, toggleColorMode } = useColorMode();
   const [workspaces, setWorkspaces] = useState<any[]>([]);
@@ -60,22 +62,24 @@ const Sidebar: React.FC<{
     }
   };
 
-  const handleDelete = async () => {
-    try {
-      if (contextMenu.workspaceId && contextMenu.selectedFile) {
-        // Delete only the selected file
+
+  const handleDeleteFile = async () => {
+    if (contextMenu.workspaceId && contextMenu.selectedFile) {
+      try {
         const workspaceRef = doc(db, 'users', auth.currentUser?.uid, 'workspaces', contextMenu.workspaceId);
         const workspaceDoc = await getDoc(workspaceRef);
   
         if (workspaceDoc.exists()) {
           const workspaceData = workspaceDoc.data();
           const files = workspaceData.files || [];
+  
+         
           const updatedFiles = files.filter((file: any) => file.name !== contextMenu.selectedFile);
   
-          // Update the workspace to remove the deleted file
+          
           await updateDoc(workspaceRef, { files: updatedFiles });
   
-          // Add the deleted file to the 'trash' collection
+          
           const fileToDelete = files.find((file: any) => file.name === contextMenu.selectedFile);
           if (fileToDelete) {
             await addDoc(collection(db, 'users', auth.currentUser?.uid, 'trash'), {
@@ -87,47 +91,51 @@ const Sidebar: React.FC<{
   
           console.log('File deleted successfully');
         }
-      } else if (contextMenu.workspaceId) {
-        // Delete the entire folder
+      } catch (error) {
+        console.error('Error deleting file:', error);
+      }
+      setContextMenu({ x: 0, y: 0, workspaceId: null, selectedFile: null });
+    }
+  };
+
+  const handleDeleteFolder = async () => {
+    if (contextMenu.workspaceId) {
+      try {
         const workspaceRef = doc(db, 'users', auth.currentUser?.uid, 'workspaces', contextMenu.workspaceId);
         const workspaceDoc = await getDoc(workspaceRef);
   
         if (workspaceDoc.exists()) {
           const workspaceData = workspaceDoc.data();
   
-          // Add the folder to the 'trash' collection
+          
           await addDoc(collection(db, 'users', auth.currentUser?.uid, 'trash'), {
             type: 'folder',
             workspaceId: contextMenu.workspaceId,
             ...workspaceData,
           });
   
-          // Mark the folder as deleted
+          e
           await updateDoc(workspaceRef, { deleted: true });
   
-          // Remove the folder from the local state
+
           setWorkspaces((prevWorkspaces) =>
             prevWorkspaces.filter((workspace) => workspace.id !== contextMenu.workspaceId)
           );
   
           console.log('Folder deleted successfully');
         }
+      } catch (error) {
+        console.error('Error deleting folder:', error);
       }
-  
-      // Refresh workspaces list
-      fetchWorkspaces();
-    } catch (error) {
-      console.error('Error deleting item:', error);
-    }
-  
-    setContextMenu({ x: 0, y: 0, workspaceId: null, selectedFile: null }); // Close the context menu
-  };
-  
+      setContextMenu({ x: 0, y: 0, workspaceId: null, selectedFile: null });
 
-  const handleFileClick = (workspaceId: string, file: string) => {
-    setWorkspaceId(workspaceId);
-    setSelectedFile(file);
+    }
   };
+
+  
+const [fileName, setFileName] = useState<string>('');
+
+  
 
   const handleAddNewFile = async (workspaceId: string) => {
     const fileName = "Untitled";
@@ -151,15 +159,7 @@ const Sidebar: React.FC<{
     setContextMenu({ x: 0, y: 0, workspaceId: null, selectedFile: null }); // Close the context menu
   };
 
-  const handleUpdateFileName = async (workspaceId: string, fileId: string, newFileName: string) => {
-    try {
-      const fileRef = doc(db, 'users', user.uid, 'workspaces', workspaceId, 'files', fileId);
-      await updateDoc(fileRef, { name: newFileName });
-      fetchWorkspaces(); // Refresh the workspaces to reflect the updated file name
-    } catch (error) {
-      console.error('Error updating file name:', error);
-    }
-  };
+  
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(setUser);
@@ -322,7 +322,7 @@ const Sidebar: React.FC<{
         {isWorkspaceDropdownOpen && (
           <Box pl={8} mt={2}>
             {workspaces.map(workspace => (
-              <div key={workspace.id} className="ml-2" onContextMenu={(e) => handleRightClick(e, workspace.id)}>
+              <div key={workspace.id} className="ml-2" onContextMenu={(e) => handleRightClick(e, workspace.id, fileName)}>
                 <button
                   className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
                   onClick={() => toggleWorkspaceFolders(workspace.id)}
@@ -407,25 +407,36 @@ const Sidebar: React.FC<{
       </div>
   
       {contextMenu.workspaceId && (
-        <div
-          className="absolute z-50 bg-white border border-gray-300 shadow-lg"
-          style={{ top: contextMenu.y, left: contextMenu.x }}
-          onClick={() => setContextMenu({ x: 0, y: 0, workspaceId: null, selectedFile: null })}
-        >
-          <button
-            className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-200"
-            onClick={() => handleAddNewFile(contextMenu.workspaceId!)}
-          >
-            Add New File
-          </button>
-          <button
-            className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-200"
-            onClick={handleDelete}
-          >
-            Delete 
-          </button>
-        </div>
-      )}
+  <div
+    className="absolute z-50 bg-white border border-gray-300 shadow-lg"
+    style={{ top: contextMenu.y, left: contextMenu.x }}
+    onClick={() => setContextMenu({ x: 0, y: 0, workspaceId: null, selectedFile: null })}
+  >
+    <button
+      className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-200"
+      onClick={() => handleAddNewFile(contextMenu.workspaceId!)}
+    >
+      Add New File
+    </button>
+    {contextMenu.selectedFile ? (
+      <button
+        className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-200"
+        onClick={handleDeleteFile}
+      >
+        Delete File
+      </button>
+    ) : (
+      <button
+        className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-200"
+        onClick={handleDeleteFolder}
+      >
+        Delete Folder
+      </button>
+    )}
+  </div>
+)}
+
+
 
 <div
       ref={resizerRef}
