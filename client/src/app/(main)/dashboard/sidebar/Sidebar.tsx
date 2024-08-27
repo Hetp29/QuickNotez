@@ -5,9 +5,9 @@ import {
   HiTemplate, HiCalendar, HiChartBar, HiShare, HiUsers, HiChevronDown 
 } from 'react-icons/hi';
 import { useColorMode, Box, Collapse } from '@chakra-ui/react';
-import { auth } from '../../../../../firebaseConfig';
-import { collection, addDoc, getDocs } from 'firebase/firestore';
-import { db } from '../../../../../firebaseConfig';
+import { auth, getDoc } from '../../../../../firebaseConfig';
+import { db, collection, addDoc, getDocs, updateDoc, doc } from '../../../../../firebaseConfig';
+
 
 const Sidebar: React.FC<{ 
     setSelectedFile: (file: string) => void;
@@ -21,38 +21,143 @@ const Sidebar: React.FC<{
     const [user, setUser] = useState<firebase.User | null>(null);
     const sidebarRef = useRef<HTMLDivElement>(null);
     const resizerRef = useRef<HTMLDivElement>(null);
+    const [contextMenu, setContextMenu] = useState<{ x: number, y: number, workspaceId: string | null }>({ x: 0, y: 0, workspaceId: null });
 
   const { colorMode, toggleColorMode } = useColorMode();
   const [workspaces, setWorkspaces] = useState<any[]>([]);
   const [workspaceFoldersOpen, setWorkspaceFoldersOpen] = useState<{ [key: string]: boolean }>({});
 
+  const handleRightClick = (event: React.MouseEvent, workspaceId: string) => {
+    event.preventDefault();
+    setContextMenu({
+      x: event.clientX,
+      y: event.clientY,
+      workspaceId,
+    });
+  };
+  
+
   const fetchWorkspaces = async () => {
     if (user) {
       try {
         const workspaceCollection = await getDocs(collection(db, 'users', user.uid, 'workspaces'));
-        const fetchedWorkspaces = workspaceCollection.docs.map(doc => ({
-          id: doc.id,
-          name: doc.data().name,
-          files: doc.data().files || [],
-        }));
+        const fetchedWorkspaces = workspaceCollection.docs
+          .map(doc => ({
+            id: doc.id,
+            name: doc.data().name,
+            files: doc.data().files || [],
+            deleted: doc.data().deleted || false,
+          }))
+          .filter(workspace => !workspace.deleted); // Filter out deleted workspaces
         setWorkspaces(fetchedWorkspaces);
       } catch (error) {
         console.error('Error fetching workspaces:', error);
       }
     }
   };
+  
 
-  const handleWorkspaceClick = (workspaceId: string) => {
-    setWorkspaceId(workspaceId); 
-    //setSelectedFile(null);
+  const handleDelete = async (workspaceId: string) => {
+    try {
+      const workspaceRef = doc(db, 'users', auth.currentUser?.uid, 'workspaces', workspaceId);
+      const workspaceDoc = await getDoc(workspaceRef);
+  
+      if (workspaceDoc.exists()) {
+        const workspaceData = workspaceDoc.data();
+  
+        // Add the folder to the 'trash' collection
+        await addDoc(collection(db, 'users', auth.currentUser?.uid, 'trash'), {
+          type: 'folder',
+          workspaceId: workspaceId,
+          ...workspaceData,
+        });
+  
+        // Mark the folder as deleted
+        await updateDoc(workspaceRef, {
+          deleted: true,
+        });
+  
+        // Remove the folder from the local state
+        setWorkspaces((prevWorkspaces) =>
+          prevWorkspaces.filter((workspace) => workspace.id !== workspaceId)
+        );
+      }
+    } catch (error) {
+      console.error('Error deleting folder:', error);
+    }
   };
+  
+  
+  // Function to handle deleting a file and moving it to the trash
+  const handleDeleteFile = async (workspaceId: string, fileName: string) => {
+    try {
+      const workspaceRef = doc(db, 'users', auth.currentUser?.uid, 'workspaces', workspaceId);
+      const workspaceDoc = await getDoc(workspaceRef);
+  
+      if (workspaceDoc.exists()) {
+        const files = workspaceDoc.data().files || [];
+        const fileToDelete = files.find((file: any) => file.name === fileName);
+  
+        // Add the file to the 'trash' collection
+        await addDoc(collection(db, 'users', auth.currentUser?.uid, 'trash'), {
+          type: 'file',
+          workspaceId: workspaceId,
+          ...fileToDelete,
+        });
+  
+        // Update the workspace to remove the deleted file
+        const updatedFiles = files.filter((file: any) => file.name !== fileName);
+        await updateDoc(workspaceRef, {
+          files: updatedFiles,
+        });
+  
+        fetchWorkspaces(); // Refresh the workspaces list
+      }
+    } catch (error) {
+      console.error('Error deleting file:', error);
+    }
+  };
+  
 
   const handleFileClick = (workspaceId: string, file: string) => {
     setWorkspaceId(workspaceId);
     setSelectedFile(file); 
   };
 
- 
+  const handleAddNewFile = async (workspaceId: string) => {
+  const fileName = "Untitled";
+  try {
+    const workspaceRef = doc(db, 'users', auth.currentUser?.uid, 'workspaces', workspaceId);
+    const workspaceDoc = await getDoc(workspaceRef);
+
+    if (workspaceDoc.exists()) {
+      console.log('Workspace found:', workspaceDoc.data());
+      const files = workspaceDoc.data().files || [];
+      files.push({ name: fileName, content: '' });
+
+      await updateDoc(workspaceRef, { files });
+      console.log('File added successfully');
+      fetchWorkspaces(); // Refresh the workspace list to include the new file
+      setSelectedFile(fileName); // Set the new file as the selected file
+    }
+  } catch (error) {
+    console.error('Error adding file:', error);
+  }
+  setContextMenu({ x: 0, y: 0, workspaceId: null }); // Close the context menu
+};
+
+  
+
+  const handleUpdateFileName = async (workspaceId: string, fileId: string, newFileName: string) => {
+    try {
+      const fileRef = doc(db, 'users', user.uid, 'workspaces', workspaceId, 'files', fileId);
+      await updateDoc(fileRef, { name: newFileName });
+      fetchWorkspaces(); // Refresh the workspaces to reflect the updated file name
+    } catch (error) {
+      console.error('Error updating file name:', error);
+    }
+  };
+  
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(setUser);
@@ -136,14 +241,13 @@ const Sidebar: React.FC<{
 
   return (
     <Box
-        ref={sidebarRef}
-        className="relative transition-all duration-300 h-screen flex flex-col"
-        style={{
-            width,
-            //borderRight: colorMode === '' ? ' #e2e8f0' : ' ',
-        }}
-        bg={colorMode === 'light' ? 'gray.100' : 'dark.800'}
-        color={colorMode === 'light' ? 'black' : 'white'}
+      ref={sidebarRef}
+      className="relative transition-all duration-300 h-screen flex flex-col"
+      style={{
+        width,
+      }}
+      bg={colorMode === 'light' ? 'gray.100' : 'dark.800'}
+      color={colorMode === 'light' ? 'black' : 'white'}
     >
       <div className={`flex items-center justify-between p-4 border-b ${colorMode === 'light' ? 'border-gray-400' : 'border-gray-600'} w-full`}>
         <div className="flex items-center gap-2 flex-grow">
@@ -207,26 +311,25 @@ const Sidebar: React.FC<{
           <HiPlus className={`text-3xl ${colorMode === 'light' ? 'text-gray-800' : 'text-white'}`} />
         </button>
       </div>
-
-    
+  
       <div className="flex-1 flex flex-col space-y-4 p-4 text-base overflow-y-auto">
         <button
           className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
-          onClick={toggleWorkspaceDropdown} 
+          onClick={toggleWorkspaceDropdown}
         >
           {isWorkspaceDropdownOpen ? (
-              <HiChevronDown className={`text-2xl ${buttonTextColor}`} />
+            <HiChevronDown className={`text-2xl ${buttonTextColor}`} />
           ) : (
-              <HiChevronRight className={`text-2xl ${buttonTextColor}`} />
+            <HiChevronRight className={`text-2xl ${buttonTextColor}`} />
           )}
           <span className={buttonTextColor}>Add Workspace</span>
         </button>
-
+  
         {isWorkspaceDropdownOpen && (
           <Box pl={8} mt={2}>
             {workspaces.map(workspace => (
-              <div key={workspace.id} className="ml-2">
-                                <button
+              <div key={workspace.id} className="ml-2" onContextMenu={(e) => handleRightClick(e, workspace.id)}>
+                <button
                   className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
                   onClick={() => toggleWorkspaceFolders(workspace.id)}
                 >
@@ -239,23 +342,33 @@ const Sidebar: React.FC<{
                 </button>
                 <Collapse in={workspaceFoldersOpen[workspace.id]} animateOpacity>
                   <Box pl={8} mt={2} style={{ transition: 'all 0.3s ease-in-out' }}>
-                    {workspace.files.map((file, index) => (
-                      <button
+                  {workspace.files.map((file, index) => (
+                    <button
                         key={index}
                         className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
                         onClick={() => handleFileClick(workspace.id, file.name)}
-                      >
-                        <HiDocument className={`text-2xl ${buttonTextColor}`} />
-                        <span className={buttonTextColor}>{file.name}</span>
-                      </button>
-                    ))}
+                        onContextMenu={(e) => {
+                        e.preventDefault();
+                        setContextMenu({
+                            x: e.clientX,
+                            y: e.clientY,
+                            workspaceId: workspace.id,
+                            selectedFile: file.name // Pass the selected file name here
+                        });
+                        }}
+                    >
+    <HiDocument className={`text-2xl ${buttonTextColor}`} />
+    <span className={buttonTextColor}>{file.name}</span>
+  </button>
+))}
+
                   </Box>
                 </Collapse>
               </div>
             ))}
           </Box>
         )}
-
+  
         <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg} mt-4`}>
           <HiChat className={`text-2xl ${buttonTextColor}`} />
           <span className={buttonTextColor}>QuickNotez AI</span>
@@ -277,7 +390,7 @@ const Sidebar: React.FC<{
           <span className={buttonTextColor}>Productivity Dashboard</span>
         </button>
       </div>
-
+  
       <div className="p-4 border-t border-gray-400 text-base">
         <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg} mb-2`}>
           <HiTrash className={`text-2xl ${buttonTextColor}`} />
@@ -304,7 +417,30 @@ const Sidebar: React.FC<{
           )}
         </button>
       </div>
+  
+      {contextMenu.workspaceId && (
+  <div
+    className="absolute z-50 bg-white border border-gray-300 shadow-lg"
+    style={{ top: contextMenu.y, left: contextMenu.x }}
+    onClick={() => setContextMenu({ x: 0, y: 0, workspaceId: null })}
+  >
+    <button
+      className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-200"
+      onClick={() => handleAddNewFile(contextMenu.workspaceId)}
+    >
+      Add New File
+    </button>
+    <button
+      className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-200"
+      onClick={() => handleDelete(contextMenu.workspaceId!)}
+    >
+      Delete Folder
+    </button>
+  </div>
+)}
 
+
+  
       <div
         ref={resizerRef}
         className={`absolute top-0 right-0 w-1 h-full cursor-col-resize ${colorMode === 'light' ? 'bg-gray-300' : 'bg-gray-700'}`}
@@ -312,6 +448,7 @@ const Sidebar: React.FC<{
       />
     </Box>
   );
+  
 };
 
 export default Sidebar;
