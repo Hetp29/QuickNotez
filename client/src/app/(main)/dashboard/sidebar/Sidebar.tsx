@@ -2,12 +2,24 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   HiChevronRight, HiPlus, HiMoon, HiSun, 
   HiChat, HiTrash, HiQuestionMarkCircle, HiDocument, 
-  HiTemplate, HiCalendar, HiChartBar, HiShare, HiChevronDown 
+  HiTemplate, HiCalendar, HiChartBar, HiShare, HiChevronDown, HiDotsVertical 
 } from 'react-icons/hi';
-import { useColorMode, Box, Collapse } from '@chakra-ui/react';
+import { useColorMode, Box, Collapse, Menu, MenuButton, MenuList, MenuItem, IconButton } from '@chakra-ui/react';
 import { auth, getDoc } from '../../../../../firebaseConfig';
 import { db, collection, addDoc, getDocs, updateDoc, doc } from '../../../../../firebaseConfig';
 import { deleteDoc } from 'firebase/firestore';
+
+interface File {
+  name: string;
+  content: string;
+}
+
+interface Workspace {
+  id: string;
+  name: string;
+  files: File[];
+  deleted?: boolean;
+}
 
 const Sidebar: React.FC<{ 
   setSelectedFile: (file: string) => void;
@@ -33,105 +45,53 @@ const Sidebar: React.FC<{
   const [workspaces, setWorkspaces] = useState<any[]>([]);
   const [workspaceFoldersOpen, setWorkspaceFoldersOpen] = useState<{ [key: string]: boolean }>({});
 
-  const handleRightClick = (event: React.MouseEvent, workspaceId: string, fileName: string | null = null) => {
+  const handleRightClick = (event: React.MouseEvent, workspaceId: string, fileName?: string) => {
     event.preventDefault();
+    event.stopPropagation();
+    console.log("Right clicked on:", fileName ? `File: ${fileName}` : `Workspace: ${workspaceId}`);
     setContextMenu({
       x: event.clientX,
       y: event.clientY,
       workspaceId,
-      selectedFile: fileName,
+      selectedFile: fileName || null
     });
   };
+  const handleFileClick = (workspaceId: string, fileName: string) => {
+    console.log("File clicked:", workspaceId, fileName);
+    setSelectedFile(fileName); 
+  };
+  
 
   const fetchWorkspaces = async () => {
-    if (user) {
-      try {
-        const workspaceCollection = await getDocs(collection(db, 'users', user.uid, 'workspaces'));
-        const fetchedWorkspaces = workspaceCollection.docs
-          .map(doc => ({
-            id: doc.id,
-            name: doc.data().name,
-            files: doc.data().files || [],
-            deleted: doc.data().deleted || false,
-          }))
-          .filter(workspace => !workspace.deleted); // Filter out deleted workspaces
-        setWorkspaces(fetchedWorkspaces);
-      } catch (error) {
-        console.error('Error fetching workspaces:', error);
-      }
+    const workspaceCollection = await getDocs(collection(db, 'users', auth.currentUser?.uid, 'workspaces'));
+    const fetchedWorkspaces = workspaceCollection.docs.map(doc => ({
+      id: doc.id,
+      name: doc.data().name,
+      files: doc.data().files || [],
+      deleted: doc.data().deleted || false,
+    })).filter(workspace => !workspace.deleted);
+    setWorkspaces(fetchedWorkspaces);
+  };
+  
+
+  const handleDeleteFile = async (workspaceId: string, fileName: string) => {
+    const workspaceRef = doc(db, 'users', auth.currentUser?.uid, 'workspaces', workspaceId);
+    const workspaceDoc = await getDoc(workspaceRef);
+    if (workspaceDoc.exists()) {
+      const updatedFiles = workspaceDoc.data().files.filter(file => file.name !== fileName);
+      await updateDoc(workspaceRef, { files: updatedFiles });
+      fetchWorkspaces();
+      console.log('File deleted successfully');
     }
   };
-
-
-  const handleDeleteFile = async () => {
-    if (contextMenu.workspaceId && contextMenu.selectedFile) {
-      try {
-        const workspaceRef = doc(db, 'users', auth.currentUser?.uid, 'workspaces', contextMenu.workspaceId);
-        const workspaceDoc = await getDoc(workspaceRef);
   
-        if (workspaceDoc.exists()) {
-          const workspaceData = workspaceDoc.data();
-          const files = workspaceData.files || [];
-  
-         
-          const updatedFiles = files.filter((file: any) => file.name !== contextMenu.selectedFile);
-  
-          
-          await updateDoc(workspaceRef, { files: updatedFiles });
-  
-          
-          const fileToDelete = files.find((file: any) => file.name === contextMenu.selectedFile);
-          if (fileToDelete) {
-            await addDoc(collection(db, 'users', auth.currentUser?.uid, 'trash'), {
-              type: 'file',
-              workspaceId: contextMenu.workspaceId,
-              ...fileToDelete,
-            });
-          }
-  
-          console.log('File deleted successfully');
-        }
-      } catch (error) {
-        console.error('Error deleting file:', error);
-      }
-      setContextMenu({ x: 0, y: 0, workspaceId: null, selectedFile: null });
-    }
+  const handleDeleteFolder = async (workspaceId: string) => {
+    const workspaceRef = doc(db, 'users', auth.currentUser?.uid, 'workspaces', workspaceId);
+    await deleteDoc(workspaceRef);
+    fetchWorkspaces();
+    console.log('Folder deleted successfully');
   };
-
-  const handleDeleteFolder = async () => {
-    if (contextMenu.workspaceId) {
-      try {
-        const workspaceRef = doc(db, 'users', auth.currentUser?.uid, 'workspaces', contextMenu.workspaceId);
-        const workspaceDoc = await getDoc(workspaceRef);
   
-        if (workspaceDoc.exists()) {
-          const workspaceData = workspaceDoc.data();
-  
-          
-          await addDoc(collection(db, 'users', auth.currentUser?.uid, 'trash'), {
-            type: 'folder',
-            workspaceId: contextMenu.workspaceId,
-            ...workspaceData,
-          });
-  
-          e
-          await updateDoc(workspaceRef, { deleted: true });
-  
-
-          setWorkspaces((prevWorkspaces) =>
-            prevWorkspaces.filter((workspace) => workspace.id !== contextMenu.workspaceId)
-          );
-  
-          console.log('Folder deleted successfully');
-        }
-      } catch (error) {
-        console.error('Error deleting folder:', error);
-      }
-      setContextMenu({ x: 0, y: 0, workspaceId: null, selectedFile: null });
-
-    }
-  };
-
   
 const [fileName, setFileName] = useState<string>('');
 
@@ -320,42 +280,43 @@ const [fileName, setFileName] = useState<string>('');
         </button>
   
         {isWorkspaceDropdownOpen && (
-          <Box pl={8} mt={2}>
-            {workspaces.map(workspace => (
-              <div key={workspace.id} className="ml-2" onContextMenu={(e) => handleRightClick(e, workspace.id, fileName)}>
-                <button
-                  className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
-                  onClick={() => toggleWorkspaceFolders(workspace.id)}
-                >
-                  {workspaceFoldersOpen[workspace.id] ? (
-                    <HiChevronDown className={`text-2xl ${buttonTextColor}`} />
-                  ) : (
-                    <HiChevronRight className={`text-2xl ${buttonTextColor}`} />
-                  )}
-                  <span className={buttonTextColor}>{workspace.name}</span>
-                </button>
-                <Collapse in={workspaceFoldersOpen[workspace.id]} animateOpacity>
-                  <Box pl={8} mt={2} style={{ transition: 'all 0.3s ease-in-out' }}>
-                    {workspace.files.map((file, index) => (
-                      <button
-                        key={index}
-                        className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
-                        onClick={() => handleFileClick(workspace.id, file.name)}
-                        onContextMenu={(e) => {
-                          e.preventDefault();
-                          handleRightClick(e, workspace.id, file.name);
-                        }}
-                      >
-                        <HiDocument className={`text-2xl ${buttonTextColor}`} />
-                        <span className={buttonTextColor}>{file.name}</span>
-                      </button>
-                    ))}
-                  </Box>
-                </Collapse>
-              </div>
+  <Box pl={8} mt={2}>
+    {workspaces.map((workspace: Workspace, index: number) => (
+      <div key={workspace.id} className="ml-2" onContextMenu={(e) => handleRightClick(e, workspace.id)}>
+        <button
+          className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
+          onClick={() => toggleWorkspaceFolders(workspace.id)}
+        >
+          {workspaceFoldersOpen[workspace.id] ? (
+            <HiChevronDown className={`text-2xl ${buttonTextColor}`} />
+          ) : (
+            <HiChevronRight className={`text-2xl ${buttonTextColor}`} />
+          )}
+          <span className={buttonTextColor}>{workspace.name}</span>
+        </button>
+        <Collapse in={workspaceFoldersOpen[workspace.id]} animateOpacity>
+          <Box pl={8} mt={2} style={{ transition: 'all 0.3s ease-in-out' }}>
+            {workspace.files.map((file: File, fileIndex: number) => (
+              <button
+                key={fileIndex}
+                className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
+                onClick={() => handleFileClick(workspace.id, file.name)}
+                onContextMenu={(e) => {
+                  e.preventDefault();
+                  handleRightClick(e, workspace.id, file.name);
+                }}
+              >
+                <HiDocument className={`text-2xl ${buttonTextColor}`} />
+                <span className={buttonTextColor}>{file.name}</span>
+              </button>
             ))}
           </Box>
-        )}
+        </Collapse>
+      </div>
+    ))}
+  </Box>
+)}
+
   
         <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg} mt-4`}>
           <HiChat className={`text-2xl ${buttonTextColor}`} />
@@ -405,38 +366,41 @@ const [fileName, setFileName] = useState<string>('');
           )}
         </button>
       </div>
-  
+
       {contextMenu.workspaceId && (
-  <div
-    className="absolute z-50 bg-white border border-gray-300 shadow-lg"
-    style={{ top: contextMenu.y, left: contextMenu.x }}
-    onClick={() => setContextMenu({ x: 0, y: 0, workspaceId: null, selectedFile: null })}
-  >
-    <button
-      className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-200"
-      onClick={() => handleAddNewFile(contextMenu.workspaceId!)}
+    <div
+        className="absolute z-50 bg-white border border-gray-300 shadow-lg"
+        style={{ top: contextMenu.y, left: contextMenu.x }}
+        onClick={() => setContextMenu({ x: 0, y: 0, workspaceId: null, selectedFile: null })}
     >
-      Add New File
-    </button>
-    {contextMenu.selectedFile ? (
-      <button
-        className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-200"
-        onClick={handleDeleteFile}
-      >
-        Delete File
-      </button>
-    ) : (
-      <button
-        className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-200"
-        onClick={handleDeleteFolder}
-      >
-        Delete Folder
-      </button>
-    )}
-  </div>
+        {contextMenu.selectedFile ? (
+            <button
+                className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-200"
+                onClick={(e) => {
+                  e.stopPropagation(); // Stop the event from closing the menu
+                  handleDeleteFile(contextMenu.workspaceId, contextMenu.selectedFile);
+              }}
+            >
+                Delete File
+            </button>
+        ) : (
+            <>
+                <button
+                    className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-200"
+                    onClick={() => handleDeleteFolder(contextMenu.workspaceId)}
+                >
+                    Delete Folder
+                </button>
+                <button
+                    className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-200"
+                    onClick={() => handleAddNewFile(contextMenu.workspaceId)}
+                >
+                    Add New File
+                </button>
+            </>
+        )}
+    </div>
 )}
-
-
 
 <div
       ref={resizerRef}
