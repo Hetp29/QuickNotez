@@ -21,14 +21,16 @@ const MainContent = ({ selectedFile, workspaceId, updateFileName }) => {
     >
       {selectedFile && (
         <NoteEditor
+          key={selectedFile} 
           selectedFile={selectedFile}
           workspaceId={workspaceId}
-          updateFileName={updateFileName} // Pass down the updateFileName function
+          updateFileName={(oldName, newName) => updateFileName(oldName, newName, workspaceId)}
         />
       )}
     </Box>
   );
 };
+
 
 const Page = () => {
   const [selectedFile, setSelectedFile] = useState<string | null>(null);

@@ -6,7 +6,7 @@ import {
 } from 'react-icons/hi';
 import { useColorMode, Box, Collapse, Menu, MenuButton, MenuList, MenuItem, IconButton } from '@chakra-ui/react';
 import { auth, getDoc } from '../../../../../firebaseConfig';
-import { db, collection, addDoc, getDocs, updateDoc, doc } from '../../../../../firebaseConfig';
+import { db, collection, addDoc, setDoc, getDocs, updateDoc, doc } from '../../../../../firebaseConfig';
 import { deleteDoc } from 'firebase/firestore';
 
 interface File {
@@ -56,11 +56,12 @@ const Sidebar: React.FC<{
       selectedFile: fileName || null
     });
   };
+  
   const handleFileClick = (workspaceId: string, fileName: string) => {
     console.log("File clicked:", workspaceId, fileName);
-    setSelectedFile(fileName); 
-  };
-  
+    setSelectedFile(fileName);
+    setWorkspaceId(workspaceId); 
+};
 
   const fetchWorkspaces = async () => {
     const workspaceCollection = await getDocs(collection(db, 'users', auth.currentUser?.uid, 'workspaces'));
@@ -97,27 +98,43 @@ const [fileName, setFileName] = useState<string>('');
 
   
 
-  const handleAddNewFile = async (workspaceId: string) => {
-    const fileName = "Untitled";
-    try {
+const handleAddNewFile = async (workspaceId: string) => {
+  const fileName = "Untitled"; // Initial name for the new file
+  try {
       const workspaceRef = doc(db, 'users', auth.currentUser?.uid, 'workspaces', workspaceId);
       const workspaceDoc = await getDoc(workspaceRef);
 
       if (workspaceDoc.exists()) {
-        console.log('Workspace found:', workspaceDoc.data());
-        const files = workspaceDoc.data().files || [];
-        files.push({ name: fileName, content: '' });
+          console.log('Workspace found:', workspaceDoc.data());
+          const files = workspaceDoc.data().files || [];
+          
+          // Check if a file with the same name already exists
+          const newFileName = files.find(file => file.name === fileName) 
+              ? `${fileName}_${files.length + 1}` // Ensure uniqueness
+              : fileName;
 
-        await updateDoc(workspaceRef, { files });
-        console.log('File added successfully');
-        fetchWorkspaces(); // Refresh the workspace list to include the new file
-        setSelectedFile(fileName); // Set the new file as the selected file
+          const newFile = { name: newFileName, content: '' };
+          files.push(newFile);
+
+          await updateDoc(workspaceRef, { files });
+          console.log('File added successfully');
+
+          // Create a corresponding document in the notes collection
+          const noteDocRef = doc(db, 'notes', `${workspaceId}_${newFileName}`);
+          await setDoc(noteDocRef, { title: newFileName, content: '' });
+
+          // Update the selected file and workspace to trigger NoteEditor loading
+          setSelectedFile(newFileName);
+          setWorkspaceId(workspaceId);
+
+          fetchWorkspaces(); // Refresh the workspace list to include the new file
       }
-    } catch (error) {
+  } catch (error) {
       console.error('Error adding file:', error);
-    }
-    setContextMenu({ x: 0, y: 0, workspaceId: null, selectedFile: null }); // Close the context menu
-  };
+  }
+  setContextMenu({ x: 0, y: 0, workspaceId: null, selectedFile: null }); // Close the context menu
+};
+
 
   
 
@@ -139,7 +156,7 @@ const [fileName, setFileName] = useState<string>('');
       try {
         await addDoc(collection(db, 'users', user.uid, 'workspaces'), {
           name: workspaceName,
-          files: [{ name: "Type here...", content: 'Your notes go here...' }],
+          files: [{ name: "Untitled", content: 'Your notes go here...' }],
         });
         fetchWorkspaces();
       } catch (error) {
@@ -377,7 +394,7 @@ const [fileName, setFileName] = useState<string>('');
             <button
                 className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-200"
                 onClick={(e) => {
-                  e.stopPropagation(); // Stop the event from closing the menu
+                  e.stopPropagation(); 
                   handleDeleteFile(contextMenu.workspaceId, contextMenu.selectedFile);
               }}
             >
