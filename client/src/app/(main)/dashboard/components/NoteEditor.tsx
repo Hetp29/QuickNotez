@@ -16,7 +16,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId }) =>
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
 
-    // Function to save content and title to Firebase
+    
     const saveNote = useCallback(async () => {
         if (selectedFile && workspaceId) {
             const noteDoc = doc(db, 'notes', `${workspaceId}_${selectedFile}`);
@@ -29,10 +29,10 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId }) =>
         }
     }, [selectedFile, workspaceId, title, content]);
 
-    // Debounce the saveNote function to prevent excessive saves
-    const debouncedSaveNote = useCallback(debounce(saveNote, 1000), [saveNote]);
+    
+    const debouncedSaveNote = useCallback(debounce(saveNote, 300), [saveNote]);
 
-    // Load content when a new file is selected
+
     useEffect(() => {
         const loadNote = async () => {
             if (selectedFile && workspaceId) {
@@ -45,8 +45,8 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId }) =>
                         console.log(`Loaded note: {title: ${docSnap.data()?.title}, content: ${docSnap.data()?.content}}`);
                     } else {
                         console.log('No such document!');
-                        setTitle(''); // Clear the title if no document is found
-                        setContent(''); // Clear the content if no document is found
+                        setTitle(''); 
+                        setContent(''); 
                     }
                 } catch (error) {
                     console.error('Error loading document:', error);
@@ -56,17 +56,19 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId }) =>
         loadNote();
     }, [selectedFile, workspaceId]);
 
-    // Handle content change
+    
     const handleContentChange = (value: string) => {
         setContent(value);
+        saveNote();
         debouncedSaveNote();
         console.log(`Content changed: ${value}`);
     };
 
-    // Handle title change
+    
     const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newTitle = e.target.value;
         setTitle(newTitle);
+        saveNote();
         debouncedSaveNote();
         console.log(`Title changed: ${newTitle}`);
     };
