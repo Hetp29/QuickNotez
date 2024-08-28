@@ -10,7 +10,7 @@ import { auth, getDoc } from '../../../../../firebaseConfig';
 import { db, collection, addDoc, setDoc, getDocs, updateDoc, doc } from '../../../../../firebaseConfig';
 import { deleteDoc } from 'firebase/firestore';
 import { User } from 'firebase/auth';
-import NoteEditor from '../components/NoteEditor';
+//import NoteEditor from '../components/NoteEditor';
 
 interface File {
   name: string;

@@ -46,7 +46,7 @@ const MainContent: React.FC<MainContentProps> = ({
           selectedFile={selectedFile}
           workspaceId={workspaceId}
           updateFileName={updateFileName}
-          onTitleUpdate={onTitleUpdate}
+          onTitleChange={onTitleUpdate}
         />
       )}
     </Box>
@@ -76,7 +76,7 @@ const Page = () => {
   };
 
   const handleTitleUpdate = (newTitle: string) => {
-    if (!selectedFile || !workspaceId) {
+    if (!selectedFile || !workspaceId || !auth.currentUser?.uid) {
       console.error('Error: selectedFile or workspaceId is null or undefined');
       return;
     }
@@ -100,7 +100,7 @@ const Page = () => {
       [selectedFile]: newTitle,
     }));
 
-    const workspaceRef = doc(db, 'users', auth.currentUser?.uid, 'workspaces', workspaceId);
+    const workspaceRef = doc(db, 'users', auth.currentUser.uid, 'workspaces', workspaceId);
     updateDoc(workspaceRef, {
       files: workspaces.find(ws => ws.id === workspaceId)?.files.map((file: { name: string; }) =>
         file.name === selectedFile ? { ...file, name: newTitle } : file

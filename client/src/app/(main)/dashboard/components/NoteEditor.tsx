@@ -10,11 +10,11 @@ const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 interface NoteEditorProps {
     selectedFile: string | null;
     workspaceId: string | null;
-    updateFileName: (oldName: string, newName: string) => void;
-    onTitleChange: (newTitle: string) => void; 
+    updateFileName: (oldName: string, newName: string) => void; // Ensure this is in the props
+    onTitleChange: (newTitle: string) => void;
 }
 
-const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId, onTitleChange }) => {
+const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId, updateFileName, onTitleChange }) => {
     const { colorMode } = useColorMode();
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
@@ -66,7 +66,6 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId, onTi
         };
         loadNote();
     }, [selectedFile, workspaceId]);
-    
 
     const handleContentChange = (value: string) => {
         setContent(value);
@@ -77,13 +76,18 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId, onTi
 
     const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newTitle = e.target.value;
+        const oldTitle = titleRef.current;
         setTitle(newTitle);
         titleRef.current = newTitle;
         debouncedSaveNote();
         console.log(`Title changed: ${newTitle}`);
-        
-        if(onTitleChange) {
-            onTitleChange(newTitle); 
+
+        if (selectedFile && updateFileName) {
+            updateFileName(oldTitle, newTitle);  
+        }
+
+        if (onTitleChange) {
+            onTitleChange(newTitle);
         }
     };
 
