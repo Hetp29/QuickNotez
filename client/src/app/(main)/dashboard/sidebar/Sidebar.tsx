@@ -290,7 +290,7 @@ useEffect(() => {
       bg={colorMode === 'light' ? 'gray.100' : 'dark.800'}
       color={colorMode === 'light' ? 'black' : 'white'}
     >
-      <div className={`flex items-center justify-between p-4 border-b ${colorMode === 'light' ? 'border-gray-400' : 'border-gray-600'} w-full`}>
+      <div className={`flex items-center justify-between p-4  w-full`}>
         <div className="flex items-center gap-2 flex-grow">
           <div
             className={`relative flex items-center justify-center ${colorMode === 'light' ? 'bg-gray-500' : 'bg-gray-700'} w-20 h-20 text-white rounded-full cursor-pointer`}
@@ -580,10 +580,11 @@ useEffect(() => {
         </div>
       )}
 <div
-      ref={resizerRef}
-      className={`absolute top-0 right-0 w-1 h-full cursor-col-resize ${colorMode === 'light' ? 'bg-gray-300' : 'bg-gray-700'}`}
-      onMouseDown={handleMouseDown}
-    />
+  ref={resizerRef}
+  className={`absolute top-0 right-0 w-0.5 h-full cursor-col-resize ${colorMode === 'light' ? 'bg-gray-300' : ''}`}
+  onMouseDown={handleMouseDown}
+/>
+
   </Box>
 );
 };
