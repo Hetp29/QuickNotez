@@ -9,6 +9,7 @@ import { FaClipboardCheck } from "react-icons/fa6";
 import { auth, getDoc } from '../../../../../firebaseConfig';
 import { db, collection, addDoc, setDoc, getDocs, updateDoc, doc } from '../../../../../firebaseConfig';
 import { deleteDoc } from 'firebase/firestore';
+import NoteEditor from '../components/NoteEditor';
 
 interface File {
   name: string;
@@ -22,12 +23,13 @@ interface Workspace {
   deleted?: boolean;
 }
 
-const isDarkMode = useColorMode === 'dark';
-
 const Sidebar: React.FC<{ 
   setSelectedFile: (file: string) => void;
   setWorkspaceId: (id: string) => void;
-}> = ({ setSelectedFile, setWorkspaceId }) => {
+  workspaces: any[];
+  setWorkspaces: React.Dispatch<React.SetStateAction<any[]>>;
+  updatedTitles: { [key: string]: string }
+}> = ({ setSelectedFile, setWorkspaceId, workspaces, setWorkspaces, updatedTitles }) => {
   const minWidth = 400;
   const maxWidth = 700;
   const [width, setWidth] = useState<number>(400);
@@ -45,8 +47,34 @@ const Sidebar: React.FC<{
 
 
   const { colorMode, toggleColorMode } = useColorMode();
-  const [workspaces, setWorkspaces] = useState<any[]>([]);
   const [workspaceFoldersOpen, setWorkspaceFoldersOpen] = useState<{ [key: string]: boolean }>({});
+
+  const handleTitleUpdate = (newTitle: string) => {
+    if (selectedFile && workspaceId) {
+        setWorkspaces(prevWorkspaces =>
+            prevWorkspaces.map(workspace => {
+                if (workspace.id === workspaceId) {
+                    return {
+                        ...workspace,
+                        files: workspace.files.map(file =>
+                            file.name === selectedFile ? { ...file, name: newTitle } : file
+                        ),
+                    };
+                }
+                return workspace;
+            })
+        );
+
+        
+        const workspaceRef = doc(db, 'users', auth.currentUser?.uid, 'workspaces', workspaceId);
+        updateDoc(workspaceRef, {
+            files: workspaces.find(ws => ws.id === workspaceId)?.files.map(file =>
+                file.name === selectedFile ? { ...file, name: newTitle } : file
+            ),
+        });
+    }
+};
+
 
   const handleRightClick = (event: React.MouseEvent, workspaceId: string, fileName?: string) => {
     event.preventDefault();
@@ -351,38 +379,40 @@ useEffect(() => {
         {isWorkspaceDropdownOpen && (
   <Box pl={8} mt={2}>
     {workspaces.map((workspace: Workspace, index: number) => (
-      <div key={workspace.id} className="ml-2" onContextMenu={(e) => handleRightClick(e, workspace.id)}>
-        <button
-          className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
-          onClick={() => toggleWorkspaceFolders(workspace.id)}
-        >
-          {workspaceFoldersOpen[workspace.id] ? (
-            <HiChevronDown className={`text-2xl ${buttonTextColor}`} />
-          ) : (
-            <HiChevronRight className={`text-2xl ${buttonTextColor}`} />
-          )}
-          <span className={buttonTextColor}>{workspace.name}</span>
-        </button>
-        <Collapse in={workspaceFoldersOpen[workspace.id]} animateOpacity>
-          <Box pl={8} mt={2} style={{ transition: 'all 0.3s ease-in-out' }}>
-            {workspace.files.map((file: File, fileIndex: number) => (
-              <button
-                key={fileIndex}
-                className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
-                onClick={() => handleFileClick(workspace.id, file.name)}
-                onContextMenu={(e) => {
-                  e.preventDefault();
-                  handleRightClick(e, workspace.id, file.name);
-                }}
-              >
-                <HiDocument className={`text-2xl ${buttonTextColor}`} />
-                <span className={buttonTextColor}>{file.name}</span>
-              </button>
-            ))}
-          </Box>
-        </Collapse>
-      </div>
-    ))}
+  <div key={workspace.id} className="ml-2" onContextMenu={(e) => handleRightClick(e, workspace.id)}>
+    <button
+      className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
+      onClick={() => toggleWorkspaceFolders(workspace.id)}
+    >
+      {workspaceFoldersOpen[workspace.id] ? (
+        <HiChevronDown className={`text-2xl ${buttonTextColor}`} />
+      ) : (
+        <HiChevronRight className={`text-2xl ${buttonTextColor}`} />
+      )}
+      <span className={buttonTextColor}>{workspace.name}</span>
+    </button>
+    <Collapse in={workspaceFoldersOpen[workspace.id]} animateOpacity>
+      <Box pl={8} mt={2} style={{ transition: 'all 0.3s ease-in-out' }}>
+        {workspace.files.map((file: File, fileIndex: number) => (
+          <button
+            key={fileIndex}
+            className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
+            onClick={() => handleFileClick(workspace.id, file.name)}
+            onContextMenu={(e) => {
+              e.preventDefault();
+              handleRightClick(e, workspace.id, file.name);
+            }}
+          >
+            <HiDocument className={`text-2xl ${buttonTextColor}`} />
+            <span className={buttonTextColor}>
+              {updatedTitles[file.name] || file.name}
+            </span>
+          </button>
+        ))}
+      </Box>
+    </Collapse>
+  </div>
+))}
   </Box>
 )}
 

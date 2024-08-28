@@ -10,13 +10,14 @@ const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 interface NoteEditorProps {
     selectedFile: string | null;
     workspaceId: string | null;
+    onTitleChange: (newTitle: string) => void; // Correctly typed prop
 }
 
-const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId }) => {
+const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId, onTitleChange }) => {
     const { colorMode } = useColorMode();
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
-    
+
     const titleRef = useRef(title);
     const contentRef = useRef(content);
 
@@ -75,6 +76,10 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId }) =>
         titleRef.current = newTitle;
         debouncedSaveNote();
         console.log(`Title changed: ${newTitle}`);
+
+        if(onTitleChange) {
+            onTitleChange(newTitle); 
+        }
     };
 
     const isDarkMode = colorMode === 'dark';
