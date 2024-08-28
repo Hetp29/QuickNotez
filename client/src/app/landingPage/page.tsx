@@ -261,75 +261,115 @@ const LandingPage = () => {
 
       </div>
 
+      <div>
 
-        <section id="pricing" className="bg-white py-16">
-          <div className="text-center mb-12">
-          <span className="block text-4xl sm:text-6xl font-semibold mb-4 text-black tracking-wide transition-transform duration-200 ease-out hover:scale-105"
-                style={{ 
-                fontFamily: "'Fira Code', monospace", 
-                letterSpacing: '0.15em',
-                textShadow: 'none',
-                fontWeight: '900'
-          }}
->
-                Choose your plan!
-              </span>
-            <p className="text-lg text-gray-600">Select a plan that suits your needs the best and start maximizing your productivity today.</p>
-          </div>
-          <div className="flex flex-wrap justify-center gap-8">
-            <div className=" p-6 rounded-lg shadow-lg flex flex-col flex-grow flex-basis-[300px] min-w-[300px] max-w-[350px] text-center">
-              <h3 className="text-2xl font-semibold mb-4 text-gray-900">Free</h3>
-              <p className="text-xl font-bold mb-4 text-gray-900">$0/month</p>
-              <ul className="text-left mb-4 space-y-2 text-gray-900">
-                <li className='text-black'>Unlimited blocks for teams</li>
-                <li className='text-black'>Unlimited file uploads</li>
-                <li className='text-black'>30 day page history</li>
-                <li className='text-black'>Invite 100 guests</li>
-                <li className='text-black'>Synced databases with 3rd party apps</li>
-                <li className='text-black'>Custom websites</li>
-                <li className='text-black'>Custom automations</li>
-                <li className='text-black'>Basic charts & dashboards</li>
-              </ul>
-              <a href="/signup" className="mt-auto">
-                <button className="bg-black text-white px-4 py-2 rounded font-semibold hover:bg-gray-800">Sign Up</button>
-              </a>
-            </div>
-            <div className="p-6 rounded-lg shadow-lg flex flex-col flex-grow flex-basis-[300px] min-w-[300px] max-w-[350px] text-center">
-              <h3 className="text-2xl font-semibold mb-4 text-gray-900">Plus</h3>
-              <p className="text-xl font-bold mb-4 text-gray-900">$8/month per seat</p>
-              <ul className="text-left mb-4 space-y-2 text-gray-900">
-                <li className='text-black'>Everything in Free +</li>
-                <li className='text-black'>SAML SSO</li>
-                <li className='text-black'>Private teamspaces</li>
-                <li className='text-black'>Bulk PDF export</li>
-                <li className='text-black'>Advanced page analytics</li>
-                <li className='text-black'>90 day page history</li>
-                <li className='text-black'>Invite 250 guests</li>
-              </ul>
-              <a href="/signup" className="mt-auto">
-                <button className="bg-black text-white px-4 py-2 rounded font-semibold hover:bg-gray-800">Get Started</button>
-              </a>
-            </div>
-            <div className=" p-6 rounded-lg shadow-lg flex flex-col flex-grow flex-basis-[300px] min-w-[300px] max-w-[350px] text-center">
-              <h3 className="text-2xl font-semibold mb-4 text-gray-900">Business</h3>
-              <p className="text-xl font-bold mb-4 text-gray-900">$12/month per seat</p>
-              <ul className="text-left mb-4 space-y-2 text-gray-900">
-                <li className='text-black'>Everything in Plus +</li>
-                <li className='text-black'>User provisioning (SCIM)</li>
-                <li className='text-black'>Advanced security & controls</li>
-                <li className='text-black'>Audit log</li>
-                <li className='text-black'>Customer success manager</li>
-                <li className='text-black'>Workspace analytics</li>
-                <li className='text-black'>Unlimited page history</li>
-                <li className='text-black'>Security & Compliance integrations</li>
-                <li className='text-black'>Invite 250 guests</li>
-              </ul>
-              <a href="#/signup" className="mt-auto">
-                <button className="bg-black text-white px-4 py-2 rounded font-semibold hover:bg-gray-800">Get Started</button>
-              </a>
-            </div>
-          </div>
-        </section>
+<section id="pricing" className="bg-white py-16">
+  <div className="text-center mb-12">
+    <span className="block text-4xl sm:text-6xl font-semibold mb-4 text-black tracking-wide transition-transform duration-200 ease-out hover:scale-105"
+          style={{ 
+          fontFamily: "'Fira Code', monospace", 
+          letterSpacing: '0.15em',
+          textShadow: 'none',
+          fontWeight: '900'
+    }}>
+      Choose your plan!
+    </span>
+    <p className="text-lg text-gray-600">Select a plan that suits your needs the best and start maximizing your productivity today.</p>
+  </div>
+  <div className="flex flex-wrap justify-center gap-8">
+    
+    {/* Free Plan */}
+    <div className="p-6 rounded-lg shadow-lg flex flex-col flex-grow flex-basis-[300px] min-w-[300px] max-w-[350px] text-center" style={{ minHeight: '550px' }}>
+      <h3 className="text-2xl font-semibold mb-4 text-gray-900">Free</h3>
+      <p className=" mb-4 text-gray-500">$0/month</p>
+      <ul className="text-left mb-4 space-y-2 text-gray-900">
+        <li className='text-black'>Unlimited blocks for teams</li>
+        <li className='text-black'>Unlimited file uploads</li>
+        <li className='text-black'>30-day page history</li>
+        <li className='text-black'>Invite 10 guests</li>
+        <li className='text-black'>Basic templates</li>
+        <li className='text-black'>Simple Mind Map (2 maps)</li>
+        <li className='text-black'>Basic QuickNotez AI (limited text completion)</li>
+        <li className='text-black'>Sync across 2 devices</li>
+      </ul>
+      <a href="/signup" className="mt-auto">
+        <button className="bg-black text-white px-4 py-2 rounded font-semibold hover:bg-gray-800">Sign Up</button>
+      </a>
+    </div>
+
+    {/* Plus Plan */}
+    <div className="p-6 rounded-lg shadow-lg flex flex-col flex-grow flex-basis-[300px] min-w-[300px] max-w-[350px] text-center" style={{ minHeight: '550px' }}>
+      <h3 className="text-2xl font-semibold mb-4 text-gray-900">Plus</h3>
+      <p className="  mb-4 text-gray-500">
+        $8/month (billed annually) <br />
+        $10/month (billed monthly)
+        
+      </p>
+      <ul className="text-left mb-4 space-y-2 text-gray-900">
+        <li className='text-black'>Everything in Free +</li>
+        <li className='text-black'>90-day page history</li>
+        <li className='text-black'>Invite 25 guests</li>
+        <li className='text-black'>Advanced templates</li>
+        <li className='text-black'>Mind Map (unlimited maps)</li>
+        <li className='text-black'>Enhanced QuickNotez AI (note summarization, idea generation)</li>
+        <li className='text-black'>Priority support</li>
+        <li className='text-black'>Sync across unlimited devices</li>
+      </ul>
+      <a href="/signup" className="mt-auto">
+        <button className="bg-black text-white px-4 py-2 rounded font-semibold hover:bg-gray-800">Get Started</button>
+      </a>
+    </div>
+
+    {/* Pro Plan */}
+    <div className="p-6 rounded-lg shadow-lg flex flex-col flex-grow flex-basis-[300px] min-w-[300px] max-w-[350px] text-center" style={{ minHeight: '550px' }}>
+      <h3 className="text-2xl font-semibold mb-4 text-gray-900">Pro</h3>
+      <p className=" mb-4 text-gray-500">
+        $15/month (billed annually) <br />
+        $18/month (billed monthly)
+      </p>
+      <ul className="text-left mb-4 space-y-2 text-gray-900">
+        <li className='text-black'>Everything in Plus +</li>
+        <li className='text-black'>Unlimited page history</li>
+        <li className='text-black'>Invite 50 guests</li>
+        <li className='text-black'>Collaborative workspace (real-time collaboration)</li>
+        <li className='text-black'>Advanced QuickNotez AI (full access to all AI features)</li>
+        <li className='text-black'>Workspace analytics (basic insights)</li>
+      </ul>
+      <a href="/signup" className="mt-auto">
+        <button className="bg-black text-white px-4 py-2 rounded font-semibold hover:bg-gray-800">Get Started</button>
+      </a>
+    </div>
+
+    {/* Enterprise Plan */}
+    <div className="p-6 rounded-lg shadow-lg flex flex-col flex-grow flex-basis-[300px] min-w-[300px] max-w-[350px] text-center" style={{ minHeight: '550px' }}>
+      <h3 className="text-2xl font-semibold mb-4 text-gray-900">Enterprise</h3>
+      <p className="mb-4 text-gray-500">
+        $20/month (billed annually)<br />
+        $25/month (billed monthly)
+      </p>
+      <ul className="text-left mb-4 space-y-2 text-gray-900">
+        <li className='text-black'>Everything in Pro +</li>
+        <li className='text-black'>Custom workspace analytics</li>
+        <li className='text-black'>Invite unlimited guests</li>
+        <li className='text-black'>Enterprise-grade security & compliance</li>
+        <li className='text-black'>Dedicated account manager</li>
+        <li className='text-black'>24/7 priority support</li>
+        <li className='text-black'>Custom SLAs</li>
+      </ul>
+      <a href="#/signup" className="mt-auto">
+        <button className="bg-black text-white px-4 py-2 rounded font-semibold hover:bg-gray-800">Get Started</button>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+</div>
+
+      
+
+
+
 
   
     </div>
