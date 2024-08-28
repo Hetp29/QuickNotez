@@ -58,7 +58,7 @@ const Page = () => {
   return (
     <ChakraProvider theme={theme}>
       <Box display="flex">
-        {/* Pass setSelectedFile, setWorkspaceId, and updateFileName to Sidebar and MainContent */}
+        
         <Sidebar
           setSelectedFile={setSelectedFile}
           setWorkspaceId={setWorkspaceId}

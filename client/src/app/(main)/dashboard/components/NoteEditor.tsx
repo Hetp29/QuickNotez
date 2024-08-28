@@ -1,9 +1,9 @@
 import dynamic from 'next/dynamic';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import 'react-quill/dist/quill.snow.css';
 import { db, doc, setDoc, getDoc } from '../../../../../firebaseConfig';
 import { debounce } from 'lodash';
-import { Box } from '@chakra-ui/react';
+import { Box, useColorMode } from '@chakra-ui/react';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
@@ -13,25 +13,26 @@ interface NoteEditorProps {
 }
 
 const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId }) => {
+    const { colorMode } = useColorMode();
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
-
     
+    const titleRef = useRef(title);
+    const contentRef = useRef(content);
+
     const saveNote = useCallback(async () => {
         if (selectedFile && workspaceId) {
             const noteDoc = doc(db, 'notes', `${workspaceId}_${selectedFile}`);
             try {
-                await setDoc(noteDoc, { title, content }, { merge: true });
-                console.log(`Saved note: {title: ${title}, content: ${content}}`);
+                await setDoc(noteDoc, { title: titleRef.current, content: contentRef.current }, { merge: true });
+                console.log(`Saved note: {title: ${titleRef.current}, content: ${contentRef.current}}`);
             } catch (error) {
                 console.error('Error saving document:', error);
             }
         }
-    }, [selectedFile, workspaceId, title, content]);
+    }, [selectedFile, workspaceId]);
 
-    
-    const debouncedSaveNote = useCallback(debounce(saveNote, 300), [saveNote]);
-
+    const debouncedSaveNote = useCallback(debounce(() => saveNote(), 300), [saveNote]);
 
     useEffect(() => {
         const loadNote = async () => {
@@ -40,13 +41,18 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId }) =>
                 try {
                     const docSnap = await getDoc(noteDoc);
                     if (docSnap.exists()) {
-                        setTitle(docSnap.data()?.title || '');
-                        setContent(docSnap.data()?.content || '');
-                        console.log(`Loaded note: {title: ${docSnap.data()?.title}, content: ${docSnap.data()?.content}}`);
+                        const data = docSnap.data();
+                        setTitle(data?.title || '');
+                        setContent(data?.content || '');
+                        titleRef.current = data?.title || '';
+                        contentRef.current = data?.content || '';
+                        console.log(`Loaded note: {title: ${data?.title}, content: ${data?.content}}`);
                     } else {
                         console.log('No such document!');
-                        setTitle(''); 
-                        setContent(''); 
+                        setTitle('');
+                        setContent('');
+                        titleRef.current = '';
+                        contentRef.current = '';
                     }
                 } catch (error) {
                     console.error('Error loading document:', error);
@@ -56,29 +62,28 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId }) =>
         loadNote();
     }, [selectedFile, workspaceId]);
 
-    
     const handleContentChange = (value: string) => {
         setContent(value);
-        saveNote();
+        contentRef.current = value;
         debouncedSaveNote();
         console.log(`Content changed: ${value}`);
     };
 
-    
     const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newTitle = e.target.value;
         setTitle(newTitle);
-        saveNote();
+        titleRef.current = newTitle;
         debouncedSaveNote();
         console.log(`Title changed: ${newTitle}`);
     };
+
+    const isDarkMode = colorMode === 'dark';
 
     return (
         <Box
             padding="40px"
             height="100%"
-            backgroundColor="gray.100"
-            color="black"
+            color={isDarkMode ? 'white' : 'black'}
         >
             <input
                 type="text"
@@ -92,10 +97,9 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId }) =>
                     marginBottom: '20px',
                     padding: '10px 0',
                     backgroundColor: 'transparent',
-                    color: '#2e2e2e',
                     border: 'none',
                     outline: 'none',
-                    borderBottom: '2px solid #e0e0e0',
+                    borderBottom: `2px solid ${isDarkMode ? '#2d3748' : '#e0e0e0'}`,
                 }}
             />
             <ReactQuill
@@ -103,7 +107,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId }) =>
                 onChange={handleContentChange}
                 style={{
                     height: 'calc(100% - 100px)',
-                    color: '#000000',
+                    color: isDarkMode ? '#e2e8f0' : '#000000',
                     borderRadius: '8px',
                     padding: '20px',
                     border: 'none',
