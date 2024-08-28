@@ -21,6 +21,8 @@ interface Workspace {
   deleted?: boolean;
 }
 
+const isDarkMode = useColorMode === 'dark';
+
 const Sidebar: React.FC<{ 
   setSelectedFile: (file: string) => void;
   setWorkspaceId: (id: string) => void;
@@ -386,13 +388,23 @@ const handleAddNewFile = async (workspaceId: string) => {
 
       {contextMenu.workspaceId && (
     <div
-        className="absolute z-50 bg-white border border-gray-300 shadow-lg"
-        style={{ top: contextMenu.y, left: contextMenu.x }}
+        className="absolute z-50 border shadow-lg"
+        style={{
+            top: contextMenu.y,
+            left: contextMenu.x,
+            backgroundColor: isDarkMode ? '#2D3748' : '#ffffff', 
+            borderColor: isDarkMode ? '#4A5568' : '#CBD5E0', 
+            color: isDarkMode ? '#E2E8F0' : '#2D3748',
+        }}
         onClick={() => setContextMenu({ x: 0, y: 0, workspaceId: null, selectedFile: null })}
     >
         {contextMenu.selectedFile ? (
             <button
-                className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-200"
+                className="block w-full px-4 py-2 text-left text-sm"
+                style={{
+                    backgroundColor: isDarkMode ? '#4A5568' : '#F7FAFC', 
+                    color: isDarkMode ? '#E2E8F0' : '#2D3748',
+                }}
                 onClick={(e) => {
                   e.stopPropagation(); 
                   handleDeleteFile(contextMenu.workspaceId, contextMenu.selectedFile);
@@ -403,13 +415,21 @@ const handleAddNewFile = async (workspaceId: string) => {
         ) : (
             <>
                 <button
-                    className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-200"
+                    className="block w-full px-4 py-2 text-left text-sm"
+                    style={{
+                        backgroundColor: isDarkMode ? '#4A5568' : '#F7FAFC', // Hover color adjustment
+                        color: isDarkMode ? '#E2E8F0' : '#2D3748',
+                    }}
                     onClick={() => handleDeleteFolder(contextMenu.workspaceId)}
                 >
                     Delete Folder
                 </button>
                 <button
-                    className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-200"
+                    className="block w-full px-4 py-2 text-left text-sm"
+                    style={{
+                        backgroundColor: isDarkMode ? '#4A5568' : '#F7FAFC', // Hover color adjustment
+                        color: isDarkMode ? '#E2E8F0' : '#2D3748',
+                    }}
                     onClick={() => handleAddNewFile(contextMenu.workspaceId)}
                 >
                     Add New File
