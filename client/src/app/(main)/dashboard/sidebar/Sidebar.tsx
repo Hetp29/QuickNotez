@@ -2,9 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   HiChevronRight, HiPlus, HiMoon, HiSun, 
   HiChat, HiTrash, HiQuestionMarkCircle, HiDocument, 
-  HiTemplate, HiCalendar, HiChartBar, HiShare, HiChevronDown, HiDotsVertical 
-} from 'react-icons/hi';
-import { useColorMode, Box, Collapse, Menu, MenuButton, MenuList, MenuItem, IconButton } from '@chakra-ui/react';
+  HiChartBar, HiChevronDown, HiTemplate } from 'react-icons/hi';
+import { RiMindMap } from 'react-icons/ri';
+import { useColorMode, Box, Collapse} from '@chakra-ui/react';
+import { FaClipboardCheck } from "react-icons/fa6";
 import { auth, getDoc } from '../../../../../firebaseConfig';
 import { db, collection, addDoc, setDoc, getDocs, updateDoc, doc } from '../../../../../firebaseConfig';
 import { deleteDoc } from 'firebase/firestore';
@@ -325,6 +326,11 @@ useEffect(() => {
       </div>
   
       <div className="flex-1 flex flex-col space-y-4 p-4 text-base overflow-y-auto">
+
+      <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}>
+          <FaClipboardCheck className={`text-2xl ${buttonTextColor}`} />
+          <span className={buttonTextColor}>Getting Started</span>
+        </button>
         <button
           className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
           onClick={toggleWorkspaceDropdown}
@@ -380,22 +386,17 @@ useEffect(() => {
   </Box>
 )}
 
-  
+        <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}>
+          <RiMindMap  className={`text-2xl ${buttonTextColor}`} />
+          <span className={buttonTextColor}>Mind Map</span>
+        </button>
         <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg} mt-4`}>
           <HiChat className={`text-2xl ${buttonTextColor}`} />
           <span className={buttonTextColor}>QuickNotez AI</span>
         </button>
         <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}>
-          <HiShare className={`text-2xl ${buttonTextColor}`} />
-          <span className={buttonTextColor}>Collaboration & Sharing</span>
-        </button>
-        <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}>
           <HiTemplate className={`text-2xl ${buttonTextColor}`} />
-          <span className={buttonTextColor}>Templates & Automation</span>
-        </button>
-        <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}>
-          <HiCalendar className={`text-2xl ${buttonTextColor}`} />
-          <span className={buttonTextColor}>Calendar & Reminders</span>
+          <span className={buttonTextColor}>Templates</span>
         </button>
         <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}>
           <HiChartBar className={`text-2xl ${buttonTextColor}`} />
