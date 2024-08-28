@@ -188,6 +188,30 @@ useEffect(() => {
     }));
   };
 
+  const [addWorkspaceContextMenu, setAddWorkspaceContextMenu] = useState<{ x: number, y: number } | null>(null);
+
+  const addWorkspaceContextMenuRef = useRef<HTMLDivElement | null>(null);
+
+useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+        if (
+            contextMenuRef.current && 
+            !contextMenuRef.current.contains(event.target as Node) &&
+            addWorkspaceContextMenu
+        ) {
+            setAddWorkspaceContextMenu(null);
+        }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+    };
+}, [addWorkspaceContextMenu, contextMenuRef]);
+
+
+
   const handleLogout = async () => {
     try {
       await auth.signOut();
@@ -303,14 +327,19 @@ useEffect(() => {
         <button
           className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
           onClick={toggleWorkspaceDropdown}
-        >
+          onContextMenu={(event) => {
+              event.preventDefault();
+              setAddWorkspaceContextMenu({ x: event.clientX, y: event.clientY });
+          }}
+      >
           {isWorkspaceDropdownOpen ? (
-            <HiChevronDown className={`text-2xl ${buttonTextColor}`} />
+              <HiChevronDown className={`text-2xl ${buttonTextColor}`} />
           ) : (
-            <HiChevronRight className={`text-2xl ${buttonTextColor}`} />
+              <HiChevronRight className={`text-2xl ${buttonTextColor}`} />
           )}
           <span className={buttonTextColor}>Add Workspace</span>
-        </button>
+      </button>
+
   
         {isWorkspaceDropdownOpen && (
   <Box pl={8} mt={2}>
@@ -449,10 +478,44 @@ useEffect(() => {
                 >
                     Add New File
                 </button>
+
+                
             </>
         )}
+
+
     </div>
 )}
+
+{addWorkspaceContextMenu && (
+        <div
+            ref={addWorkspaceContextMenuRef}
+            className="absolute z-50 border shadow-lg"
+            style={{
+                top: addWorkspaceContextMenu.y,
+                left: addWorkspaceContextMenu.x,
+                backgroundColor: colorMode === 'dark' ? '#2D3748' : '#ffffff',
+                borderColor: colorMode === 'dark' ? '#4A5568' : '#CBD5E0',
+                color: colorMode === 'dark' ? '#E2E8F0' : '#2D3748',
+            }}
+            onClick={() => setAddWorkspaceContextMenu(null)}
+        >
+            <button
+                className="block w-full px-4 py-2 text-left text-sm"
+                style={{
+                    backgroundColor: colorMode === 'dark' ? '#282a2d' : '#F7FAFC', 
+                    color: colorMode === 'dark' ? '#E2E8F0' : '#2D3748',
+                }}  
+                onClick={(e) => {
+                    e.stopPropagation();
+                    handleAddWorkspace();
+                    setAddWorkspaceContextMenu(null);
+                }}
+            >
+                Create New Workspace 
+            </button>
+        </div>
+      )}
 <div
       ref={resizerRef}
       className={`absolute top-0 right-0 w-1 h-full cursor-col-resize ${colorMode === 'light' ? 'bg-gray-300' : 'bg-gray-700'}`}
