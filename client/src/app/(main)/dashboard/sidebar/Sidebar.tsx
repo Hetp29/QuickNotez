@@ -96,12 +96,12 @@ const Sidebar: React.FC<{
   };
   
   
-const [fileName, setFileName] = useState<string>('');
+
 
   
 
 const handleAddNewFile = async (workspaceId: string) => {
-  const fileName = "Untitled"; // Initial name for the new file
+  const fileName = "Untitled"; 
   try {
       const workspaceRef = doc(db, 'users', auth.currentUser?.uid, 'workspaces', workspaceId);
       const workspaceDoc = await getDoc(workspaceRef);
@@ -110,9 +110,9 @@ const handleAddNewFile = async (workspaceId: string) => {
           console.log('Workspace found:', workspaceDoc.data());
           const files = workspaceDoc.data().files || [];
           
-          // Check if a file with the same name already exists
+          
           const newFileName = files.find(file => file.name === fileName) 
-              ? `${fileName}_${files.length + 1}` // Ensure uniqueness
+              ? `${fileName}_${files.length + 1}` 
               : fileName;
 
           const newFile = { name: newFileName, content: '' };
@@ -121,23 +121,37 @@ const handleAddNewFile = async (workspaceId: string) => {
           await updateDoc(workspaceRef, { files });
           console.log('File added successfully');
 
-          // Create a corresponding document in the notes collection
+        
           const noteDocRef = doc(db, 'notes', `${workspaceId}_${newFileName}`);
           await setDoc(noteDocRef, { title: newFileName, content: '' });
 
-          // Update the selected file and workspace to trigger NoteEditor loading
+          
           setSelectedFile(newFileName);
           setWorkspaceId(workspaceId);
 
-          fetchWorkspaces(); // Refresh the workspace list to include the new file
+          fetchWorkspaces(); 
       }
   } catch (error) {
       console.error('Error adding file:', error);
   }
-  setContextMenu({ x: 0, y: 0, workspaceId: null, selectedFile: null }); // Close the context menu
+  setContextMenu({ x: 0, y: 0, workspaceId: null, selectedFile: null });
 };
 
+const contextMenuRef = useRef<HTMLDivElement | null>(null);
 
+useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+        if (contextMenuRef.current && !contextMenuRef.current.contains(event.target as Node)) {
+            setContextMenu({ x: 0, y: 0, workspaceId: null, selectedFile: null });
+        }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+    };
+}, [contextMenuRef]);
   
 
   useEffect(() => {
@@ -149,7 +163,7 @@ const handleAddNewFile = async (workspaceId: string) => {
     if (user) {
       fetchWorkspaces();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  
   }, [user]);
 
   const handleAddWorkspace = async () => {
@@ -388,13 +402,14 @@ const handleAddNewFile = async (workspaceId: string) => {
 
       {contextMenu.workspaceId && (
     <div
+        ref={contextMenuRef}
         className="absolute z-50 border shadow-lg"
         style={{
             top: contextMenu.y,
             left: contextMenu.x,
-            backgroundColor: isDarkMode ? '#2D3748' : '#ffffff', 
-            borderColor: isDarkMode ? '#4A5568' : '#CBD5E0', 
-            color: isDarkMode ? '#E2E8F0' : '#2D3748',
+            backgroundColor: colorMode === 'dark' ? '#2D3748' : '#ffffff', 
+            borderColor: colorMode === 'dark' ? '#4A5568' : '#CBD5E0',
+            color: colorMode === 'dark' ? '#E2E8F0' : '#2D3748', 
         }}
         onClick={() => setContextMenu({ x: 0, y: 0, workspaceId: null, selectedFile: null })}
     >
@@ -402,13 +417,13 @@ const handleAddNewFile = async (workspaceId: string) => {
             <button
                 className="block w-full px-4 py-2 text-left text-sm"
                 style={{
-                    backgroundColor: isDarkMode ? '#4A5568' : '#F7FAFC', 
-                    color: isDarkMode ? '#E2E8F0' : '#2D3748',
+                    backgroundColor: colorMode === 'dark' ? '#282a2d' : '#F7FAFC', 
+                    color: colorMode === 'dark' ? '#E2E8F0' : '#2D3748',
                 }}
                 onClick={(e) => {
-                  e.stopPropagation(); 
-                  handleDeleteFile(contextMenu.workspaceId, contextMenu.selectedFile);
-              }}
+                    e.stopPropagation(); 
+                    handleDeleteFile(contextMenu.workspaceId, contextMenu.selectedFile);
+                }}
             >
                 Delete File
             </button>
@@ -417,8 +432,8 @@ const handleAddNewFile = async (workspaceId: string) => {
                 <button
                     className="block w-full px-4 py-2 text-left text-sm"
                     style={{
-                        backgroundColor: isDarkMode ? '#4A5568' : '#F7FAFC', // Hover color adjustment
-                        color: isDarkMode ? '#E2E8F0' : '#2D3748',
+                        backgroundColor: colorMode === 'dark' ? '#2D3748' : '#F7FAFC', 
+                        color: colorMode === 'dark' ? '#E2E8F0' : '#2D3748', 
                     }}
                     onClick={() => handleDeleteFolder(contextMenu.workspaceId)}
                 >
@@ -427,8 +442,8 @@ const handleAddNewFile = async (workspaceId: string) => {
                 <button
                     className="block w-full px-4 py-2 text-left text-sm"
                     style={{
-                        backgroundColor: isDarkMode ? '#4A5568' : '#F7FAFC', // Hover color adjustment
-                        color: isDarkMode ? '#E2E8F0' : '#2D3748',
+                        backgroundColor: colorMode === 'dark' ? '#2D3748' : '#F7FAFC', 
+                        color: colorMode === 'dark' ? '#E2E8F0' : '#2D3748', 
                     }}
                     onClick={() => handleAddNewFile(contextMenu.workspaceId)}
                 >
@@ -438,7 +453,6 @@ const handleAddNewFile = async (workspaceId: string) => {
         )}
     </div>
 )}
-
 <div
       ref={resizerRef}
       className={`absolute top-0 right-0 w-1 h-full cursor-col-resize ${colorMode === 'light' ? 'bg-gray-300' : 'bg-gray-700'}`}
