@@ -10,7 +10,8 @@ const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 interface NoteEditorProps {
     selectedFile: string | null;
     workspaceId: string | null;
-    onTitleChange: (newTitle: string) => void; // Correctly typed prop
+    updateFileName: (oldName: string, newName: string) => void;
+    onTitleChange: (newTitle: string) => void; 
 }
 
 const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId, onTitleChange }) => {
@@ -40,28 +41,32 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId, onTi
             if (selectedFile && workspaceId) {
                 const noteDoc = doc(db, 'notes', `${workspaceId}_${selectedFile}`);
                 try {
+                    console.log(`Fetching document for path: notes/${workspaceId}_${selectedFile}`);
                     const docSnap = await getDoc(noteDoc);
                     if (docSnap.exists()) {
                         const data = docSnap.data();
-                        setTitle(data?.title || '');
+                        setTitle(data?.title || 'Untitled');
                         setContent(data?.content || '');
                         titleRef.current = data?.title || '';
                         contentRef.current = data?.content || '';
                         console.log(`Loaded note: {title: ${data?.title}, content: ${data?.content}}`);
                     } else {
                         console.log('No such document!');
-                        setTitle('');
+                        setTitle('Untitled');
                         setContent('');
-                        titleRef.current = '';
+                        titleRef.current = 'Untitled';
                         contentRef.current = '';
                     }
                 } catch (error) {
                     console.error('Error loading document:', error);
                 }
+            } else {
+                console.error('Error: selectedFile or workspaceId is null');
             }
         };
         loadNote();
     }, [selectedFile, workspaceId]);
+    
 
     const handleContentChange = (value: string) => {
         setContent(value);
@@ -76,7 +81,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId, onTi
         titleRef.current = newTitle;
         debouncedSaveNote();
         console.log(`Title changed: ${newTitle}`);
-
+        
         if(onTitleChange) {
             onTitleChange(newTitle); 
         }
