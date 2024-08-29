@@ -88,9 +88,9 @@ const Sidebar: React.FC<{
     });
   };
   
-  const handleFileClick = (workspaceId: string, fileId: string) => {
-    console.log("File clicked:", workspaceId, fileId);
-    setSelectedFile(fileId);
+  const handleFileClick = (workspaceId: string, fileName: string) => {
+    console.log("File clicked:", workspaceId, fileName);
+    setSelectedFile(fileName);
     setWorkspaceId(workspaceId); 
 };
 
@@ -107,59 +107,28 @@ const Sidebar: React.FC<{
   
 
   const handleDeleteFile = async (workspaceId: string, fileName: string) => {
-    try {
-        const workspaceRef = doc(db, 'users', auth.currentUser?.uid, 'workspaces', workspaceId);
-        const workspaceDoc = await getDoc(workspaceRef);
-
-        if (workspaceDoc.exists()) {
-            const updatedFiles = workspaceDoc.data().files.filter(file => file.name !== fileName);
-
-            await updateDoc(workspaceRef, { files: updatedFiles });
-            console.log('File reference removed from workspace successfully');
-
-            
-            const noteDocRef = doc(db, 'notes', `${workspaceId}_${fileName}`);
-            await deleteDoc(noteDocRef);
-            console.log('File deleted from notes collection successfully');
-
-            fetchWorkspaces(); 
-        }
-    } catch (error) {
-        console.error('Error deleting file:', error);
+    const workspaceRef = doc(db, 'users', auth.currentUser?.uid, 'workspaces', workspaceId);
+    const workspaceDoc = await getDoc(workspaceRef);
+    if (workspaceDoc.exists()) {
+      const updatedFiles = workspaceDoc.data().files.filter(file => file.name !== fileName);
+      await updateDoc(workspaceRef, { files: updatedFiles });
+      fetchWorkspaces();
+      console.log('File deleted successfully');
     }
-};
-
+  };
   
-const handleDeleteFolder = async (workspaceId: string) => {
-  try {
-      const workspaceRef = doc(db, 'users', auth.currentUser?.uid, 'workspaces', workspaceId);
-      const workspaceDoc = await getDoc(workspaceRef);
-
-      if (workspaceDoc.exists()) {
-          const files = workspaceDoc.data().files || [];
-
-          
-          for (const file of files) {
-              const noteDocRef = doc(db, 'notes', `${workspaceId}_${file.name}`);
-              await deleteDoc(noteDocRef);
-          }
-
-          
-          await deleteDoc(workspaceRef);
-          console.log('Workspace and all associated files deleted successfully');
-
-          fetchWorkspaces(); 
-      }
-  } catch (error) {
-      console.error('Error deleting folder:', error);
-  }
-};
-
+  const handleDeleteFolder = async (workspaceId: string) => {
+    const workspaceRef = doc(db, 'users', auth.currentUser?.uid, 'workspaces', workspaceId);
+    await deleteDoc(workspaceRef);
+    fetchWorkspaces();
+    console.log('Folder deleted successfully');
+  };
   
   
 
 
   
+
 const handleAddNewFile = async (workspaceId: string) => {
   const fileName = "Untitled"; 
   try {
@@ -170,20 +139,23 @@ const handleAddNewFile = async (workspaceId: string) => {
           console.log('Workspace found:', workspaceDoc.data());
           const files = workspaceDoc.data().files || [];
           
-          // Generate a unique ID for the new file
-          const uniqueFileId = doc(collection(db, 'notes')).id;
+          
+          const newFileName = files.find(file => file.name === fileName) 
+              ? `${fileName} ${files.length + 1}` 
+              : fileName;
 
-          const newFile = { id: uniqueFileId, name: fileName, content: '' };
+          const newFile = { name: newFileName, content: '' };
           files.push(newFile);
 
           await updateDoc(workspaceRef, { files });
           console.log('File added successfully');
 
-          // Create the corresponding document in the notes collection using the unique ID
-          const noteDocRef = doc(db, 'notes', uniqueFileId);
-          await setDoc(noteDocRef, { title: fileName, content: '' });
+        
+          const noteDocRef = doc(db, 'notes', `${workspaceId}_${newFileName}`);
+          await setDoc(noteDocRef, { title: newFileName, content: '' });
 
-          setSelectedFile(uniqueFileId);
+          
+          setSelectedFile(newFileName);
           setWorkspaceId(workspaceId);
 
           fetchWorkspaces(); 
@@ -193,8 +165,6 @@ const handleAddNewFile = async (workspaceId: string) => {
   }
   setContextMenu({ x: 0, y: 0, workspaceId: null, selectedFile: null });
 };
-
-
 
 const contextMenuRef = useRef<HTMLDivElement | null>(null);
 
@@ -425,7 +395,7 @@ useEffect(() => {
       <Box pl={8} mt={2} style={{ transition: 'all 0.3s ease-in-out' }}>
         {workspace.files.map((file: File, fileIndex: number) => (
           <button
-            key={file.id}  // <-- Ensure this key is unique
+            key={fileIndex}
             className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
             onClick={() => handleFileClick(workspace.id, file.name)}
             onContextMenu={(e) => {
@@ -443,7 +413,6 @@ useEffect(() => {
     </Collapse>
   </div>
 ))}
-
   </Box>
 )}
 
