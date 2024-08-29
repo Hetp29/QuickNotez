@@ -107,25 +107,54 @@ const Sidebar: React.FC<{
   
 
   const handleDeleteFile = async (workspaceId: string, fileName: string) => {
-    const workspaceRef = doc(db, 'users', auth.currentUser?.uid, 'workspaces', workspaceId);
-    const workspaceDoc = await getDoc(workspaceRef);
-    if (workspaceDoc.exists()) {
-      const updatedFiles = workspaceDoc.data().files.filter(file => file.name !== fileName);
-      await updateDoc(workspaceRef, { files: updatedFiles });
-      fetchWorkspaces();
-      console.log('File deleted successfully');
-    }
-  };
-  
-  const handleDeleteFolder = async (workspaceId: string) => {
-    const workspaceRef = doc(db, 'users', auth.currentUser?.uid, 'workspaces', workspaceId);
-    await deleteDoc(workspaceRef);
-    fetchWorkspaces();
-    console.log('Folder deleted successfully');
-  };
-  
-  
+    try {
+        const workspaceRef = doc(db, 'users', auth.currentUser?.uid, 'workspaces', workspaceId);
+        const workspaceDoc = await getDoc(workspaceRef);
 
+        if (workspaceDoc.exists()) {
+            const updatedFiles = workspaceDoc.data().files.filter(file => file.name !== fileName);
+
+            await updateDoc(workspaceRef, { files: updatedFiles });
+            console.log('File reference removed from workspace successfully');
+
+            
+            const noteDocRef = doc(db, 'notes', `${workspaceId}_${fileName}`);
+            await deleteDoc(noteDocRef);
+            console.log('File deleted from notes collection successfully');
+
+            fetchWorkspaces(); 
+        }
+    } catch (error) {
+        console.error('Error deleting file:', error);
+    }
+};
+
+  
+  
+const handleDeleteFolder = async (workspaceId: string) => {
+  try {
+      const workspaceRef = doc(db, 'users', auth.currentUser?.uid, 'workspaces', workspaceId);
+      const workspaceDoc = await getDoc(workspaceRef);
+
+      if (workspaceDoc.exists()) {
+          const files = workspaceDoc.data().files || [];
+
+          
+          for (const file of files) {
+              const noteDocRef = doc(db, 'notes', `${workspaceId}_${file.name}`);
+              await deleteDoc(noteDocRef);
+          }
+
+          
+          await deleteDoc(workspaceRef);
+          console.log('Workspace and all associated files deleted successfully');
+
+          fetchWorkspaces(); 
+      }
+  } catch (error) {
+      console.error('Error deleting folder:', error);
+  }
+};
 
   
 
