@@ -4,12 +4,13 @@ import {
   HiChat, HiTrash, HiQuestionMarkCircle, HiDocument, 
   HiChartBar, HiChevronDown, HiTemplate, HiFolder} from 'react-icons/hi';
 import { RiMindMap } from 'react-icons/ri';
+import { BsChevronExpand } from "react-icons/bs";
 import { useColorMode, Box, Collapse, Menu, MenuButton, MenuList, MenuItem, Button, IconButton} from '@chakra-ui/react';
 import { FaClipboardCheck } from "react-icons/fa6";
 import { auth, getDoc } from '../../../../../firebaseConfig';
 import { db, collection, addDoc, setDoc, getDocs, updateDoc, doc } from '../../../../../firebaseConfig';
 import { deleteDoc } from 'firebase/firestore';
-import NoteEditor from '../components/NoteEditor';
+
 
 interface File {
   name: string;
@@ -447,70 +448,71 @@ useEffect(() => {
         </button>
       </div>
   
-      <div className="p-4 border-t border-gray-400 text-base">
-        <Menu>
-          <MenuButton
-            as={Button}
-            rightIcon={<HiChevronDown />}
-            className={`w-full flex items-center justify-between ${buttonHoverBg}`}
-          >
-            {currentWorkspace ? currentWorkspace.name : 'Select Workspace'}
-          </MenuButton>
-          <MenuList>
-            {workspaces.map((workspace) => (
-              <MenuItem
-                key={workspace.id}
-                icon={<HiFolder />}
-                onClick={() => {
-                  handleWorkspaceSelect(workspace);
-                  setWorkspaceId(workspace.id);
-                }}
-                onContextMenu={(e) => {
-                  e.preventDefault();
-                  handleRightClick(e, workspace.id);
-                }}
-              >
-                {workspace.name}
-              </MenuItem>
-            ))}
-            <MenuItem
-              icon={<HiPlus />}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleAddWorkspace();
-              }}
-            >
-              Create New Workspace
-            </MenuItem>
-          </MenuList>
-        </Menu>
-  
-        <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg} mb-2`}>
-          <HiTrash className={`text-2xl ${buttonTextColor}`} />
-          <span className={buttonTextColor}>Trash</span>
-        </button>
-        <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg} mb-2`}>
-          <HiQuestionMarkCircle className={`text-2xl ${buttonTextColor}`} />
-          <span className={buttonTextColor}>Help and Support</span>
-        </button>
-        <button
-          className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
-          onClick={toggleColorMode}
-        >
-          {colorMode === 'dark' ? (
-            <>
-              <HiSun className={`text-2xl ${buttonTextColor}`} />
-              <span className={buttonTextColor}>Light Mode</span>
-            </>
-          ) : (
-            <>
-              <HiMoon className={`text-2xl ${buttonTextColor}`} />
-              <span className={buttonTextColor}>Dark Mode</span>
-            </>
-          )}
-        </button>
+      <div className="flex items-center justify-between p-4 border-t text-base">
+  <Menu >
+    <MenuButton
+      as={Button}
+      className={`flex-grow ${colorMode === 'dark' ? 'bg-transparent' : ''}`}
+      bg="transparent"
+      _hover={{ bg: colorMode === 'light' ? 'gray.200' : 'gray.600' }}
+    >
+      <div className="flex items-center">
+        <BsChevronExpand className="mr-2" />  {/* Icon placed before the text with margin to the right */}
+        <span>{currentWorkspace ? currentWorkspace.name : 'Select Workspace'}</span>
       </div>
-  
+  </MenuButton>
+
+
+    
+    <MenuList>
+      {workspaces.map((workspace) => (
+        <MenuItem
+          key={workspace.id}
+          icon={<HiFolder />}
+          onClick={() => {
+            handleWorkspaceSelect(workspace);
+            setWorkspaceId(workspace.id);
+          }}
+          onContextMenu={(e) => {
+            e.preventDefault();
+            handleRightClick(e, workspace.id);
+          }}
+        >
+          {workspace.name}
+        </MenuItem>
+      ))}
+      <MenuItem
+        icon={<HiPlus />}
+        onClick={(e) => {
+          e.stopPropagation();
+          handleAddWorkspace();
+        }}
+      >
+        Create New Workspace
+      </MenuItem>
+    </MenuList>
+  </Menu>
+
+  <div className="flex items-center ">
+      <IconButton
+        aria-label="Help and Support"
+        icon={<HiQuestionMarkCircle />}
+        bg="transparent"
+        _hover={{ bg: colorMode === 'light' ? 'gray.200' : 'gray.600' }}
+        onClick={() => console.log("Help and Support Clicked")}
+      />
+      <IconButton
+        aria-label="Toggle Light Mode"
+        icon={colorMode === 'dark' ? <HiSun /> : <HiMoon />}
+        bg="transparent"
+        _hover={{ bg: colorMode === 'light' ? 'gray.200' : 'gray.600' }}
+        onClick={toggleColorMode}
+      />
+</div>
+
+</div>
+
+
       {contextMenu.workspaceId && (
         <div
           ref={contextMenuRef}
