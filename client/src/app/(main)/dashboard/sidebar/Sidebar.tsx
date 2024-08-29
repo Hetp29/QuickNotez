@@ -382,76 +382,54 @@ useEffect(() => {
             </h1>
           </div>
         </div>
-        <button className="p-2" onClick={handleAddWorkspace}>
-          <HiPlus className={`text-3xl ${colorMode === 'light' ? 'text-gray-800' : 'text-white'}`} />
-        </button>
       </div>
   
       <div className="flex-1 flex flex-col space-y-4 p-4 text-base overflow-y-auto">
-
-      <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}>
+        <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}>
           <FaClipboardCheck className={`text-2xl ${buttonTextColor}`} />
           <span className={buttonTextColor}>Getting Started</span>
         </button>
-        <button
-          className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
-          onClick={toggleWorkspaceDropdown}
-          onContextMenu={(event) => {
-              event.preventDefault();
-              setAddWorkspaceContextMenu({ x: event.clientX, y: event.clientY });
-          }}
-      >
-          {isWorkspaceDropdownOpen ? (
-              <HiChevronDown className={`text-2xl ${buttonTextColor}`} />
-          ) : (
-              <HiChevronRight className={`text-2xl ${buttonTextColor}`} />
-          )}
-          <span className={buttonTextColor}>Add Workspace</span>
-      </button>
-
   
-        {isWorkspaceDropdownOpen && (
-  <Box pl={8} mt={2}>
-    {workspaces.map((workspace: Workspace, index: number) => (
-  <div key={workspace.id} className="ml-2" onContextMenu={(e) => handleRightClick(e, workspace.id)}>
-    <button
-      className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
-      onClick={() => toggleWorkspaceFolders(workspace.id)}
-    >
-      {workspaceFoldersOpen[workspace.id] ? (
-        <HiChevronDown className={`text-2xl ${buttonTextColor}`} />
-      ) : (
-        <HiChevronRight className={`text-2xl ${buttonTextColor}`} />
-      )}
-      <span className={buttonTextColor}>{workspace.name}</span>
-    </button>
-    <Collapse in={workspaceFoldersOpen[workspace.id]} animateOpacity>
-      <Box pl={8} mt={2} style={{ transition: 'all 0.3s ease-in-out' }}>
-        {workspace.files.map((file: File, fileIndex: number) => (
-          <button
-            key={fileIndex}
-            className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
-            onClick={() => handleFileClick(workspace.id, file.name)}
-            onContextMenu={(e) => {
-              e.preventDefault();
-              handleRightClick(e, workspace.id, file.name);
-            }}
-          >
-            <HiDocument className={`text-2xl ${buttonTextColor}`} />
-            <span className={buttonTextColor}>
-              {updatedTitles[file.name] || file.name}
-            </span>
-          </button>
+        {workspaces.map((workspace: Workspace) => (
+          <Box key={workspace.id}>
+            <button
+              className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
+              onClick={() => {
+                toggleWorkspaceFolders(workspace.id);
+                setWorkspaceId(workspace.id);
+              }}
+            >
+              {workspaceFoldersOpen[workspace.id] ? (
+                <HiChevronDown className={`text-2xl ${buttonTextColor}`} />
+              ) : (
+                <HiChevronRight className={`text-2xl ${buttonTextColor}`} />
+              )}
+              <span className={buttonTextColor}>{workspace.name}</span>
+            </button>
+            <Collapse in={workspaceFoldersOpen[workspace.id]} animateOpacity>
+              <Box pl={8} mt={2} style={{ transition: 'all 0.3s ease-in-out' }}>
+                {workspace.files.map((file: File) => (
+                  <button
+                    key={file.name}
+                    className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
+                    onClick={() => handleFileClick(workspace.id, file.name)}
+                    onContextMenu={(e) => {
+                      e.preventDefault();
+                      handleRightClick(e, workspace.id, file.name);
+                    }}
+                  >
+                    <HiDocument className={`text-2xl ${buttonTextColor}`} />
+                    <span className={buttonTextColor}>
+                      {updatedTitles[file.name] || file.name}
+                    </span>
+                  </button>
+                ))}
+              </Box>
+            </Collapse>
+          </Box>
         ))}
-      </Box>
-    </Collapse>
-  </div>
-))}
-  </Box>
-)}
-
         <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}>
-          <RiMindMap  className={`text-2xl ${buttonTextColor}`} />
+          <RiMindMap className={`text-2xl ${buttonTextColor}`} />
           <span className={buttonTextColor}>Mind Map</span>
         </button>
         <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg} mt-4`}>
@@ -467,185 +445,172 @@ useEffect(() => {
           <span className={buttonTextColor}>Productivity Dashboard</span>
         </button>
       </div>
-
-      
-
   
       <div className="p-4 border-t border-gray-400 text-base">
-      <Menu>
-        <MenuButton
-          as={Button}
-          rightIcon={<HiChevronDown />}
-          className={`w-full flex items-center justify-between ${buttonHoverBg}`}
-        >
-          {currentWorkspace ? currentWorkspace.name : 'Select Workspace'}
-        </MenuButton>
-        <MenuList>
-          {workspaces.map((workspace) => (
-            <MenuItem
-              key={workspace.id}
-              icon={<HiFolder />}
-              onClick={() => {
-                handleWorkspaceSelect(workspace);
-                setWorkspaceId(workspace.id); 
-              }}
-            >
-              {workspace.name}
-            </MenuItem>
-          ))}
-        </MenuList>
-      </Menu>
-        <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg} mb-2`}>
-          <HiTrash className={`text-2xl ${buttonTextColor}`} />
-          <span className={buttonTextColor}>Trash</span>
-        </button>
-        <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg} mb-2`}>
-          <HiQuestionMarkCircle className={`text-2xl ${buttonTextColor}`} />
-          <span className={buttonTextColor}>Help and Support</span>
-        </button>
-        <button
-          className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
-          onClick={toggleColorMode}
-        >
-          {colorMode === 'dark' ? (
-            <>
-              <HiSun className={`text-2xl ${buttonTextColor}`} />
-              <span className={buttonTextColor}>Light Mode</span>
-            </>
-          ) : (
-            <>
-              <HiMoon className={`text-2xl ${buttonTextColor}`} />
-              <span className={buttonTextColor}>Dark Mode</span>
-            </>
-          )}
-        </button>
-      </div>
-
-      {contextMenu.workspaceId && (
-    <div
-        ref={contextMenuRef}
-        className="absolute z-50 border shadow-lg"
-        style={{
-            top: contextMenu.y,
-            left: contextMenu.x,
-            backgroundColor: colorMode === 'dark' ? '#2D3748' : '#ffffff', 
-            borderColor: colorMode === 'dark' ? '#4A5568' : '#CBD5E0',
-            color: colorMode === 'dark' ? '#E2E8F0' : '#2D3748', 
-        }}
-        onClick={() => setContextMenu({ x: 0, y: 0, workspaceId: null, selectedFile: null })}
+  <Menu>
+    <MenuButton
+      as={Button}
+      rightIcon={<HiChevronDown />}
+      className={`w-full flex items-center justify-between ${buttonHoverBg}`}
     >
-        {contextMenu.selectedFile ? (
-            <button
-                className="block w-full px-4 py-2 text-left text-sm"
-                style={{
-                    backgroundColor: colorMode === 'dark' ? 'var(--chakra-colors-dark-800)' : 'var(--chakra-colors-gray-100)',
-                    color: colorMode === 'dark' ? '#E2E8F0' : '#2D3748',
-                    transition: 'background-color 0.2s ease'
-                }}
-                onClick={(e) => {
-                    e.stopPropagation(); 
-                    handleDeleteFile(contextMenu.workspaceId, contextMenu.selectedFile);
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = colorMode === 'dark' ? '#4A5568' : '#E2E8F0';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = colorMode === 'dark' ? 'var(--chakra-colors-dark-800)' : 'var(--chakra-colors-gray-100)';
-                }}
+      {currentWorkspace ? currentWorkspace.name : 'Select Workspace'}
+    </MenuButton>
+    <MenuList>
+      {workspaces.map((workspace) => (
+        <MenuItem
+          key={workspace.id}
+          icon={<HiFolder />}
+          onClick={() => {
+            handleWorkspaceSelect(workspace);
+            setWorkspaceId(workspace.id);
+          }}
+          onContextMenu={(e) => {
+            e.preventDefault();
+            handleRightClick(e, workspace.id);
+          }}
+        >
+          {workspace.name}
+        </MenuItem>
+      ))}
+      <MenuItem
+        icon={<HiPlus />}
+        onClick={(e) => {
+          e.stopPropagation();
+          handleAddWorkspace();
+        }}
+      >
+        Create New Workspace
+      </MenuItem>
+    </MenuList>
+  </Menu>
 
-            >
-                Delete File
-            </button>
-        ) : (
-            <>
-                <button
-                    className="block w-full px-4 py-2 text-left text-sm"
-                    style={{
-                        backgroundColor: colorMode === 'dark' ? 'var(--chakra-colors-dark-800)' : 'var(--chakra-colors-gray-100)',
-                        color: colorMode === 'dark' ? '#E2E8F0' : '#2D3748', 
-                        transition: 'background-color 0.2s ease'
-                    }}
-                    onClick={() => handleDeleteFolder(contextMenu.workspaceId)}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = colorMode === 'dark' ? '#4A5568' : '#E2E8F0';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = colorMode === 'dark' ? 'var(--chakra-colors-dark-800)' : 'var(--chakra-colors-gray-100)';
-                    }}
-                >
-                    Delete Folder
-                </button>
-                <button
-                    className="block w-full px-4 py-2 text-left text-sm"
-                    style={{
-                        backgroundColor: colorMode === 'dark' ? 'var(--chakra-colors-dark-800)' : '#F7FAFC',
-                        color: colorMode === 'dark' ? '#E2E8F0' : '#2D3748', 
-                        transition: 'background-color 0.2s ease'
-                    }}
-                    onClick={() => handleAddNewFile(contextMenu.workspaceId)}
-                    
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = colorMode === 'dark' ? '#4A5568' : '#E2E8F0';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = colorMode === 'dark' ? 'var(--chakra-colors-dark-800)' : 'var(--chakra-colors-gray-100)';
-                    }}
+  <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg} mb-2`}>
+    <HiTrash className={`text-2xl ${buttonTextColor}`} />
+    <span className={buttonTextColor}>Trash</span>
+  </button>
+  <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg} mb-2`}>
+    <HiQuestionMarkCircle className={`text-2xl ${buttonTextColor}`} />
+    <span className={buttonTextColor}>Help and Support</span>
+  </button>
+  <button
+    className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
+    onClick={toggleColorMode}
+  >
+    {colorMode === 'dark' ? (
+      <>
+        <HiSun className={`text-2xl ${buttonTextColor}`} />
+        <span className={buttonTextColor}>Light Mode</span>
+      </>
+    ) : (
+      <>
+        <HiMoon className={`text-2xl ${buttonTextColor}`} />
+        <span className={buttonTextColor}>Dark Mode</span>
+      </>
+    )}
+  </button>
+</div>
 
-                >
-                    Add New File
-                </button>
-
-                
-            </>
-        )}
-
-
-    </div>
+{contextMenu.workspaceId && (
+  <div
+    ref={contextMenuRef}
+    className="absolute z-50 border shadow-lg"
+    style={{
+      top: contextMenu.y,
+      left: contextMenu.x,
+      backgroundColor: colorMode === 'dark' ? '#2D3748' : '#ffffff',
+      borderColor: colorMode === 'dark' ? '#4A5568' : '#CBD5E0',
+      color: colorMode === 'dark' ? '#E2E8F0' : '#2D3748',
+    }}
+    onClick={() => setContextMenu({ x: 0, y: 0, workspaceId: null, selectedFile: null })}
+  >
+    <button
+      className="block w-full px-4 py-2 text-left text-sm"
+      style={{
+        backgroundColor: colorMode === 'dark' ? 'var(--chakra-colors-dark-800)' : 'var(--chakra-colors-gray-100)',
+        color: colorMode === 'dark' ? '#E2E8F0' : '#2D3748',
+        transition: 'background-color 0.2s ease',
+      }}
+      onClick={(e) => {
+        e.stopPropagation();
+        handleDeleteFolder(contextMenu.workspaceId);
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.backgroundColor = colorMode === 'dark' ? '#4A5568' : '#E2E8F0';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.backgroundColor = colorMode === 'dark' ? 'var(--chakra-colors-dark-800)' : 'var(--chakra-colors-gray-100)';
+      }}
+    >
+      Delete Folder
+    </button>
+    <button
+      className="block w-full px-4 py-2 text-left text-sm"
+      style={{
+        backgroundColor: colorMode === 'dark' ? 'var(--chakra-colors-dark-800)' : '#F7FAFC',
+        color: colorMode === 'dark' ? '#E2E8F0' : '#2D3748',
+        transition: 'background-color 0.2s ease',
+      }}
+      onClick={(e) => {
+        e.stopPropagation();
+        handleAddNewFile(contextMenu.workspaceId);
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.backgroundColor = colorMode === 'dark' ? '#4A5568' : '#E2E8F0';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.backgroundColor = colorMode === 'dark' ? 'var(--chakra-colors-dark-800)' : 'var(--chakra-colors-gray-100)';
+      }}
+    >
+      Add New File
+    </button>
+  </div>
 )}
 
-{addWorkspaceContextMenu && (
+  
+      {addWorkspaceContextMenu && (
         <div
-            ref={addWorkspaceContextMenuRef}
-            className="absolute z-50 border shadow-lg"
-            style={{
-                top: addWorkspaceContextMenu.y,
-                left: addWorkspaceContextMenu.x,
-                backgroundColor: colorMode === 'dark' ? '#2D3748' : '#ffffff',
-                borderColor: colorMode === 'dark' ? '#4A5568' : '#CBD5E0',
-                color: colorMode === 'dark' ? '#E2E8F0' : '#2D3748',
-            }}
-            onClick={() => setAddWorkspaceContextMenu(null)}
+          ref={addWorkspaceContextMenuRef}
+          className="absolute z-50 border shadow-lg"
+          style={{
+            top: addWorkspaceContextMenu.y,
+            left: addWorkspaceContextMenu.x,
+            backgroundColor: colorMode === 'dark' ? '#2D3748' : '#ffffff',
+            borderColor: colorMode === 'dark' ? '#4A5568' : '#CBD5E0',
+            color: colorMode === 'dark' ? '#E2E8F0' : '#2D3748',
+          }}
+          onClick={() => setAddWorkspaceContextMenu(null)}
         >
-            <button
-                className="block w-full px-4 py-2 text-left text-sm"
-                style={{
-                  backgroundColor: colorMode === 'dark' ? 'var(--chakra-colors-dark-800)' : 'var(--chakra-colors-gray-100)',
-                    color: colorMode === 'dark' ? '#E2E8F0' : '#2D3748',
-                    transition: 'background-color 0.2s ease',
-                }}  
-                onClick={(e) => {
-                    e.stopPropagation();
-                    handleAddWorkspace();
-                    setAddWorkspaceContextMenu(null);
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = colorMode === 'dark' ? '#4A5568' : '#E2E8F0';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = colorMode === 'dark' ? 'var(--chakra-colors-dark-800)' : 'var(--chakra-colors-gray-100)';
-                }}
-            >
-                Create New Workspace 
-            </button>
+          <button
+            className="block w-full px-4 py-2 text-left text-sm"
+            style={{
+              backgroundColor: colorMode === 'dark' ? 'var(--chakra-colors-dark-800)' : 'var(--chakra-colors-gray-100)',
+              color: colorMode === 'dark' ? '#E2E8F0' : '#2D3748',
+              transition: 'background-color 0.2s ease',
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleAddWorkspace();
+              setAddWorkspaceContextMenu(null);
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = colorMode === 'dark' ? '#4A5568' : '#E2E8F0';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = colorMode === 'dark' ? 'var(--chakra-colors-dark-800)' : 'var(--chakra-colors-gray-100)';
+            }}
+          >
+            Create New Workspace
+          </button>
         </div>
       )}
-<div
-  ref={resizerRef}
-  className={`absolute top-0 right-0 w-0.5 h-full cursor-col-resize ${colorMode === 'light' ? 'bg-gray-300' : ''}`}
-  onMouseDown={handleMouseDown}
-/>
-
-  </Box>
-);
+  
+      <div
+        ref={resizerRef}
+        className={`absolute top-0 right-0 w-0.5 h-full cursor-col-resize ${colorMode === 'light' ? 'bg-gray-300' : ''}`}
+        onMouseDown={handleMouseDown}
+      />
+    </Box>
+  );
+  
 };
 export default Sidebar;
