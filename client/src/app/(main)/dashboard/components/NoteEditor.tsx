@@ -10,11 +10,10 @@ const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 interface NoteEditorProps {
     selectedFile: string | null;
     workspaceId: string | null;
-    updateFileName: (oldName: string, newName: string) => void; // Ensure this is in the props
-    onTitleChange: (newTitle: string) => void;
+    onTitleChange: (newTitle: string) => void; // Correctly typed prop
 }
 
-const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId, updateFileName, onTitleChange }) => {
+const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId, onTitleChange }) => {
     const { colorMode } = useColorMode();
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
@@ -38,34 +37,34 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId, upda
 
     useEffect(() => {
         const loadNote = async () => {
-            if (selectedFile && workspaceId) {
+            if (!selectedFile || !workspaceId) return;
+    
+            try {
                 const noteDoc = doc(db, 'notes', `${workspaceId}_${selectedFile}`);
-                try {
-                    console.log(`Fetching document for path: notes/${workspaceId}_${selectedFile}`);
-                    const docSnap = await getDoc(noteDoc);
-                    if (docSnap.exists()) {
-                        const data = docSnap.data();
-                        setTitle(data?.title || 'Untitled');
-                        setContent(data?.content || '');
-                        titleRef.current = data?.title || '';
-                        contentRef.current = data?.content || '';
-                        console.log(`Loaded note: {title: ${data?.title}, content: ${data?.content}}`);
-                    } else {
-                        console.log('No such document!');
-                        setTitle('Untitled');
-                        setContent('');
-                        titleRef.current = 'Untitled';
-                        contentRef.current = '';
-                    }
-                } catch (error) {
-                    console.error('Error loading document:', error);
+                const docSnap = await getDoc(noteDoc);
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    setTitle(data?.title || 'Untitled');
+                    setContent(data?.content || '');
+                    titleRef.current = data?.title || 'Untitled';
+                    contentRef.current = data?.content || '';
+                    console.log(`Loaded note: {title: ${data?.title}, content: ${data?.content}}`);
+                } else {
+                    // If the document does not exist, set it up as a new one with default values
+                    setTitle('Untitled');
+                    setContent('');
+                    titleRef.current = 'Untitled';
+                    contentRef.current = '';
+                    await setDoc(noteDoc, { title: 'Untitled', content: '' }); // Save the default document to Firestore
+                    console.log('Default note created');
                 }
-            } else {
-                console.error('Error: selectedFile or workspaceId is null');
+            } catch (error) {
+                console.error('Error loading document:', error);
             }
         };
         loadNote();
     }, [selectedFile, workspaceId]);
+    
 
     const handleContentChange = (value: string) => {
         setContent(value);
@@ -76,18 +75,13 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId, upda
 
     const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newTitle = e.target.value;
-        const oldTitle = titleRef.current;
         setTitle(newTitle);
         titleRef.current = newTitle;
         debouncedSaveNote();
         console.log(`Title changed: ${newTitle}`);
 
-        if (selectedFile && updateFileName) {
-            updateFileName(oldTitle, newTitle);  
-        }
-
-        if (onTitleChange) {
-            onTitleChange(newTitle);
+        if(onTitleChange) {
+            onTitleChange(newTitle); 
         }
     };
 

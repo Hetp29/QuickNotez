@@ -9,8 +9,7 @@ import { FaClipboardCheck } from "react-icons/fa6";
 import { auth, getDoc } from '../../../../../firebaseConfig';
 import { db, collection, addDoc, setDoc, getDocs, updateDoc, doc } from '../../../../../firebaseConfig';
 import { deleteDoc } from 'firebase/firestore';
-import { User } from 'firebase/auth';
-//import NoteEditor from '../components/NoteEditor';
+import NoteEditor from '../components/NoteEditor';
 
 interface File {
   name: string;
@@ -36,7 +35,7 @@ const Sidebar: React.FC<{
   const [width, setWidth] = useState<number>(400);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [isWorkspaceDropdownOpen, setIsWorkspaceDropdownOpen] = useState(false); 
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<firebase.User | null>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
   const resizerRef = useRef<HTMLDivElement>(null);
   const [contextMenu, setContextMenu] = useState<{ 
@@ -50,13 +49,34 @@ const Sidebar: React.FC<{
   const { colorMode, toggleColorMode } = useColorMode();
   const [workspaceFoldersOpen, setWorkspaceFoldersOpen] = useState<{ [key: string]: boolean }>({});
 
-  
+  const handleTitleUpdate = (newTitle: string) => {
+    if (selectedFile && workspaceId) {
+        setWorkspaces(prevWorkspaces =>
+            prevWorkspaces.map(workspace => {
+                if (workspace.id === workspaceId) {
+                    return {
+                        ...workspace,
+                        files: workspace.files.map(file =>
+                            file.name === selectedFile ? { ...file, name: newTitle } : file
+                        ),
+                    };
+                }
+                return workspace;
+            })
+        );
 
-  const handleRightClick = (event: React.MouseEvent, workspaceId: string | null, fileName?: string | null) => {
-    if(!workspaceId) {
-      console.error("Workspace ID is null");
-      return;
+        
+        const workspaceRef = doc(db, 'users', auth.currentUser?.uid, 'workspaces', workspaceId);
+        updateDoc(workspaceRef, {
+            files: workspaces.find(ws => ws.id === workspaceId)?.files.map(file =>
+                file.name === selectedFile ? { ...file, name: newTitle } : file
+            ),
+        });
     }
+};
+
+
+  const handleRightClick = (event: React.MouseEvent, workspaceId: string, fileName?: string) => {
     event.preventDefault();
     event.stopPropagation();
     console.log("Right clicked on:", fileName ? `File: ${fileName}` : `Workspace: ${workspaceId}`);
@@ -68,20 +88,13 @@ const Sidebar: React.FC<{
     });
   };
   
-  const handleFileClick = (workspaceId: string | null, fileName: string | null) => {
-    if(!workspaceId || !fileName) {
-      console.error("Workspace ID or file name is null");
-      return;
-    }
+  const handleFileClick = (workspaceId: string, fileName: string) => {
     console.log("File clicked:", workspaceId, fileName);
     setSelectedFile(fileName);
     setWorkspaceId(workspaceId); 
 };
 
   const fetchWorkspaces = async () => {
-    if(!auth.currentUser?.uid) {
-      throw new Error('User is not authenticated')
-    }
     const workspaceCollection = await getDocs(collection(db, 'users', auth.currentUser?.uid, 'workspaces'));
     const fetchedWorkspaces = workspaceCollection.docs.map(doc => ({
       id: doc.id,
@@ -94,13 +107,10 @@ const Sidebar: React.FC<{
   
 
   const handleDeleteFile = async (workspaceId: string, fileName: string) => {
-    if(!auth.currentUser?.uid) {
-      throw new Error('User is not authenticated')
-    }
     const workspaceRef = doc(db, 'users', auth.currentUser?.uid, 'workspaces', workspaceId);
     const workspaceDoc = await getDoc(workspaceRef);
     if (workspaceDoc.exists()) {
-      const updatedFiles = workspaceDoc.data().files.filter((file: { name: string; }) => file.name !== fileName);
+      const updatedFiles = workspaceDoc.data().files.filter(file => file.name !== fileName);
       await updateDoc(workspaceRef, { files: updatedFiles });
       fetchWorkspaces();
       console.log('File deleted successfully');
@@ -108,9 +118,6 @@ const Sidebar: React.FC<{
   };
   
   const handleDeleteFolder = async (workspaceId: string) => {
-    if(!auth.currentUser?.uid) {
-      throw new Error('User is not authenticated')
-    }
     const workspaceRef = doc(db, 'users', auth.currentUser?.uid, 'workspaces', workspaceId);
     await deleteDoc(workspaceRef);
     fetchWorkspaces();
@@ -124,9 +131,6 @@ const Sidebar: React.FC<{
 
 const handleAddNewFile = async (workspaceId: string) => {
   const fileName = "Untitled"; 
-  if(!auth.currentUser?.uid) {
-    throw new Error('User is not authenticated')
-  }
   try {
       const workspaceRef = doc(db, 'users', auth.currentUser?.uid, 'workspaces', workspaceId);
       const workspaceDoc = await getDoc(workspaceRef);
@@ -136,8 +140,8 @@ const handleAddNewFile = async (workspaceId: string) => {
           const files = workspaceDoc.data().files || [];
           
           
-          const newFileName = files.find((file: { name: string; }) => file.name === fileName) 
-              ? `${fileName}_${files.length + 1}` 
+          const newFileName = files.find(file => file.name === fileName) 
+              ? `${fileName} ${files.length + 1}` 
               : fileName;
 
           const newFile = { name: newFileName, content: '' };
@@ -159,6 +163,7 @@ const handleAddNewFile = async (workspaceId: string) => {
   } catch (error) {
       console.error('Error adding file:', error);
   }
+  setContextMenu({ x: 0, y: 0, workspaceId: null, selectedFile: null });
 };
 
 const contextMenuRef = useRef<HTMLDivElement | null>(null);
@@ -388,24 +393,22 @@ useEffect(() => {
     </button>
     <Collapse in={workspaceFoldersOpen[workspace.id]} animateOpacity>
       <Box pl={8} mt={2} style={{ transition: 'all 0.3s ease-in-out' }}>
-        
-      {workspace.files.map((file: File, fileIndex: number) => (
-        <button
-          key={fileIndex}
-          className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
-          onClick={() => handleFileClick(workspace.id, file.name)}
-          onContextMenu={(e) => {
-            e.preventDefault();
-            handleRightClick(e, workspace.id, file.name);
-          }}
-        >
-          <HiDocument className={`text-2xl ${buttonTextColor}`} />
-          <span className={buttonTextColor}>
-            {updatedTitles[file.name] || file.name || 'Untitled'}
-          </span>
-        </button>
-      ))}
-
+        {workspace.files.map((file: File, fileIndex: number) => (
+          <button
+            key={fileIndex}
+            className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
+            onClick={() => handleFileClick(workspace.id, file.name)}
+            onContextMenu={(e) => {
+              e.preventDefault();
+              handleRightClick(e, workspace.id, file.name);
+            }}
+          >
+            <HiDocument className={`text-2xl ${buttonTextColor}`} />
+            <span className={buttonTextColor}>
+              {updatedTitles[file.name] || file.name}
+            </span>
+          </button>
+        ))}
       </Box>
     </Collapse>
   </div>
@@ -480,13 +483,9 @@ useEffect(() => {
                     transition: 'background-color 0.2s ease'
                 }}
                 onClick={(e) => {
-                  e.stopPropagation();
-                  if (contextMenu.workspaceId && contextMenu.selectedFile) {
-                      handleDeleteFile(contextMenu.workspaceId, contextMenu.selectedFile);
-                  } else {
-                      console.error("Workspace ID or selected file is null");
-                  }
-              }}
+                    e.stopPropagation(); 
+                    handleDeleteFile(contextMenu.workspaceId, contextMenu.selectedFile);
+                }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = colorMode === 'dark' ? '#4A5568' : '#E2E8F0';
                 }}
@@ -506,13 +505,7 @@ useEffect(() => {
                         color: colorMode === 'dark' ? '#E2E8F0' : '#2D3748', 
                         transition: 'background-color 0.2s ease'
                     }}
-                    onClick={() => {
-                      if (contextMenu.workspaceId) {
-                          handleDeleteFolder(contextMenu.workspaceId);
-                      } else {
-                          console.error("Workspace ID is null");
-                      }
-                  }}
+                    onClick={() => handleDeleteFolder(contextMenu.workspaceId)}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.backgroundColor = colorMode === 'dark' ? '#4A5568' : '#E2E8F0';
                     }}
@@ -529,13 +522,7 @@ useEffect(() => {
                         color: colorMode === 'dark' ? '#E2E8F0' : '#2D3748', 
                         transition: 'background-color 0.2s ease'
                     }}
-                    onClick={() => {
-                      if (contextMenu.workspaceId) {
-                          handleAddNewFile(contextMenu.workspaceId);
-                      } else {
-                          console.error("Workspace ID is null");
-                      }
-                  }}
+                    onClick={() => handleAddNewFile(contextMenu.workspaceId)}
                     
                     onMouseEnter={(e) => {
                       e.currentTarget.style.backgroundColor = colorMode === 'dark' ? '#4A5568' : '#E2E8F0';

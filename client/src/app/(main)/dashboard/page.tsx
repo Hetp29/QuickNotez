@@ -1,4 +1,4 @@
-"use client";
+"use client";  // This needs to be exactly like this, without quotes or extra characters
 
 import React, { useState } from 'react';
 import Sidebar from './sidebar/Sidebar';
@@ -7,56 +7,13 @@ import dynamic from 'next/dynamic';
 import theme from './styles/theme';
 import { auth, db, doc, updateDoc } from '../../../../firebaseConfig';
 
+// Dynamically import NoteEditor to prevent SSR issues
 const NoteEditor = dynamic(() => import('./components/NoteEditor'), { ssr: false });
-
-interface Workspace {
-  id: string;
-  name: string;
-  files: { name: string; content: string }[];
-}
-
-interface MainContentProps {
-  selectedFile: string | null;
-  workspaceId: string | null;
-  updateFileName: (oldName: string, newName: string) => void;
-  onTitleUpdate: (newTitle: string) => void;
-}
-
-const MainContent: React.FC<MainContentProps> = ({
-  selectedFile,
-  workspaceId,
-  updateFileName,
-  onTitleUpdate
-}) => {
-  const { colorMode } = useColorMode();
-
-  console.log('Rendering MainContent with selectedFile:', selectedFile);
-  console.log('Rendering MainContent with workspaceId:', workspaceId);
-
-  return (
-    <Box
-      flex="1"
-      p={4}
-      bg={colorMode === 'light' ? 'gray.100' : 'dark.900'}
-      color={colorMode === 'light' ? 'black' : 'white'}
-      minH="100vh"
-    >
-      {selectedFile && (
-        <NoteEditor
-          selectedFile={selectedFile}
-          workspaceId={workspaceId}
-          updateFileName={updateFileName}
-          onTitleChange={onTitleUpdate}
-        />
-      )}
-    </Box>
-  );
-};
 
 const Page = () => {
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [workspaceId, setWorkspaceId] = useState<string | null>(null);
-  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+  const [workspaces, setWorkspaces] = useState<any[]>([]); // Manage workspaces in state
   const [updatedTitles, setUpdatedTitles] = useState<{ [key: string]: string }>({});
 
   const updateFileName = (oldName: string, newName: string) => {
@@ -76,38 +33,47 @@ const Page = () => {
   };
 
   const handleTitleUpdate = (newTitle: string) => {
-    if (!selectedFile || !workspaceId || !auth.currentUser?.uid) {
-      console.error('Error: selectedFile or workspaceId is null or undefined');
-      return;
+    console.log("Updating title:", newTitle);
+    if (selectedFile && workspaceId) {
+      setWorkspaces(prevWorkspaces =>
+        prevWorkspaces.map(workspace => {
+          if (workspace.id === workspaceId) {
+            return {
+              ...workspace,
+              files: workspace.files.map(file =>
+                file.name === selectedFile ? { ...file, name: newTitle } : file
+              ),
+            };
+          }
+          return workspace;
+        })
+      );
+
+      
+      const workspaceRef = doc(db, 'users', auth.currentUser?.uid, 'workspaces', workspaceId);
+      updateDoc(workspaceRef, {
+        files: workspaces.find(ws => ws.id === workspaceId)?.files.map(file =>
+          file.name === selectedFile ? { ...file, name: newTitle } : file
+        ),
+      });
     }
+  };
 
-    setWorkspaces(prevWorkspaces =>
-      prevWorkspaces.map(workspace => {
-        if (workspace.id === workspaceId) {
-          return {
-            ...workspace,
-            files: workspace.files.map(file =>
-              file.name === selectedFile ? { ...file, name: newTitle } : file
-            ),
-          };
-        }
-        return workspace;
-      })
+  const MainContent = ({ selectedFile, workspaceId, updateFileName, onTitleUpdate }) => {
+    const { colorMode } = useColorMode();
+
+    return (
+      <Box flex="1" p={4} bg={colorMode === 'light' ? 'gray.100' : 'dark.900'} color={colorMode === 'light' ? 'black' : 'white'} minH="100vh">
+        {selectedFile && (
+          <NoteEditor
+            selectedFile={selectedFile}
+            workspaceId={workspaceId}
+            updateFileName={updateFileName}
+            onTitleUpdate={handleTitleUpdate}
+          />
+        )}
+      </Box>
     );
-
-    setUpdatedTitles(prevTitles => ({
-      ...prevTitles,
-      [selectedFile]: newTitle,
-    }));
-
-    const workspaceRef = doc(db, 'users', auth.currentUser.uid, 'workspaces', workspaceId);
-    updateDoc(workspaceRef, {
-      files: workspaces.find(ws => ws.id === workspaceId)?.files.map((file: { name: string; }) =>
-        file.name === selectedFile ? { ...file, name: newTitle } : file
-      ),
-    }).catch((error) => {
-      console.error('Error updating Firebase:', error);
-    });
   };
 
   return (
@@ -118,13 +84,13 @@ const Page = () => {
           setWorkspaceId={setWorkspaceId}
           workspaces={workspaces}
           setWorkspaces={setWorkspaces}
-          updatedTitles={updatedTitles}
+          updatedTitles={updatedTitles} 
         />
         <MainContent
           selectedFile={selectedFile}
           workspaceId={workspaceId}
           updateFileName={updateFileName}
-          onTitleUpdate={handleTitleUpdate}
+          onTitleUpdate={handleTitleUpdate}  // Pass the function here
         />
       </Box>
     </ChakraProvider>
