@@ -114,26 +114,47 @@ const Sidebar: React.FC<{
 
   const handleDeleteFile = async (workspaceId: string, fileName: string) => {
     try {
-        const workspaceRef = doc(db, 'users', auth.currentUser?.uid, 'workspaces', workspaceId);
-        const workspaceDoc = await getDoc(workspaceRef);
-
-        if (workspaceDoc.exists()) {
-            const updatedFiles = workspaceDoc.data().files.filter(file => file.name !== fileName);
-
-            await updateDoc(workspaceRef, { files: updatedFiles });
-            console.log('File reference removed from workspace successfully');
-
-            
-            const noteDocRef = doc(db, 'notes', `${workspaceId}_${fileName}`);
-            await deleteDoc(noteDocRef);
-            console.log('File deleted from notes collection successfully');
-
-            fetchWorkspaces(); 
+      const workspaceRef = doc(db, 'users', auth.currentUser?.uid, 'workspaces', workspaceId);
+      const workspaceDoc = await getDoc(workspaceRef);
+  
+      if (workspaceDoc.exists()) {
+        const updatedFiles = workspaceDoc.data().files.filter(file => file.name !== fileName);
+  
+      
+        await updateDoc(workspaceRef, { files: updatedFiles });
+        console.log('File reference removed from workspace successfully');
+  
+        
+        const noteDocRef = doc(db, 'notes', `${workspaceId}_${fileName}`);
+        await deleteDoc(noteDocRef);
+        console.log('File deleted from notes collection successfully');
+  
+        
+        setWorkspaces(prevWorkspaces =>
+          prevWorkspaces.map(workspace =>
+            workspace.id === workspaceId
+              ? { ...workspace, files: updatedFiles }
+              : workspace
+          )
+        );
+  
+        
+        setCurrentWorkspace(prevWorkspace =>
+          prevWorkspace?.id === workspaceId
+            ? { ...prevWorkspace, files: updatedFiles }
+            : prevWorkspace
+        );
+        
+        
+        if (updatedFiles.length === 0 || !updatedFiles.some(file => file.name === fileName)) {
+          setSelectedFile(null);
         }
+      }
     } catch (error) {
-        console.error('Error deleting file:', error);
+      console.error('Error deleting file:', error);
     }
-};
+  };
+  
 
   
   
@@ -512,107 +533,134 @@ useEffect(() => {
 
 </div>
 
+      
 
-      {contextMenu.workspaceId && (
-        <div
-          ref={contextMenuRef}
-          className="absolute z-50 border shadow-lg"
-          style={{
+
+{contextMenu.workspaceId && (
+    <div
+        ref={contextMenuRef}
+        className="absolute z-50 border shadow-lg"
+        style={{
             top: contextMenu.y,
             left: contextMenu.x,
-            backgroundColor: colorMode === 'dark' ? '#2D3748' : '#ffffff',
+            backgroundColor: colorMode === 'dark' ? '#2D3748' : '#ffffff', 
             borderColor: colorMode === 'dark' ? '#4A5568' : '#CBD5E0',
-            color: colorMode === 'dark' ? '#E2E8F0' : '#2D3748',
-          }}
-          onClick={() => setContextMenu({ x: 0, y: 0, workspaceId: null, selectedFile: null })}
-        >
-          <button
-            className="block w-full px-4 py-2 text-left text-sm"
-            style={{
-              backgroundColor: colorMode === 'dark' ? 'var(--chakra-colors-dark-800)' : 'var(--chakra-colors-gray-100)',
-              color: colorMode === 'dark' ? '#E2E8F0' : '#2D3748',
-              transition: 'background-color 0.2s ease',
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleDeleteFolder(contextMenu.workspaceId);
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = colorMode === 'dark' ? '#4A5568' : '#E2E8F0';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = colorMode === 'dark' ? 'var(--chakra-colors-dark-800)' : 'var(--chakra-colors-gray-100)';
-            }}
-          >
-            Delete Folder
-          </button>
-          <button
-            className="block w-full px-4 py-2 text-left text-sm"
-            style={{
-              backgroundColor: colorMode === 'dark' ? 'var(--chakra-colors-dark-800)' : '#F7FAFC',
-              color: colorMode === 'dark' ? '#E2E8F0' : '#2D3748',
-              transition: 'background-color 0.2s ease',
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleAddNewFile(contextMenu.workspaceId);
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = colorMode === 'dark' ? '#4A5568' : '#E2E8F0';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = colorMode === 'dark' ? 'var(--chakra-colors-dark-800)' : 'var(--chakra-colors-gray-100)';
-            }}
-          >
-            Add New File
-          </button>
-        </div>
-      )}
+            color: colorMode === 'dark' ? '#E2E8F0' : '#2D3748', 
+        }}
+        onClick={() => setContextMenu({ x: 0, y: 0, workspaceId: null, selectedFile: null })}
+    >
+        {contextMenu.selectedFile ? (
+            <button
+                className="block w-full px-4 py-2 text-left text-sm"
+                style={{
+                    backgroundColor: colorMode === 'dark' ? 'var(--chakra-colors-dark-800)' : 'var(--chakra-colors-gray-100)',
+                    color: colorMode === 'dark' ? '#E2E8F0' : '#2D3748',
+                    transition: 'background-color 0.2s ease'
+                }}
+                onClick={(e) => {
+                    e.stopPropagation(); 
+                    handleDeleteFile(contextMenu.workspaceId, contextMenu.selectedFile);
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = colorMode === 'dark' ? '#4A5568' : '#E2E8F0';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = colorMode === 'dark' ? 'var(--chakra-colors-dark-800)' : 'var(--chakra-colors-gray-100)';
+                }}
 
-      {addWorkspaceContextMenu && (
+            >
+                Delete File
+            </button>
+        ) : (
+            <>
+                <button
+                    className="block w-full px-4 py-2 text-left text-sm"
+                    style={{
+                        backgroundColor: colorMode === 'dark' ? 'var(--chakra-colors-dark-800)' : 'var(--chakra-colors-gray-100)',
+                        color: colorMode === 'dark' ? '#E2E8F0' : '#2D3748', 
+                        transition: 'background-color 0.2s ease'
+                    }}
+                    onClick={() => handleDeleteFolder(contextMenu.workspaceId)}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = colorMode === 'dark' ? '#4A5568' : '#E2E8F0';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = colorMode === 'dark' ? 'var(--chakra-colors-dark-800)' : 'var(--chakra-colors-gray-100)';
+                    }}
+                >
+                    Delete Folder
+                </button>
+                <button
+                    className="block w-full px-4 py-2 text-left text-sm"
+                    style={{
+                        backgroundColor: colorMode === 'dark' ? 'var(--chakra-colors-dark-800)' : '#F7FAFC',
+                        color: colorMode === 'dark' ? '#E2E8F0' : '#2D3748', 
+                        transition: 'background-color 0.2s ease'
+                    }}
+                    onClick={() => handleAddNewFile(contextMenu.workspaceId)}
+                    
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = colorMode === 'dark' ? '#4A5568' : '#E2E8F0';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = colorMode === 'dark' ? 'var(--chakra-colors-dark-800)' : 'var(--chakra-colors-gray-100)';
+                    }}
+
+                >
+                    Add New File
+                </button>
+
+                
+            </>
+        )}
+
+
+    </div>
+)}
+
+{addWorkspaceContextMenu && (
         <div
-          ref={addWorkspaceContextMenuRef}
-          className="absolute z-50 border shadow-lg"
-          style={{
-            top: addWorkspaceContextMenu.y,
-            left: addWorkspaceContextMenu.x,
-            backgroundColor: colorMode === 'dark' ? '#2D3748' : '#ffffff',
-            borderColor: colorMode === 'dark' ? '#4A5568' : '#CBD5E0',
-            color: colorMode === 'dark' ? '#E2E8F0' : '#2D3748',
-          }}
-          onClick={() => setAddWorkspaceContextMenu(null)}
-        >
-          <button
-            className="block w-full px-4 py-2 text-left text-sm"
+            ref={addWorkspaceContextMenuRef}
+            className="absolute z-50 border shadow-lg"
             style={{
-              backgroundColor: colorMode === 'dark' ? 'var(--chakra-colors-dark-800)' : 'var(--chakra-colors-gray-100)',
-              color: colorMode === 'dark' ? '#E2E8F0' : '#2D3748',
-              transition: 'background-color 0.2s ease',
+                top: addWorkspaceContextMenu.y,
+                left: addWorkspaceContextMenu.x,
+                backgroundColor: colorMode === 'dark' ? '#2D3748' : '#ffffff',
+                borderColor: colorMode === 'dark' ? '#4A5568' : '#CBD5E0',
+                color: colorMode === 'dark' ? '#E2E8F0' : '#2D3748',
             }}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleAddWorkspace();
-              setAddWorkspaceContextMenu(null);
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = colorMode === 'dark' ? '#4A5568' : '#E2E8F0';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = colorMode === 'dark' ? 'var(--chakra-colors-dark-800)' : 'var(--chakra-colors-gray-100)';
-            }}
-          >
-            Create New Workspace
-          </button>
+            onClick={() => setAddWorkspaceContextMenu(null)}
+        >
+            <button
+                className="block w-full px-4 py-2 text-left text-sm"
+                style={{
+                  backgroundColor: colorMode === 'dark' ? 'var(--chakra-colors-dark-800)' : 'var(--chakra-colors-gray-100)',
+                    color: colorMode === 'dark' ? '#E2E8F0' : '#2D3748',
+                    transition: 'background-color 0.2s ease',
+                }}  
+                onClick={(e) => {
+                    e.stopPropagation();
+                    handleAddWorkspace();
+                    setAddWorkspaceContextMenu(null);
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = colorMode === 'dark' ? '#4A5568' : '#E2E8F0';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = colorMode === 'dark' ? 'var(--chakra-colors-dark-800)' : 'var(--chakra-colors-gray-100)';
+                }}
+            >
+                Create New Workspace 
+            </button>
         </div>
       )}
+<div
+  ref={resizerRef}
+  className={`absolute top-0 right-0 w-0.5 h-full cursor-col-resize ${colorMode === 'light' ? 'bg-gray-300' : ''}`}
+  onMouseDown={handleMouseDown}
+/>
 
-      <div
-        ref={resizerRef}
-        className={`absolute top-0 right-0 w-0.5 h-full cursor-col-resize ${colorMode === 'light' ? 'bg-gray-300' : ''}`}
-        onMouseDown={handleMouseDown}
-      />
-    </Box>
-  );
+  </Box>
+);
 };
-
 export default Sidebar;
