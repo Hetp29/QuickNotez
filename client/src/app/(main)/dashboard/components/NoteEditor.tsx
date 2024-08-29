@@ -1,8 +1,8 @@
 import dynamic from 'next/dynamic';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import 'react-quill/dist/quill.snow.css';
-import { debounce } from 'lodash';
 import { db, doc, setDoc, getDoc } from '../../../../../firebaseConfig';
+import { debounce } from 'lodash';
 import { Box, useColorMode } from '@chakra-ui/react';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
@@ -10,65 +10,81 @@ const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 interface NoteEditorProps {
     selectedFile: string | null;
     workspaceId: string | null;
-    onTitleChange: (newTitle: string) => void;
 }
 
-const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId, onTitleChange }) => {
+const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId }) => {
     const { colorMode } = useColorMode();
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
+    
     const titleRef = useRef(title);
     const contentRef = useRef(content);
-
-    useEffect(() => {
-        titleRef.current = title;
-        contentRef.current = content;
-    }, [title, content]);
 
     const saveNote = useCallback(async () => {
         if (selectedFile && workspaceId) {
             const noteDoc = doc(db, 'notes', `${workspaceId}_${selectedFile}`);
-            await setDoc(noteDoc, { title: titleRef.current, content: contentRef.current }, { merge: true });
+            try {
+                await setDoc(noteDoc, { title: titleRef.current, content: contentRef.current }, { merge: true });
+                console.log(`Saved note: {title: ${titleRef.current}, content: ${contentRef.current}}`);
+            } catch (error) {
+                console.error('Error saving document:', error);
+            }
         }
     }, [selectedFile, workspaceId]);
 
-    const debouncedSaveNote = useCallback(debounce(saveNote, 500), [saveNote]);
-
-    const debouncedTitleChange = useCallback(debounce((newTitle) => {
-        onTitleChange(newTitle);
-    }, 500), [onTitleChange]);
+    const debouncedSaveNote = useCallback(debounce(() => saveNote(), 300), [saveNote]);
 
     useEffect(() => {
         const loadNote = async () => {
             if (selectedFile && workspaceId) {
                 const noteDoc = doc(db, 'notes', `${workspaceId}_${selectedFile}`);
-                const docSnap = await getDoc(noteDoc);
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    setTitle(data.title || '');
-                    setContent(data.content || '');
+                try {
+                    const docSnap = await getDoc(noteDoc);
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        setTitle(data?.title || '');
+                        setContent(data?.content || '');
+                        titleRef.current = data?.title || '';
+                        contentRef.current = data?.content || '';
+                        console.log(`Loaded note: {title: ${data?.title}, content: ${data?.content}}`);
+                    } else {
+                        console.log('No such document!');
+                        setTitle('');
+                        setContent('');
+                        titleRef.current = '';
+                        contentRef.current = '';
+                    }
+                } catch (error) {
+                    console.error('Error loading document:', error);
                 }
             }
         };
         loadNote();
     }, [selectedFile, workspaceId]);
 
+    const handleContentChange = (value: string) => {
+        setContent(value);
+        contentRef.current = value;
+        debouncedSaveNote();
+        console.log(`Content changed: ${value}`);
+    };
+
     const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newTitle = e.target.value;
         setTitle(newTitle);
+        titleRef.current = newTitle;
         debouncedSaveNote();
-        debouncedTitleChange(newTitle);
-    };
-
-    const handleContentChange = (value: string) => {
-        setContent(value);
-        debouncedSaveNote();
+        console.log(`Title changed: ${newTitle}`);
     };
 
     const isDarkMode = colorMode === 'dark';
 
     return (
-        <Box padding="40px" height="100%" color={isDarkMode ? 'white' : 'black'}>
+        <Box
+            padding="40px"
+            height="100%"
+            color={isDarkMode ? 'white' : 'black'}
+        >
             <input
                 type="text"
                 value={title}

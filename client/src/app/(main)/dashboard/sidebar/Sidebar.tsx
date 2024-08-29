@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   HiChevronRight, HiPlus, HiMoon, HiSun, 
   HiChat, HiTrash, HiQuestionMarkCircle, HiDocument, 
-  HiChartBar, HiChevronDown, HiTemplate } from 'react-icons/hi';
+  HiChartBar, HiChevronDown, HiTemplate, HiFolder} from 'react-icons/hi';
 import { RiMindMap } from 'react-icons/ri';
-import { useColorMode, Box, Collapse} from '@chakra-ui/react';
+import { useColorMode, Box, Collapse, Menu, MenuButton, MenuList, MenuItem, Button, IconButton} from '@chakra-ui/react';
 import { FaClipboardCheck } from "react-icons/fa6";
 import { auth, getDoc } from '../../../../../firebaseConfig';
 import { db, collection, addDoc, setDoc, getDocs, updateDoc, doc } from '../../../../../firebaseConfig';
@@ -26,8 +26,8 @@ interface Workspace {
 const Sidebar: React.FC<{ 
   setSelectedFile: (file: string) => void;
   setWorkspaceId: (id: string) => void;
-  workspaces: any[];
-  setWorkspaces: React.Dispatch<React.SetStateAction<any[]>>;
+  workspaces: Workspace[];
+  setWorkspaces: React.Dispatch<React.SetStateAction<Workspace[]>>;
   updatedTitles: { [key: string]: string }
 }> = ({ setSelectedFile, setWorkspaceId, workspaces, setWorkspaces, updatedTitles }) => {
   const minWidth = 400;
@@ -44,6 +44,11 @@ const Sidebar: React.FC<{
     workspaceId: string | null, 
     selectedFile: string | null 
   }>({ x: 0, y: 0, workspaceId: null, selectedFile: null });
+  const [currentWorkspace, setCurrentWorkspace] = useState<Workspace | null>(null);
+  const handleWorkspaceSelect = (workspace: Workspace) => {
+    setCurrentWorkspace(workspace);
+    setWorkspaceId(workspace.id);
+  }
 
 
   const { colorMode, toggleColorMode } = useColorMode();
@@ -462,8 +467,34 @@ useEffect(() => {
           <span className={buttonTextColor}>Productivity Dashboard</span>
         </button>
       </div>
+
+      
+
   
       <div className="p-4 border-t border-gray-400 text-base">
+      <Menu>
+        <MenuButton
+          as={Button}
+          rightIcon={<HiChevronDown />}
+          className={`w-full flex items-center justify-between ${buttonHoverBg}`}
+        >
+          {currentWorkspace ? currentWorkspace.name : 'Select Workspace'}
+        </MenuButton>
+        <MenuList>
+          {workspaces.map((workspace) => (
+            <MenuItem
+              key={workspace.id}
+              icon={<HiFolder />}
+              onClick={() => {
+                handleWorkspaceSelect(workspace);
+                setWorkspaceId(workspace.id); 
+              }}
+            >
+              {workspace.name}
+            </MenuItem>
+          ))}
+        </MenuList>
+      </Menu>
         <button className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg} mb-2`}>
           <HiTrash className={`text-2xl ${buttonTextColor}`} />
           <span className={buttonTextColor}>Trash</span>
