@@ -2,7 +2,6 @@ import dynamic from 'next/dynamic';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import 'react-quill/dist/quill.snow.css';
 import { db, doc, setDoc, getDoc } from '../../../../../firebaseConfig';
-import { debounce } from 'lodash';
 import { Box, useColorMode } from '@chakra-ui/react';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
@@ -10,13 +9,14 @@ const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 interface NoteEditorProps {
     selectedFile: string | null;
     workspaceId: string | null;
-    onTitleChange: (newTitle: string) => void; // Correctly typed prop
+    onTitleChange: (newTitle: string) => void;
 }
 
 const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId, onTitleChange }) => {
     const { colorMode } = useColorMode();
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
+    const titleInputRef = useRef<HTMLInputElement>(null); // Ref for the title input field
 
     const titleRef = useRef(title);
     const contentRef = useRef(content);
@@ -33,29 +33,28 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId, onTi
         }
     }, [selectedFile, workspaceId]);
 
-    const debouncedSaveNote = useCallback(debounce(() => saveNote(), 300), [saveNote]);
-
     useEffect(() => {
         const loadNote = async () => {
             if (!selectedFile || !workspaceId) return;
-    
+
             try {
                 const noteDoc = doc(db, 'notes', `${workspaceId}_${selectedFile}`);
                 const docSnap = await getDoc(noteDoc);
                 if (docSnap.exists()) {
                     const data = docSnap.data();
-                    setTitle(data?.title || 'Untitled');
+                    setTitle(data?.title || '');
                     setContent(data?.content || '');
-                    titleRef.current = data?.title || 'Untitled';
+                    titleRef.current = data?.title || '';
                     contentRef.current = data?.content || '';
                     console.log(`Loaded note: {title: ${data?.title}, content: ${data?.content}}`);
                 } else {
                     // If the document does not exist, set it up as a new one with default values
-                    setTitle('Untitled');
+                    const defaultTitle = 'Untitled';
+                    setTitle(defaultTitle);
                     setContent('');
-                    titleRef.current = 'Untitled';
+                    titleRef.current = defaultTitle;
                     contentRef.current = '';
-                    await setDoc(noteDoc, { title: 'Untitled', content: '' }); // Save the default document to Firestore
+                    await setDoc(noteDoc, { title: defaultTitle, content: '' });
                     console.log('Default note created');
                 }
             } catch (error) {
@@ -64,25 +63,32 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId, onTi
         };
         loadNote();
     }, [selectedFile, workspaceId]);
-    
-
-    const handleContentChange = (value: string) => {
-        setContent(value);
-        contentRef.current = value;
-        debouncedSaveNote();
-        console.log(`Content changed: ${value}`);
-    };
 
     const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newTitle = e.target.value;
         setTitle(newTitle);
         titleRef.current = newTitle;
-        debouncedSaveNote();
-        console.log(`Title changed: ${newTitle}`);
 
-        if(onTitleChange) {
-            onTitleChange(newTitle); 
+        // Update the title in the parent component
+        onTitleChange(newTitle);
+
+        // Save without debounce
+        saveNote();
+    };
+
+    useEffect(() => {
+        // Restore focus to the title input field after re-render
+        if (titleInputRef.current) {
+            titleInputRef.current.focus();
         }
+    }, [title]);
+
+    const handleContentChange = (value: string) => {
+        setContent(value);
+        contentRef.current = value;
+
+        // Save without debounce
+        saveNote();
     };
 
     const isDarkMode = colorMode === 'dark';
@@ -94,6 +100,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ selectedFile, workspaceId, onTi
             color={isDarkMode ? 'white' : 'black'}
         >
             <input
+                ref={titleInputRef} // Attach ref to the input field
                 type="text"
                 value={title}
                 onChange={handleTitleChange}

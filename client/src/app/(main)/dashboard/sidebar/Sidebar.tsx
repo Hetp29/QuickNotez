@@ -88,9 +88,9 @@ const Sidebar: React.FC<{
     });
   };
   
-  const handleFileClick = (workspaceId: string, fileName: string) => {
-    console.log("File clicked:", workspaceId, fileName);
-    setSelectedFile(fileName);
+  const handleFileClick = (workspaceId: string, fileId: string) => {
+    console.log("File clicked:", workspaceId, fileId);
+    setSelectedFile(fileId);
     setWorkspaceId(workspaceId); 
 };
 
@@ -160,7 +160,6 @@ const handleDeleteFolder = async (workspaceId: string) => {
 
 
   
-
 const handleAddNewFile = async (workspaceId: string) => {
   const fileName = "Untitled"; 
   try {
@@ -171,23 +170,20 @@ const handleAddNewFile = async (workspaceId: string) => {
           console.log('Workspace found:', workspaceDoc.data());
           const files = workspaceDoc.data().files || [];
           
-          
-          const newFileName = files.find(file => file.name === fileName) 
-              ? `${fileName} ${files.length + 1}` 
-              : fileName;
+          // Generate a unique ID for the new file
+          const uniqueFileId = doc(collection(db, 'notes')).id;
 
-          const newFile = { name: newFileName, content: '' };
+          const newFile = { id: uniqueFileId, name: fileName, content: '' };
           files.push(newFile);
 
           await updateDoc(workspaceRef, { files });
           console.log('File added successfully');
 
-        
-          const noteDocRef = doc(db, 'notes', `${workspaceId}_${newFileName}`);
-          await setDoc(noteDocRef, { title: newFileName, content: '' });
+          // Create the corresponding document in the notes collection using the unique ID
+          const noteDocRef = doc(db, 'notes', uniqueFileId);
+          await setDoc(noteDocRef, { title: fileName, content: '' });
 
-          
-          setSelectedFile(newFileName);
+          setSelectedFile(uniqueFileId);
           setWorkspaceId(workspaceId);
 
           fetchWorkspaces(); 
@@ -197,6 +193,8 @@ const handleAddNewFile = async (workspaceId: string) => {
   }
   setContextMenu({ x: 0, y: 0, workspaceId: null, selectedFile: null });
 };
+
+
 
 const contextMenuRef = useRef<HTMLDivElement | null>(null);
 
@@ -427,7 +425,7 @@ useEffect(() => {
       <Box pl={8} mt={2} style={{ transition: 'all 0.3s ease-in-out' }}>
         {workspace.files.map((file: File, fileIndex: number) => (
           <button
-            key={fileIndex}
+            key={file.id}  // <-- Ensure this key is unique
             className={`flex items-center gap-2 p-2 rounded ${buttonHoverBg}`}
             onClick={() => handleFileClick(workspace.id, file.name)}
             onContextMenu={(e) => {
@@ -445,6 +443,7 @@ useEffect(() => {
     </Collapse>
   </div>
 ))}
+
   </Box>
 )}
 

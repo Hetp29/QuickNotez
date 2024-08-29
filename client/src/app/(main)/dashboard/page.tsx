@@ -1,4 +1,4 @@
-"use client";  // This needs to be exactly like this, without quotes or extra characters
+"use client"; // This needs to be exactly like this, without quotes or extra characters
 
 import React, { useState } from 'react';
 import Sidebar from './sidebar/Sidebar';
@@ -16,22 +16,6 @@ const Page = () => {
   const [workspaces, setWorkspaces] = useState<any[]>([]); // Manage workspaces in state
   const [updatedTitles, setUpdatedTitles] = useState<{ [key: string]: string }>({});
 
-  const updateFileName = (oldName: string, newName: string) => {
-    setWorkspaces((prevWorkspaces) =>
-      prevWorkspaces.map((workspace) => {
-        if (workspace.id === workspaceId) {
-          return {
-            ...workspace,
-            files: workspace.files.map((file) =>
-              file.name === oldName ? { ...file, name: newName } : file
-            ),
-          };
-        }
-        return workspace;
-      })
-    );
-  };
-
   const handleTitleUpdate = (newTitle: string) => {
     console.log("Updating title:", newTitle);
     if (selectedFile && workspaceId) {
@@ -41,7 +25,7 @@ const Page = () => {
             return {
               ...workspace,
               files: workspace.files.map(file =>
-                file.name === selectedFile ? { ...file, name: newTitle } : file
+                file.id === selectedFile ? { ...file, name: newTitle } : file
               ),
             };
           }
@@ -49,17 +33,23 @@ const Page = () => {
         })
       );
 
-      
+      // Update the title in Firebase
       const workspaceRef = doc(db, 'users', auth.currentUser?.uid, 'workspaces', workspaceId);
       updateDoc(workspaceRef, {
         files: workspaces.find(ws => ws.id === workspaceId)?.files.map(file =>
-          file.name === selectedFile ? { ...file, name: newTitle } : file
+          file.id === selectedFile ? { ...file, name: newTitle } : file
         ),
       });
+
+      // Update the title in the updatedTitles state
+      setUpdatedTitles(prevTitles => ({
+        ...prevTitles,
+        [selectedFile]: newTitle,
+      }));
     }
   };
 
-  const MainContent = ({ selectedFile, workspaceId, updateFileName, onTitleUpdate }) => {
+  const MainContent = () => {
     const { colorMode } = useColorMode();
 
     return (
@@ -68,8 +58,7 @@ const Page = () => {
           <NoteEditor
             selectedFile={selectedFile}
             workspaceId={workspaceId}
-            updateFileName={updateFileName}
-            onTitleUpdate={handleTitleUpdate}
+            onTitleChange={handleTitleUpdate}  // Pass the function here
           />
         )}
       </Box>
@@ -86,12 +75,7 @@ const Page = () => {
           setWorkspaces={setWorkspaces}
           updatedTitles={updatedTitles} 
         />
-        <MainContent
-          selectedFile={selectedFile}
-          workspaceId={workspaceId}
-          updateFileName={updateFileName}
-          onTitleUpdate={handleTitleUpdate}  // Pass the function here
-        />
+        <MainContent />
       </Box>
     </ChakraProvider>
   );
