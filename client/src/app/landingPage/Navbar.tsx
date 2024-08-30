@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import { HiSun, HiMoon } from 'react-icons/hi';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const router = useRouter();
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
@@ -22,40 +25,42 @@ const Navbar = () => {
     router.push('/login');
   };
 
+  if (!mounted) return null; 
+
   return (
-    <nav className={`fixed w-full z-50 top-0 left-0 shadow-md ${theme === 'dark' ? 'bg-black' : 'bg-white'}`}>
+    <nav className={`fixed w-full z-50 top-0 left-0 shadow-md ${resolvedTheme === 'dark' ? 'bg-black' : 'bg-white'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" onClick={scrollToTop} className="flex items-center cursor-pointer">
-              <span className={`text-4xl font-extrabold tracking-wide ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>QN</span>
-              <span className={`text-2xl font-bold ml-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>QuickNotez</span>
+              <span className={`text-4xl font-extrabold tracking-wide ${resolvedTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>QN</span>
+              <span className={`text-2xl font-bold ml-2 ${resolvedTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>QuickNotez</span>
             </Link>
           </div>
           <div className="hidden md:block">
             <div className="ml-10 flex items-center space-x-4">
-              <Link href="/products" className={`font-bold tracking-wide hover:bg-gray-200 px-3 py-2 rounded-md text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              <Link href="/products" className={`font-bold tracking-wide hover:bg-gray-200 px-3 py-2 rounded-md text-sm ${resolvedTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 Products
               </Link>
-              <Link href="/resources" className={`font-bold tracking-wide hover:bg-gray-200 px-3 py-2 rounded-md text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              <Link href="/resources" className={`font-bold tracking-wide hover:bg-gray-200 px-3 py-2 rounded-md text-sm ${resolvedTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 Resources
               </Link>
-              <Link href="/download" className={`font-bold tracking-wide hover:bg-gray-200 px-3 py-2 rounded-md text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              <Link href="/download" className={`font-bold tracking-wide hover:bg-gray-200 px-3 py-2 rounded-md text-sm ${resolvedTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 Download
               </Link>
               <button
                 onClick={() => scrollToSection('pricing')}
-                className={`font-bold tracking-wide hover:bg-gray-200 px-3 py-2 rounded-md text-sm cursor-pointer ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}
+                className={`font-bold tracking-wide hover:bg-gray-200 px-3 py-2 rounded-md text-sm cursor-pointer ${resolvedTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}
               >
                 Pricing
               </button>
               <button
                 onClick={handleLoginClick}
-                className={`font-bold tracking-wide hover:bg-gray-200 px-3 py-2 rounded-md text-sm cursor-pointer ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}
+                className={`font-bold tracking-wide hover:bg-gray-200 px-3 py-2 rounded-md text-sm cursor-pointer ${resolvedTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}
               >
                 Login
               </button>
-              {/* Dark Mode/Light Mode Toggle */}
+            
               <button
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                 className="ml-4 p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white flex items-center justify-center focus:outline-none"
@@ -102,32 +107,30 @@ const Navbar = () => {
               </svg>
             </button>
             <div className="px-2 space-y-4">
-              <Link href="/products" className={`font-bold tracking-wide hover:bg-gray-200 block px-3 py-2 rounded-md text-base ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              <Link href="/products" className={`font-bold tracking-wide hover:bg-gray-200 block px-3 py-2 rounded-md text-base ${resolvedTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 Products
               </Link>
-              <Link href="/resources" className={`font-bold tracking-wide hover:bg-gray-200 block px-3 py-2 rounded-md text-base ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              <Link href="/resources" className={`font-bold tracking-wide hover:bg-gray-200 block px-3 py-2 rounded-md text-base ${resolvedTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 Resources
               </Link>
-              <Link href="/download" className={`font-bold tracking-wide hover:bg-gray-200 block px-3 py-2 rounded-md text-base ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              <Link href="/download" className={`font-bold tracking-wide hover:bg-gray-200 block px-3 py-2 rounded-md text-base ${resolvedTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 Download
               </Link>
               <button
                 onClick={() => scrollToSection('pricing')}
-                className={`font-bold tracking-wide hover:bg-gray-200 block px-3 py-2 rounded-md text-base cursor-pointer ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}
+                className={`font-bold tracking-wide hover:bg-gray-200 block px-3 py-2 rounded-md text-base cursor-pointer ${resolvedTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}
               >
                 Pricing
               </button>
-              <Link href="/login" className={`font-bold tracking-wide hover:bg-gray-200 block px-3 py-2 rounded-md text-base ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              <Link href="/login" className={`font-bold tracking-wide hover:bg-gray-200 block px-3 py-2 rounded-md text-base ${resolvedTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 Login
               </Link>
-              <div className="flex items-center ml-4 p-2 rounded-full ">
-                <button
-                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                  className="focus:outline-none"
-                >
-                  {theme === 'dark' ? <HiSun className="w-5 h-5" /> : <HiMoon className="w-5 h-5" />}
-                </button>
-              </div>
+              <button
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="ml-4 p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white flex items-center justify-center focus:outline-none"
+              >
+                {theme === 'dark' ? <HiSun className="w-5 h-5" /> : <HiMoon className="w-5 h-5" />}
+              </button>
             </div>
           </div>
         </div>
