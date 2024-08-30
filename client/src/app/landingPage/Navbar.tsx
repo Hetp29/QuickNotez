@@ -8,6 +8,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { theme, setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
@@ -28,7 +29,7 @@ const Navbar = () => {
   if (!mounted) return null; 
 
   return (
-    <nav className={`fixed w-full z-50 top-0 left-0 shadow-md ${resolvedTheme === 'dark' ? 'bg-black' : 'bg-white'}`}>
+    <nav className={`fixed w-full z-50 top-0 left-0 shadow-md ${resolvedTheme === 'dark' ? 'bg-zinc-800' : 'bg-white'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex-shrink-0 flex items-center">

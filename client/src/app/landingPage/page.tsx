@@ -9,7 +9,7 @@ import { Image } from '@chakra-ui/react';
 const LandingPage = () => {
   
   return (
-    <section className="min-h-screen flex flex-col pt-16 bg-white dark:bg-black text-black dark:text-white transition-colors ">
+    <section className="min-h-screen flex flex-col pt-16 bg-white dark:bg-zinc-800 text-black dark:text-white transition-colors ">
       <Navbar  />
       <div className="flex-1 flex flex-col justify-center items-center text-center overflow-auto px-4 sm:px-6 mt-16 pt-20">
       <TitleSection 
@@ -230,10 +230,10 @@ const LandingPage = () => {
     }
   />
 
-        <div className="flex flex-col items-center gap-12 mt-8">
+        <div className="flex flex-col  items-center gap-12 mt-8">
 
         <div className="flex flex-wrap justify-center gap-12">
-          <Card className="p-8 max-w-xs hover:shadow-lg transition-transform duration-200 ease-out hover:scale-105">
+          <Card className="p-8 dark:bg-zinc-800 dark:border-gray-900 max-w-xs hover:shadow-lg transition-transform duration-200 ease-out hover:scale-105">
             <p className="text-lg font-medium mb-4">
               &quot;QuickNotez has completely changed the way I manage my projects. It's intuitive, efficient, and reliable.&quot;
             </p>
@@ -242,7 +242,7 @@ const LandingPage = () => {
               <p className="text-sm">Project Manager</p>
             </div>
           </Card>
-          <Card className="p-8 max-w-xs hover:shadow-lg transition-transform duration-200 ease-out hover:scale-105">
+          <Card className="p-8 dark:bg-zinc-800 dark:border-gray-900 max-w-xs hover:shadow-lg transition-transform duration-200 ease-out hover:scale-105">
             <p className="text-lg font-medium mb-4">
               &quot;The integration of tasks and notes is seamless. QuickNotez makes collaboration and organization a breeze.&quot;
             </p>
@@ -251,7 +251,7 @@ const LandingPage = () => {
               <p className="text-sm">Software Developer</p>
             </div>
           </Card>
-          <Card className="p-8 max-w-xs hover:shadow-lg transition-transform duration-200 ease-out hover:scale-105">
+          <Card className="p-8 dark:bg-zinc-800 dark:border-gray-900 max-w-xs hover:shadow-lg transition-transform duration-200 ease-out hover:scale-105">
             <p className="text-lg font-medium mb-4">
               &quot;An exceptional tool for anyone who needs to stay organized. The user interface is clean and easy to use.&quot;
             </p>
@@ -263,7 +263,7 @@ const LandingPage = () => {
         </div>
 
         <div className="flex flex-wrap justify-center gap-12 mt-8">
-          <Card className="p-8 max-w-xs hover:shadow-lg transition-transform duration-200 ease-out hover:scale-105">
+        <Card className="p-8 dark:bg-zinc-800 dark:border-gray-900 max-w-xs hover:shadow-lg transition-transform duration-200 ease-out hover:scale-105">
             <p className="text-lg font-medium mb-4">
               &quot;QuickNotez has become an essential part of my daily workflow. The features are just what I needed to stay on top of things.&quot;
             </p>
@@ -272,7 +272,7 @@ const LandingPage = () => {
               <p className="text-sm">Marketing Specialist</p>
             </div>
           </Card>
-          <Card className="p-8 max-w-xs hover:shadow-lg transition-transform duration-200 ease-out hover:scale-105">
+          <Card className="p-8 dark:bg-zinc-800 dark:border-gray-900 max-w-xs hover:shadow-lg transition-transform duration-200 ease-out hover:scale-105">
             <p className="text-lg font-medium mb-4">
               &quot;I love how QuickNotez integrates all my notes and tasks into one place. It's incredibly user-friendly and efficient.&quot;
             </p>
@@ -281,7 +281,7 @@ const LandingPage = () => {
               <p className="text-sm">Graphic Designer</p>
             </div>
           </Card>
-          <Card className="p-8 max-w-xs hover:shadow-lg transition-transform duration-200 ease-out hover:scale-105">
+          <Card className="p-8 dark:bg-zinc-800 dark:border-gray-900 max-w-xs hover:shadow-lg transition-transform duration-200 ease-out hover:scale-105">
             <p className="text-lg font-medium mb-4">
               &quot;The customization options are fantastic. When I use QuickNotez, I am able to tailor everything to fit my unique needs.&quot;
             </p>
@@ -298,7 +298,7 @@ const LandingPage = () => {
 
       <div>
 
-<section id="pricing" className="bg-white py-16 bg-white dark:bg-black text-black dark:text-white transition-colors">
+<section id="pricing" className="bg-white py-16 bg-white dark:bg-zinc-800 text-black dark:text-white transition-colors">
       <div className="text-center mb-12">
         <span 
           className="block text-4xl sm:text-6xl font-semibold mb-4 text-black dark:text-white tracking-wide transition-transform duration-200 ease-out hover:scale-105"
@@ -318,7 +318,7 @@ const LandingPage = () => {
 
   <div className="flex flex-wrap justify-center gap-8">
 
-  <div className="p-6 rounded-lg shadow-lg flex flex-col flex-grow flex-basis-[300px] min-w-[300px] max-w-[350px] text-center bg-white dark:bg-black border border-gray-300 dark:border-gray-900 transition-colors" style={{ minHeight: '550px' }}>
+  <div className="p-6 rounded-lg shadow-lg flex flex-col flex-grow flex-basis-[300px] min-w-[300px] max-w-[350px] text-center bg-white dark:bg-zinc-800 border border-gray-300 dark:border-gray-900 transition-colors" style={{ minHeight: '550px' }}>
       <h3 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">Free</h3>
       <p className="mb-4 text-gray-500 dark:text-gray-300">$0/month</p>
       <ul className="text-left mb-4 space-y-2 text-gray-900 dark:text-white">
@@ -338,7 +338,7 @@ const LandingPage = () => {
       </a>
   </div>
 
-  <div className="p-6 rounded-lg shadow-lg flex flex-col flex-grow flex-basis-[300px] min-w-[300px] max-w-[350px] text-center bg-white dark:bg-black border border-gray-300 dark:border-gray-900 transition-colors" style={{ minHeight: '550px' }}>
+  <div className="p-6 rounded-lg shadow-lg flex flex-col flex-grow flex-basis-[300px] min-w-[300px] max-w-[350px] text-center bg-white dark:bg-zinc-800 border border-gray-300 dark:border-gray-900 transition-colors" style={{ minHeight: '550px' }}>
   <h3 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">Plus</h3>
       <p className="  mb-4 text-gray-500 dark:text-gray-300">
         $8/month (billed annually) <br />
@@ -360,7 +360,7 @@ const LandingPage = () => {
       </a>
     </div>
 
-    <div className="p-6 rounded-lg shadow-lg flex flex-col flex-grow flex-basis-[300px] min-w-[300px] max-w-[350px] text-center bg-white dark:bg-black border border-gray-300 dark:border-gray-900 transition-colors" style={{ minHeight: '550px' }}>
+    <div className="p-6 rounded-lg shadow-lg flex flex-col flex-grow flex-basis-[300px] min-w-[300px] max-w-[350px] text-center bg-white dark:bg-zinc-800 border border-gray-300 dark:border-gray-900 transition-colors" style={{ minHeight: '550px' }}>
     <h3 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">Pro</h3>
     <p className="  mb-4 text-gray-500 dark:text-gray-300">
         $15/month (billed annually) <br />
@@ -379,7 +379,7 @@ const LandingPage = () => {
       </a>
     </div>
 
-    <div className="p-6 rounded-lg shadow-lg flex flex-col flex-grow flex-basis-[300px] min-w-[300px] max-w-[350px] text-center bg-white dark:bg-black border border-gray-300 dark:border-gray-900 transition-colors" style={{ minHeight: '550px' }}>
+    <div className="p-6 rounded-lg shadow-lg flex flex-col flex-grow flex-basis-[300px] min-w-[300px] max-w-[350px] text-center bg-white dark:bg-zinc-800 border border-gray-300 dark:border-gray-900 transition-colors" style={{ minHeight: '550px' }}>
     <h3 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">Enterprise</h3>
     <p className="  mb-4 text-gray-500 dark:text-gray-300">
         $20/month (billed annually)<br />

@@ -42,7 +42,7 @@ const LoginPage = () => {
   };
 
   return (
-    <section className="min-h-screen flex flex-col bg-white dark:bg-black text-black dark:text-white transition-colors duration-300">
+    <section className="min-h-screen flex flex-col bg-white dark:bg-zinc-800 text-black dark:text-white transition-colors duration-300">
       <Navbar />
       <div className="flex-1 flex flex-col justify-center items-center text-center overflow-auto px-4 sm:px-6 mt-16 pt-20">
         <h1 className="text-4xl sm:text-6xl font-semibold mb-4 text-black dark:text-white tracking-wide transition-transform duration-200 ease-out hover:scale-105"
@@ -67,7 +67,7 @@ const LoginPage = () => {
         </p>
 
         <div className="mt-8 flex justify-center w-full max-w-lg">
-          <Card className="bg-gray-100 dark:bg-gray-900 p-8 text-black dark:text-white shadow-lg w-full max-w-md">
+        <Card className="bg-white dark:bg-zinc-800 border border-gray-300 dark:border-black  p-8 text-black dark:text-white shadow-lg w-full max-w-md">
             {errorMessage && (
               <div className="mb-4 text-red-500 dark:text-red-400 text-sm">
                 {errorMessage}
@@ -85,7 +85,7 @@ const LoginPage = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 sm:text-sm bg-white dark:bg-gray-900 text-black dark:text-white"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-black dark:bg-zinc-800 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 sm:text-sm bg-white text-black dark:text-white"
                 />
               </div>
               <div>
@@ -99,7 +99,7 @@ const LoginPage = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 sm:text-sm bg-white dark:bg-gray-900 text-black dark:text-white"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-black dark:bg-zinc-800 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 sm:text-sm bg-white text-black dark:text-white"
                 />
                 <div className="mt-2 flex justify-center">
                   <a href="/forgot-password" className="text-blue-500 dark:text-blue-400 hover:underline">
@@ -133,7 +133,7 @@ const LoginPage = () => {
           </Card>
         </div>
       </div>
-      <footer className="py-4 bg-white dark:bg-black text-center text-gray-700 dark:text-gray-300 transition-colors duration-300">
+      <footer className="w-full text-center py-6 bg-gray-100 dark:bg-zinc-800 text-gray-800 dark:text-gray-300 border-t border-gray-300 dark:border-gray-900 transition-colors duration-300">
         <p>© 2024 QuickNotez. All rights reserved.</p>
       </footer>
     </section>
