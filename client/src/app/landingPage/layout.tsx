@@ -9,7 +9,7 @@ const HomePageLayout = ({ children }:  {children:React.ReactNode }) => {
     };
 
     return (
-        <main className="0 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen transition-colors duration-300">
+        <main className="0 dark:bg-black text-gray-900 dark:text-gray-100 min-h-screen transition-colors duration-300">
             <header className="flex justify-end p-4">
                 
             </header>

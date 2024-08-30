@@ -1,7 +1,9 @@
+import React from 'react';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { HiSun, HiMoon } from 'react-icons/hi';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,7 +33,7 @@ const Navbar = () => {
             </Link>
           </div>
           <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-4">
+            <div className="ml-10 flex items-center space-x-4">
               <Link href="/products" className={`font-bold tracking-wide hover:bg-gray-200 px-3 py-2 rounded-md text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 Products
               </Link>
@@ -56,9 +58,9 @@ const Navbar = () => {
               {/* Dark Mode/Light Mode Toggle */}
               <button
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className={`ml-4 p-2 rounded-full ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-900'}`}
+                className="ml-4 p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white flex items-center justify-center focus:outline-none"
               >
-                {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+                {theme === 'dark' ? <HiSun className="w-5 h-5" /> : <HiMoon className="w-5 h-5" />}
               </button>
             </div>
           </div>
@@ -99,7 +101,7 @@ const Navbar = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
-            <div className= {"px-2 space-y-4"}>
+            <div className="px-2 space-y-4">
               <Link href="/products" className={`font-bold tracking-wide hover:bg-gray-200 block px-3 py-2 rounded-md text-base ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 Products
               </Link>
@@ -118,12 +120,14 @@ const Navbar = () => {
               <Link href="/login" className={`font-bold tracking-wide hover:bg-gray-200 block px-3 py-2 rounded-md text-base ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 Login
               </Link>
-              <button
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className={`ml-4 p-2 rounded-full ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-900'}`}
-              >
-                Toggle Theme
-              </button>
+              <div className="flex items-center ml-4 p-2 rounded-full ">
+                <button
+                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                  className="focus:outline-none"
+                >
+                  {theme === 'dark' ? <HiSun className="w-5 h-5" /> : <HiMoon className="w-5 h-5" />}
+                </button>
+              </div>
             </div>
           </div>
         </div>

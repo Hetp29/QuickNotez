@@ -31,6 +31,7 @@ body {
     --radius: 0.5rem;
   }
 
+  
   .dark {
     --background: 249 100% 3.9%;
     --foreground: 248 100% 88%;
@@ -220,3 +221,4 @@ a {
 html {
   scroll-behavior: smooth;
 }
+
