@@ -8,8 +8,6 @@ const Navbar = () => {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
 
-  
-
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -23,7 +21,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className={`fixed w-full z-50 top-0 left-0 shadow-md ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
+    <nav className={`fixed w-full z-50 top-0 left-0 shadow-md ${theme === 'dark' ? 'bg-black' : 'bg-white'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex-shrink-0 flex items-center">
@@ -55,7 +53,13 @@ const Navbar = () => {
               >
                 Login
               </button>
-              
+              {/* Dark Mode/Light Mode Toggle */}
+              <button
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className={`ml-4 p-2 rounded-full ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-900'}`}
+              >
+                {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+              </button>
             </div>
           </div>
           <div className="-mr-2 flex md:hidden">
@@ -116,7 +120,7 @@ const Navbar = () => {
               </Link>
               <button
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className={`ml-4 p-2 rounded-full ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-900'}`}
+                className={`ml-4 p-2 rounded-full ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-900'}`}
               >
                 Toggle Theme
               </button>
