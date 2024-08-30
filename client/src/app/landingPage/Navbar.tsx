@@ -99,7 +99,7 @@ const Navbar = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
-            <div className="px-2 space-y-4">
+            <div className= {"px-2 space-y-4"}>
               <Link href="/products" className={`font-bold tracking-wide hover:bg-gray-200 block px-3 py-2 rounded-md text-base ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 Products
               </Link>
