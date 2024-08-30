@@ -194,7 +194,7 @@ const handleAddNewFile = async (workspaceId: string) => {
       console.log('Workspace found:', workspaceDoc.data());
       const files = workspaceDoc.data().files || [];
 
-      // Ensure the file name is unique by appending a number if necessary
+      
       const newFileName = files.find(file => file.name.startsWith(fileName))
         ? `Untitled ${files.length + 1}`
         : fileName;
@@ -202,7 +202,7 @@ const handleAddNewFile = async (workspaceId: string) => {
       const newFile = { name: newFileName, content: '' };
       files.push(newFile);
 
-      // Update the Firestore workspace document
+      
       await updateDoc(workspaceRef, { files });
       console.log('File added successfully');
 

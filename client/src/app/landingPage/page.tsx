@@ -4,6 +4,8 @@ import Navbar from "./Navbar";
 import TitleSection from "./Slogan";
 import { Card } from '@/components/ui/card';
 import Footer from './Footer';
+import { Image } from '@chakra-ui/react';
+
 
 const LandingPage = () => {
   
@@ -66,13 +68,26 @@ const LandingPage = () => {
           </a>
         </p>
       </div>
-        <div className="mt-16 mb-16">
-          <img
-            src="/images/appBanner.png"
-            alt="App Trailer"
-            className="w-54 h-54 object-contain transition-transform duration-200 ease-out hover:scale-105 filter invert"
-          />
-        </div>
+      <div className="mt-28 mb-6 flex justify-center items-center space-x-4">
+  <div className="relative h-[500px] w-[500px] hidden md:block">
+    <Image
+      src="/images/documents-dark.png"
+      alt="App Trailer"
+      className="object-contain transition-transform duration-200 ease-out hover:scale-105 filter invert"
+    />
+  </div>
+  <div className="relative h-[500px] w-[500px] hidden md:block">
+    <Image
+      src="/images/reading-dark.png"  
+      alt="Second Image"
+      className="object-contain transition-transform duration-200 ease-out hover:scale-105 filter invert"
+    />
+  </div>
+</div>
+
+
+
+
         <div className="flex flex-wrap justify-center gap-28 mt-16 mb-16">
           <img
             src="/images/client1.png"
@@ -139,13 +154,14 @@ const LandingPage = () => {
             </div>
           }
         />
-        <div className="flex flex-wrap justify-center gap-28 mt-12 mb-14 bg-gray-200 border-gray-300 transition-colors duration-300">
-          <img
-            src="/images/cal.png"
-            alt="Calendar"
-            className="h-64 w-74 max-w-screen-lg mx-auto object-contain border border-gray-300 transition-transform duration-200 ease-out hover:scale-105"
+        <div className="mt-32 relative h-[500px] w-[500px] hidden md:block">
+          <Image
+            src="/images/error-dark.png"
+            alt="App Trailer"
+            className="object-contain transition-transform duration-200 ease-out hover:scale-105 filter invert"
           />
         </div>
+
 
         <TitleSection
             title={

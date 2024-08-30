@@ -18,34 +18,34 @@ const Page = () => {
   const handleTitleUpdate = (newTitle: string) => {
     console.log("Updating title:", newTitle);
     if (selectedFile && workspaceId) {
-      setWorkspaces(prevWorkspaces =>
-        prevWorkspaces.map(workspace => {
-          if (workspace.id === workspaceId) {
-            return {
-              ...workspace,
-              files: workspace.files.map(file =>
-                file.id === selectedFile ? { ...file, name: newTitle } : file
-              ),
-            };
-          }
-          return workspace;
-        })
-      );
+        setWorkspaces(prevWorkspaces =>
+            prevWorkspaces.map(workspace => {
+                if (workspace.id === workspaceId) {
+                    return {
+                        ...workspace,
+                        files: workspace.files.map(file =>
+                            file.name === selectedFile ? { ...file, name: newTitle } : file
+                        ),
+                    };
+                }
+                return workspace;
+            })
+        );
 
+        const workspaceRef = doc(db, 'users', auth.currentUser?.uid, 'workspaces', workspaceId);
+        updateDoc(workspaceRef, {
+            files: workspaces.find(ws => ws.id === workspaceId)?.files.map(file =>
+                file.name === selectedFile ? { ...file, name: newTitle } : file
+            ),
+        });
 
-      const workspaceRef = doc(db, 'users', auth.currentUser?.uid, 'workspaces', workspaceId);
-      updateDoc(workspaceRef, {
-        files: workspaces.find(ws => ws.id === workspaceId)?.files.map(file =>
-          file.id === selectedFile ? { ...file, name: newTitle } : file
-        ),
-      });
-
-      setUpdatedTitles(prevTitles => ({
-        ...prevTitles,
-        [selectedFile]: newTitle,
-      }));
+        setUpdatedTitles(prevTitles => ({
+            ...prevTitles,
+            [selectedFile]: newTitle,
+        }));
     }
-  };
+};
+
 
   const MainContent = () => {
     const { colorMode } = useColorMode();
