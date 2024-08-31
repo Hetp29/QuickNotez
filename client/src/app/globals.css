@@ -33,7 +33,7 @@ body {
 
   
   .dark {
-    --background: 0 0% 0%;
+    --background: 249 100% 3.9%;
     --foreground: 248 100% 88%;
     --card: 224 71.4% 4.1%;
     --card-foreground: 210 20% 98%;
@@ -193,6 +193,7 @@ html {
 html.light {
   --bg-color: #ffffff;
   --text-color: #000000;
+  --caret-color: #000000;
 }
 
 body {
@@ -222,3 +223,18 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Override for Quill Editor text color in light and dark modes */
+.ql-editor {
+  color: var(--text-color); /* This will ensure text color matches the theme */
+}
+
+/* Light mode specific styling */
+html.light .ql-editor {
+  color: #2d3748; /* Dark grey color for light mode */
+}
+
+/* Dark mode specific styling */
+html.dark .ql-editor {
+  color: #cbd5e0; /* Light grey color for dark mode */
+  --caret-color: #ffffff;
+}
