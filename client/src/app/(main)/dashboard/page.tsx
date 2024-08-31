@@ -55,8 +55,8 @@ const Page = () => {
         {selectedFile && (
           <NoteEditor
             selectedFile={selectedFile}
-            workspaceId={workspaceId}
-            onTitleChange={handleTitleUpdate}  
+            workspaceId={workspaceId} 
+            handleTitleUpdate={handleTitleUpdate}
           />
         )}
       </Box>

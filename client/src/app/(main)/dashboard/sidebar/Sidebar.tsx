@@ -446,7 +446,7 @@ useEffect(() => {
           >
             <HiDocument className={`text-2xl ${buttonTextColor}`} />
             <span className={buttonTextColor}>
-              {file.name}
+              {updatedTitles[file.name] || file.name}
             </span>
           </button>
         ))}
